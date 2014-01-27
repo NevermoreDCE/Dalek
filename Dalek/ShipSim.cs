@@ -7,14 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using StarShips;
-using StarShips.Weapons;
-using StarShips.Defenses;
 using StarShips.Randomizer;
 using StarShips.Interfaces;
-using StarShips.Repair;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using StarShips.Actions;
+using StarShips.PartBase;
 
 namespace Dalek
 {
@@ -202,6 +201,53 @@ namespace Dalek
             if (Ship1 != null && Ship2 != null)
                 while (!victory)
                     FightRound();
+        }
+
+        private void btnTestShip2_Click(object sender, EventArgs e)
+        {
+            Ship1 = new Ship();
+            Ship1.Name = "Test Ship";
+            Ship1.HP.Max = 50;
+            Ship1.HP.Current = 50;
+            Ship1.Equipment.Add(new WeaponPart("Laser Beam", 1, 5, 2, 0, new List<IShipPartAction>()));
+            Ship1.Equipment.Add(new WeaponPart("Laser Beam", 1, 5, 2, 0, new List<IShipPartAction>()));
+            Ship1.Equipment.Add(new WeaponPart("Plasma Cannon", 1, 12, 3, 2, new List<IShipPartAction>()));
+            Ship1.Equipment.Add(new WeaponPart("Torpedo", 1, 20, 2, 4, new List<IShipPartAction>()));
+            List<IShipPartAction> ShieldGenAction = new List<IShipPartAction>();
+            ShieldGenAction.Add(new RepairThisPart(2));
+            Ship1.Equipment.Add(new DefensePart("Shield Generator", 15, 1, "Down", "Penetrating", ShieldGenAction));
+            Ship1.Equipment.Add(new DefensePart("Shield Generator", 15, 1, "Down", "Penetrating", ShieldGenAction));
+            Ship1.Equipment.Add(new DefensePart("Armor Plate", 15, 3, "Destroyed", "Shattering", new List<IShipPartAction>()));
+            List<IShipPartAction> DmgControlAction = new List<IShipPartAction>();
+            DmgControlAction.Add(new RepairTargetShip(5));
+            //Ship1.Equipment.Add(new ActionPart("Damage Control", 1, "Regen: 5 HPs", DmgControlAction));
+            ShowShipDetails(Ship1, tlpShip1);
+
+            Ship2 = new Ship();
+            Ship2.Name = "Test Ship";
+            Ship2.HP.Max = 50;
+            Ship2.HP.Current = 50;
+            Ship2.Equipment.Add(new WeaponPart("Laser Beam", 1, 5, 2, 0, new List<IShipPartAction>()));
+            Ship2.Equipment.Add(new WeaponPart("Laser Beam", 1, 5, 2, 0, new List<IShipPartAction>()));
+            Ship2.Equipment.Add(new WeaponPart("Laser Beam", 1, 5, 2, 0, new List<IShipPartAction>()));
+            Ship2.Equipment.Add(new WeaponPart("Laser Beam", 1, 5, 2, 0, new List<IShipPartAction>()));
+            ShieldGenAction = new List<IShipPartAction>();
+            ShieldGenAction.Add(new RepairThisPart(2));
+            Ship2.Equipment.Add(new DefensePart("Shield Generator", 15,1, "Down", "Penetrating", ShieldGenAction));
+            Ship2.Equipment.Add(new DefensePart("Shield Generator", 15,1, "Down", "Penetrating", ShieldGenAction));
+            Ship2.Equipment.Add(new DefensePart("Armor Plate", 15, 3, "Destroyed", "Shattering", new List<IShipPartAction>()));
+            DmgControlAction = new List<IShipPartAction>();
+            DmgControlAction.Add(new RepairTargetShip(5));
+            Ship2.Equipment.Add(new ActionPart("Damage Control", 1, "Regen: 5 HPs", DmgControlAction));
+            //Ship2.Equipment.Add(new DamageControl());
+            ShowShipDetails(Ship2, tlpShip2);
+
+            if (Ship1 != null && Ship2 != null)
+            {
+                btnFight.Enabled = true;
+                btnToTheDeath.Enabled = true;
+                btnResetShips.Enabled = true;
+            }
         }
 
         

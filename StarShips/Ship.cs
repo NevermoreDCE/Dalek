@@ -11,7 +11,7 @@ namespace StarShips
     [Serializable]
     public struct StatWithMax:ISerializable
     {
-        public int Max;
+        public int Max = 0;
         public int Current;
         public override string ToString()
         {
@@ -60,6 +60,7 @@ namespace StarShips
         public StatWithMax MP;
         public List<ShipPart> Equipment = new List<ShipPart>();
         public string Name;
+        public int PointCost { get { int result = HP.Max * 5; foreach (ShipPart part in Equipment)result += part.PointCost; return result; } }
         #endregion
 
         #region Public Methods
@@ -82,8 +83,8 @@ namespace StarShips
                     else
                     {
                         // check if has a target
-                        if (weapon.Target == null)
-                            weapon.Target = Target;
+                        if (part.Target == null)
+                            part.Target = Target;
                         result.Add(string.Format("{0} fires, {1}", part.Name,weapon.Fire()));
                     }
                 }
@@ -132,11 +133,11 @@ namespace StarShips
         public List<string> EndOfTurn()
         {
             List<string> result = new List<string>();
-            foreach (IActionable part in Equipment.Where(f => f is IActionable && !f.IsDestroyed))
+            foreach (ShipPart part in Equipment.Where(f => !f.IsDestroyed))
             {
                 result.Add(part.DoAction(this));
             }
-            return result;
+            return result.Where(f=>f!=string.Empty).ToList<string>();
 
 
         }
@@ -154,8 +155,8 @@ namespace StarShips
         {
             info.AddValue("HP", HP);
             info.AddValue("MP", MP);
-            foreach (IWeapon weap in Equipment.Where(f => f is IWeapon))
-                weap.Target = null;
+            foreach (ShipPart part in Equipment)
+                part.Target = null;
             info.AddValue("Equipment", Equipment);
             info.AddValue("Name", Name);
         }

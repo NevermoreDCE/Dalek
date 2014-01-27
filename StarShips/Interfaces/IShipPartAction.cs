@@ -5,10 +5,10 @@ using System.Text;
 
 namespace StarShips.Interfaces
 {
-    public interface IWeapon
+    public interface IShipPartAction
     {
-        bool IsLoaded{get;}
-        string Fire();
-        int Reload();
+        int[] ActionValues;
+        string DoAction(ShipPart caller);
+        string ToString();
     }
 }

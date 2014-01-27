@@ -72,5 +72,9 @@ namespace StarShips.Defenses
             this.IsDestroyed = false;
             return Hitpoints.Add(amount).ToString();
         }
+        public string DoAction(Ship target)
+        {
+            return string.Empty;
+        }
     }
 }

@@ -40,6 +40,7 @@
             this.ofdShip2 = new System.Windows.Forms.OpenFileDialog();
             this.btnSelectShip1 = new System.Windows.Forms.Button();
             this.btnToTheDeath = new System.Windows.Forms.Button();
+            this.btnTestShip2 = new System.Windows.Forms.Button();
             this.gbxShip1.SuspendLayout();
             this.gbxShip2.SuspendLayout();
             this.SuspendLayout();
@@ -162,11 +163,22 @@
             this.btnToTheDeath.UseVisualStyleBackColor = true;
             this.btnToTheDeath.Click += new System.EventHandler(this.btnToTheDeath_Click);
             // 
+            // btnTestShip2
+            // 
+            this.btnTestShip2.Location = new System.Drawing.Point(12, 338);
+            this.btnTestShip2.Name = "btnTestShip2";
+            this.btnTestShip2.Size = new System.Drawing.Size(177, 30);
+            this.btnTestShip2.TabIndex = 9;
+            this.btnTestShip2.Text = "Test Ship 2";
+            this.btnTestShip2.UseVisualStyleBackColor = true;
+            this.btnTestShip2.Click += new System.EventHandler(this.btnTestShip2_Click);
+            // 
             // ShipSim
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(891, 789);
+            this.Controls.Add(this.btnTestShip2);
             this.Controls.Add(this.btnToTheDeath);
             this.Controls.Add(this.btnSelectShip1);
             this.Controls.Add(this.btnSelectShip2);
@@ -197,6 +209,7 @@
         private System.Windows.Forms.OpenFileDialog ofdShip2;
         private System.Windows.Forms.Button btnSelectShip1;
         private System.Windows.Forms.Button btnToTheDeath;
+        private System.Windows.Forms.Button btnTestShip2;
     }
 }
 

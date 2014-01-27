@@ -16,13 +16,7 @@ namespace StarShips.Weapons
         int _reloadTime = 0;
         //int _weaponRange = 1000;
         
-        Ship _target;
-        public Ship Target
-        {
-            get { return _target; }
-            set { _target = value; }
-        }
-
+        
         bool _isLoaded = true;
 
         public bool IsLoaded
