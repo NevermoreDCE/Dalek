@@ -1,0 +1,46 @@
+<shipParts>
+	<weaponParts>
+		<weaponPart name="Laser Beam">
+			<MaxHP>1</MaxHP>
+			<WeaponDamage>5</WeaponDamage>
+			<CritMultiplier>2</CritMultiplier>
+			<ReloadTime>0</ReloadTime>
+			<Actions>
+				<action type="RepairThisPart">
+					<Value index="0">2</Value>
+				</action>
+			</Actions>
+		</weaponPart>
+		<weaponPart name="Plasma Cannon">
+			<MaxHP>1</MaxHP>
+			<WeaponDamage>12</WeaponDamage>
+			<CritMultiplier>3</CritMultiplier>
+			<ReloadTime>2</ReloadTime>
+			<Actions></Actions>
+		</weaponPart>
+	</weaponParts>
+	<defenseParts>
+		<defensePart name="Shield Generator">
+			<MaxHP>1</MaxHP>
+			<DR>1</DR>
+			<DownAdjective>Down</DownAdjective>
+			<PenetrateVerb>Penetrating</PenetrateVerb>
+			<Actions>
+				<action type="RepairThisPart">
+					<Value index="0">2</Value>
+				</action>
+			</Actions>
+		</defensePart>
+	</defenseParts>
+	<actionParts>
+		<actionPart name="Damage Control">
+			<MaxHP>1</MaxHP>
+			<ActionDescription>Regen: 5 HPs</ActionDescription>
+			<Actions>
+				<action type="RepairTargetShip">
+					<Value index="0">5</Value>
+				</action>
+			</Actions>
+		</actionPart>
+	</actionParts>
+</shipParts>
