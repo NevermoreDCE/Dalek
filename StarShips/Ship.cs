@@ -9,10 +9,12 @@ using System.Runtime.Serialization;
 namespace StarShips
 {
     [Serializable]
-    public struct StatWithMax:ISerializable
+    public class StatWithMax:ISerializable
     {
-        public int Max = 0;
-        public int Current;
+        int _max = 0;
+        int _current = 0;
+        public int Max { get { return _max; } set { _max = value; _current = value; } }
+        public int Current { get { return _current; } set { _current = value; } }
         public override string ToString()
         {
             return string.Format("{0}/{1}", Current.ToString("D" + Max.ToString().Length.ToString()), Max.ToString());
@@ -50,14 +52,19 @@ namespace StarShips
             Max = (int)info.GetValue("Max", typeof(int));
             Current = (int)info.GetValue("Current", typeof(int));
         }
+
+        public StatWithMax()
+        {
+
+        }
     }
 
     [Serializable]
     public class Ship : ISerializable
     {
         #region Properties
-        public StatWithMax HP;
-        public StatWithMax MP;
+        public StatWithMax HP = new StatWithMax();
+        public StatWithMax MP = new StatWithMax();
         public List<ShipPart> Equipment = new List<ShipPart>();
         public string Name;
         public int PointCost { get { int result = HP.Max * 5; foreach (ShipPart part in Equipment)result += part.PointCost; return result; } }

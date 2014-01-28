@@ -11,7 +11,8 @@ namespace StarShips.Actions
     public class RepairThisPart : IShipPartAction, ISerializable
     {
         #region Private Variables
-        public int[] ActionValues = new int[1];
+        int[] _actionValues = new int[1];
+        public int[] ActionValues { get { return _actionValues; } set { _actionValues = value; } }
         #endregion
 
         #region Public Methods
@@ -49,7 +50,10 @@ namespace StarShips.Actions
         {
             ActionValues[0] = amount;
         }
-
+        public RepairThisPart(int[] ActionValues)
+        {
+            this.ActionValues = ActionValues;
+        }
         public RepairThisPart(SerializationInfo info, StreamingContext ctxt)
         {
             ActionValues[0] = (int)info.GetValue("Amount", typeof(int));

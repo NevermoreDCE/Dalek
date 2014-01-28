@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 using StarShips.Interfaces;
+using System.Xml.Linq;
 
 namespace StarShips.PartBase
 {
@@ -28,13 +29,42 @@ namespace StarShips.PartBase
             this.IsDestroyed = false;
             return string.Empty;
         }
+        #endregion
 
+        #region Serialization
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("Name", Name);
             info.AddValue("HP", HP);
             info.AddValue("ActionDescription", _actionDescription);
             info.AddValue("Actions", _actions);
+        }
+
+        public void GetObjectXML(XDocument sourceDoc)
+        {
+            XElement act;
+
+            if (sourceDoc.Descendants("actionPart").Where(f => f.Attribute("name").Value == this.Name).Count() > 0)
+            {
+                // Update Existing
+                act = sourceDoc.Descendants("actionPart").First(f => f.Attribute("name").Value == this.Name);
+                act.Element("MaxHP").Value = this.HP.Max.ToString();
+                act.Element("ActionDescription").Value = this._actionDescription.ToString();
+                
+                addActions(act.Element("Actions"));
+            }
+            else
+            {
+                // Create New
+                XElement actions = new XElement("Actions");
+                addActions(actions);
+                act =
+                    new XElement("actionPart", new XAttribute("name", this.Name),
+                        new XElement("MaxHP", this.HP.Max.ToString()),
+                        new XElement("ActionDescription", this._actionDescription.ToString()),
+                        actions);
+                sourceDoc.Element("actionParts").Add(act);
+            }
         }
         #endregion
 
@@ -54,6 +84,14 @@ namespace StarShips.PartBase
             HP = (StatWithMax)info.GetValue("HP", typeof(StatWithMax));
             _actionDescription = (string)info.GetValue("ActionDescription", typeof(string));
             _actions = (List<IShipPartAction>)info.GetValue("Actions", typeof(List<IShipPartAction>));
+        }
+
+        public ActionPart(XElement description)
+        {
+            this.Name = description.Attribute("name").Value;
+            this.HP.Max = int.Parse(description.Element("MaxHP").Value);
+            this._actionDescription = description.Element("ActionDescription").Value;
+            loadActions(description.Element("Actions"));
         }
         #endregion
 

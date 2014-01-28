@@ -7,7 +7,7 @@ namespace StarShips.Interfaces
 {
     public interface IShipPartAction
     {
-        int[] ActionValues;
+        int[] ActionValues {get;set;}
         string DoAction(ShipPart caller);
         string ToString();
     }

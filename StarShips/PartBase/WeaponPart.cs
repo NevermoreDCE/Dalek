@@ -5,6 +5,7 @@ using System.Text;
 using StarShips.Interfaces;
 using StarShips.Randomizer;
 using System.Runtime.Serialization;
+using System.Xml.Linq;
 
 namespace StarShips.PartBase
 {
@@ -74,6 +75,7 @@ namespace StarShips.PartBase
 
         #endregion
 
+        #region Serialization
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("Name", Name);
@@ -84,6 +86,39 @@ namespace StarShips.PartBase
             info.AddValue("CurrentReload", _currentReload);
             info.AddValue("Actions", _actions);
         }
+
+        public void GetObjectXML(XDocument sourceDoc)
+        {
+            XElement weap;
+
+            if (sourceDoc.Descendants("weaponPart").Where(f => f.Attribute("name").Value == this.Name).Count() > 0)
+            {
+                // Update Existing
+                weap = sourceDoc.Descendants("weaponPart").First(f => f.Attribute("name").Value == this.Name);
+                weap.Element("MaxHP").Value = this.HP.Max.ToString();
+                weap.Element("WeaponDamage").Value = this._weaponDamage.ToString();
+                weap.Element("CritMultiplier").Value = this._critMultiplier.ToString();
+                weap.Element("ReloadTime").Value = this._reloadTime.ToString();
+
+                addActions(weap.Element("Actions"));
+            }
+            else
+            {
+                // Create New
+                XElement actions = new XElement("Actions");
+                addActions(actions);
+                weap =
+                    new XElement("weaponPart", new XAttribute("name", this.Name),
+                        new XElement("MaxHP", this.HP.Max.ToString()),
+                        new XElement("WeaponDamage", this._weaponDamage.ToString()),
+                        new XElement("CritMultiplier", this._critMultiplier.ToString()),
+                        new XElement("ReloadTime", this._reloadTime.ToString()),
+                        actions);
+                sourceDoc.Element("weaponParts").Add(weap);
+            }
+        }
+
+        #endregion
 
         #region Constructors
         public WeaponPart(string Name, int MaxHP, int Damage, int CritMultiplier, int ReloadTime, List<IShipPartAction> Actions)
@@ -105,6 +140,15 @@ namespace StarShips.PartBase
             _reloadTime = (int)info.GetValue("ReloadTime", typeof(int));
             _currentReload = (int)info.GetValue("CurrentReload", typeof(int));
             _actions = (List<IShipPartAction>)info.GetValue("Actions", typeof(List<IShipPartAction>));
+        }
+        public WeaponPart(XElement description)
+        {
+            this.Name = description.Attribute("name").Value;
+            this.HP.Max = int.Parse(description.Element("MaxHP").Value);
+            this._weaponDamage = int.Parse(description.Element("WeaponDamage").Value);
+            this._critMultiplier = int.Parse(description.Element("CritMultiplier").Value);
+            this._reloadTime = int.Parse(description.Element("ReloadTime").Value);
+            loadActions(description.Element("Actions"));
         }
         #endregion
 

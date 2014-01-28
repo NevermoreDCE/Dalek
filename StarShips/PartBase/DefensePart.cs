@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using StarShips.Interfaces;
 using System.Runtime.Serialization;
+using System.Xml.Linq;
 
 namespace StarShips.PartBase
 {
@@ -12,7 +13,6 @@ namespace StarShips.PartBase
     {
         #region Private Variables
         int _dr;
-        Ship _target;
         string _downAdjective = "Down";
         string _penetrateVerb = "Penetrating";
         #endregion
@@ -80,6 +80,38 @@ namespace StarShips.PartBase
             info.AddValue("PenetrateVerb", _penetrateVerb);
             info.AddValue("Actions", _actions);
         }
+
+        public void GetObjectXML(XDocument sourceDoc)
+        {
+            XElement def;
+
+            if (sourceDoc.Descendants("defensePart").Where(f => f.Attribute("name").Value == this.Name).Count() > 0)
+            {
+                // Update Existing
+                def = sourceDoc.Descendants("defensePart").First(f => f.Attribute("name").Value == this.Name);
+                def.Element("MaxHP").Value = this.HP.Max.ToString();
+                def.Element("DR").Value = this._dr.ToString();
+                def.Element("DownAdjective").Value = this._downAdjective.ToString();
+                def.Element("PenetrateVerb").Value = this._penetrateVerb.ToString();
+
+                addActions(def.Element("Actions"));
+            }
+            else
+            {
+                // Create New
+                XElement actions = new XElement("Actions");
+                addActions(actions);
+                def =
+                    new XElement("defensePart", new XAttribute("name", this.Name),
+                        new XElement("MaxHP", this.HP.Max.ToString()),
+                        new XElement("DR", this._dr.ToString()),
+                        new XElement("DownAdjective", this._downAdjective.ToString()),
+                        new XElement("PenetrateVerb", this._penetrateVerb.ToString()),
+                        actions);
+                sourceDoc.Element("defenseParts").Add(def);
+            }
+        }
+
         #endregion
 
         #region Constructors
@@ -102,6 +134,16 @@ namespace StarShips.PartBase
             _downAdjective = (string)info.GetValue("DownAdjective", typeof(string));
             _penetrateVerb = (string)info.GetValue("PenetrateVerb", typeof(string));
             _actions = (List<IShipPartAction>)info.GetValue("Actions", typeof(List<IShipPartAction>));
+        }
+
+        public DefensePart(XElement description)
+        {
+            this.Name = description.Attribute("name").Value;
+            this.HP.Max = int.Parse(description.Element("MaxHP").Value);
+            this._dr = int.Parse(description.Element("DR").Value);
+            this._downAdjective = description.Element("DownAdjective").Value;
+            this._penetrateVerb = description.Element("PenetrateVerb").Value;
+            loadActions(description.Element("Actions"));
         }
         #endregion
 

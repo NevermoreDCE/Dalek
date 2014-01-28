@@ -43,7 +43,7 @@
     <Compile Include="Actions\RepairTargetShip.cs" />
     <Compile Include="Actions\RepairThisPart.cs" />
     <Compile Include="PartBase\ActionPart.cs" />
-    <Compile Include="PartBase\Defense.cs" />
+    <Compile Include="PartBase\DefensePart.cs" />
     <Compile Include="Interfaces\IDefense.cs" />
     <Compile Include="Interfaces\IShipPartAction.cs" />
     <Compile Include="Interfaces\IWeapon.cs" />
@@ -52,7 +52,7 @@
     <Compile Include="Randomizer\RNG.cs" />
     <Compile Include="Ship.cs" />
     <Compile Include="ShipPart.cs" />
-    <Compile Include="PartBase\Weapon.cs" />
+    <Compile Include="PartBase\WeaponPart.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
