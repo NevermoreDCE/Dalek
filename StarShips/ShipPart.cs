@@ -22,6 +22,9 @@ namespace StarShips
         
         public abstract override string ToString();
         public abstract string Repair(int amount);
+        public abstract void GetObjectXML(XDocument sourceDoc);
+
+
         public string DoAction(Ship target)
         {
             if (_target == null)

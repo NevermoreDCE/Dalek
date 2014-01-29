@@ -32,6 +32,10 @@ namespace StarShips.PartBase
             }
         }
 
+        public int WeaponDamage { get { return _weaponDamage; } }
+        public int CritMultiplier { get { return _critMultiplier; } }
+        public int ReloadTime { get { return _reloadTime; } }
+
         #endregion
 
         #region Private Methods
@@ -87,7 +91,7 @@ namespace StarShips.PartBase
             info.AddValue("Actions", _actions);
         }
 
-        public void GetObjectXML(XDocument sourceDoc)
+        public override void GetObjectXML(XDocument sourceDoc)
         {
             XElement weap;
 
@@ -114,7 +118,7 @@ namespace StarShips.PartBase
                         new XElement("CritMultiplier", this._critMultiplier.ToString()),
                         new XElement("ReloadTime", this._reloadTime.ToString()),
                         actions);
-                sourceDoc.Element("weaponParts").Add(weap);
+                sourceDoc.Descendants("weaponParts").First().Add(weap);
             }
         }
 

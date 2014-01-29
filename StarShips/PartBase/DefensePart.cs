@@ -18,7 +18,9 @@ namespace StarShips.PartBase
         #endregion
 
         #region Public Properties
-        /* Empty Region */
+        public int DR { get { return _dr; } }
+        public string DownAdjective { get { return _downAdjective; } }
+        public string PenetrateVerb { get { return _penetrateVerb; } }
         #endregion
 
         #region Private Methods
@@ -70,7 +72,9 @@ namespace StarShips.PartBase
 
             return result;
         }
+        #endregion
 
+        #region Serialization
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("Name", Name);
@@ -81,7 +85,7 @@ namespace StarShips.PartBase
             info.AddValue("Actions", _actions);
         }
 
-        public void GetObjectXML(XDocument sourceDoc)
+        public override void GetObjectXML(XDocument sourceDoc)
         {
             XElement def;
 
@@ -108,7 +112,7 @@ namespace StarShips.PartBase
                         new XElement("DownAdjective", this._downAdjective.ToString()),
                         new XElement("PenetrateVerb", this._penetrateVerb.ToString()),
                         actions);
-                sourceDoc.Element("defenseParts").Add(def);
+                sourceDoc.Descendants("defenseParts").First().Add(def);
             }
         }
 

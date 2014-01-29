@@ -16,6 +16,7 @@ namespace StarShips.PartBase
         #endregion
 
         #region Public Properties
+        public string Description { get { return _actionDescription; } }
         #endregion
 
         #region Public Methods
@@ -40,7 +41,7 @@ namespace StarShips.PartBase
             info.AddValue("Actions", _actions);
         }
 
-        public void GetObjectXML(XDocument sourceDoc)
+        public override void GetObjectXML(XDocument sourceDoc)
         {
             XElement act;
 
@@ -63,7 +64,7 @@ namespace StarShips.PartBase
                         new XElement("MaxHP", this.HP.Max.ToString()),
                         new XElement("ActionDescription", this._actionDescription.ToString()),
                         actions);
-                sourceDoc.Element("actionParts").Add(act);
+                sourceDoc.Descendants("actionParts").First().Add(act);
             }
         }
         #endregion
