@@ -27,7 +27,10 @@ namespace ShipEditor
             nudHitpoints.ValueChanged += new EventHandler(nudHitpoints_ValueChanged);
             lblPartName.DataBindings.Add("Text", ship.Equipment, "Name");
             bsShipParts.DataSource = ship.Equipment;
+
             LoadParts();
+            shipDoc = XDocument.Load("Ships.xml");
+            LoadShipList(shipDoc);
             ShowShipList();
             ShowShip();
         }
