@@ -5,6 +5,7 @@ using System.Text;
 using StarShips.Interfaces;
 using StarShips.Randomizer;
 using System.Runtime.Serialization;
+using System.Xml.Linq;
 
 namespace StarShips
 {
@@ -148,16 +149,14 @@ namespace StarShips
 
 
         }
-        #endregion
 
-        #region Constructors
-        public Ship()
+        public override string ToString()
         {
-            /* Empty Constructor */
+            return string.Format("{0} (HP:{1}/{2})", this.Name, this.HP.Current, this.HP.Max);
         }
         #endregion
 
-        #region ISerializable methods
+        #region Serialization
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("HP", HP);
@@ -168,6 +167,51 @@ namespace StarShips
             info.AddValue("Name", Name);
         }
 
+        public void GetObjectXML(XDocument sourceDoc)
+        {
+            XElement ship;
+
+            if (sourceDoc.Descendants("ship").Where(f => f.Attribute("name").Value == this.Name).Count() > 0)
+            {
+                // Update Existing
+                ship = sourceDoc.Descendants("ship").First(f => f.Attribute("name").Value == this.Name);
+                ship.Element("MaxHP").Value = HP.Max.ToString();
+                ship.Element("MaxMP").Value = MP.Max.ToString();
+                addPartsXML(ship.Element("shipParts"));
+
+            }
+            else
+            {
+                // Create New
+                XElement parts = new XElement("shipParts");
+                addPartsXML(parts);
+
+                ship =
+                    new XElement("ship", new XAttribute("name", this.Name),
+                        new XElement("MaxHP", HP.Max.ToString()),
+                        new XElement("MaxMP", MP.Max.ToString()),
+                        parts);
+                sourceDoc.Element("ships").Add(ship);
+            }
+        }
+
+        private void addPartsXML(XElement shipParts)
+        {
+            List<XElement> parts = new List<XElement>();
+            foreach (var shipPart in this.Equipment)
+                parts.Add(new XElement("shipPart", shipPart.Name));
+            shipParts.RemoveAll();
+            foreach (var element in parts)
+                shipParts.Add(element);
+        }
+
+        #endregion
+
+        #region Constructors
+        public Ship()
+        {
+            /* Empty Constructor */
+        }
         public Ship(SerializationInfo info, StreamingContext ctxt)
         {
             HP = (StatWithMax)info.GetValue("HP", typeof(StatWithMax));
@@ -175,6 +219,16 @@ namespace StarShips
             Equipment = (List<ShipPart>)info.GetValue("Equipment", typeof(List<ShipPart>));
             Name = (string)info.GetValue("Name", typeof(string));
         }
+        public Ship(XElement description, List<ShipPart> partsList)
+        {
+            this.Name = description.Attribute("name").Value;
+            this.HP.Max = int.Parse(description.Element("MaxHP").Value);
+            this.MP.Max = int.Parse(description.Element("MaxMP").Value);
+            foreach (XElement SPE in description.Element("shipParts").Elements())
+                this.Equipment.Add(partsList.First(f => f.Name == SPE.Value).Clone());
+        }
+
         #endregion
+
     }
 }

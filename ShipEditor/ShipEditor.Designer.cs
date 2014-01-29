@@ -48,6 +48,12 @@
             this.drpPartList = new Microsoft.VisualBasic.PowerPacks.DataRepeater();
             this.cbxPartList = new System.Windows.Forms.ComboBox();
             this.btnAddPart = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.cbxShipList = new System.Windows.Forms.ComboBox();
+            this.btnLoadShip = new System.Windows.Forms.Button();
+            this.btnSaveShip = new System.Windows.Forms.Button();
+            this.btnClear = new System.Windows.Forms.Button();
+            this.btnDeleteShip = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudHitpoints)).BeginInit();
             this.drpPartList.ItemTemplate.SuspendLayout();
@@ -57,13 +63,13 @@
             // ofdOpen
             // 
             this.ofdOpen.DefaultExt = "ship";
-            this.ofdOpen.Filter = "ShipSim Files|*.ship";
+            this.ofdOpen.Filter = "ShipSim Files|*.xml";
             this.ofdOpen.FileOk += new System.ComponentModel.CancelEventHandler(this.ofdOpen_FileOk);
             // 
             // sfdSave
             // 
             this.sfdSave.DefaultExt = "ship";
-            this.sfdSave.Filter = "ShipSim Files|*.ship";
+            this.sfdSave.Filter = "ShipSim Files|*.xml";
             this.sfdSave.FileOk += new System.ComponentModel.CancelEventHandler(this.sfdSave_FileOk);
             // 
             // menuStrip1
@@ -111,6 +117,7 @@
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.saveToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.saveToolStripMenuItem.Text = "&Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
@@ -134,7 +141,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 37);
+            this.label1.Location = new System.Drawing.Point(11, 57);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(59, 13);
             this.label1.TabIndex = 1;
@@ -142,7 +149,7 @@
             // 
             // tbxShipName
             // 
-            this.tbxShipName.Location = new System.Drawing.Point(103, 34);
+            this.tbxShipName.Location = new System.Drawing.Point(102, 54);
             this.tbxShipName.Name = "tbxShipName";
             this.tbxShipName.Size = new System.Drawing.Size(232, 20);
             this.tbxShipName.TabIndex = 2;
@@ -150,7 +157,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 59);
+            this.label2.Location = new System.Drawing.Point(11, 82);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(71, 13);
             this.label2.TabIndex = 3;
@@ -158,7 +165,7 @@
             // 
             // nudHitpoints
             // 
-            this.nudHitpoints.Location = new System.Drawing.Point(103, 60);
+            this.nudHitpoints.Location = new System.Drawing.Point(102, 80);
             this.nudHitpoints.Name = "nudHitpoints";
             this.nudHitpoints.Size = new System.Drawing.Size(55, 20);
             this.nudHitpoints.TabIndex = 4;
@@ -200,9 +207,9 @@
             this.drpPartList.ItemTemplate.Controls.Add(this.lblPartName);
             this.drpPartList.ItemTemplate.Controls.Add(this.btnDeletePart);
             this.drpPartList.ItemTemplate.Size = new System.Drawing.Size(394, 29);
-            this.drpPartList.Location = new System.Drawing.Point(15, 132);
+            this.drpPartList.Location = new System.Drawing.Point(14, 152);
             this.drpPartList.Name = "drpPartList";
-            this.drpPartList.Size = new System.Drawing.Size(402, 379);
+            this.drpPartList.Size = new System.Drawing.Size(402, 336);
             this.drpPartList.TabIndex = 5;
             this.drpPartList.Text = "dataRepeater1";
             this.drpPartList.VirtualMode = true;
@@ -210,14 +217,14 @@
             // cbxPartList
             // 
             this.cbxPartList.FormattingEnabled = true;
-            this.cbxPartList.Location = new System.Drawing.Point(19, 95);
+            this.cbxPartList.Location = new System.Drawing.Point(18, 115);
             this.cbxPartList.Name = "cbxPartList";
             this.cbxPartList.Size = new System.Drawing.Size(316, 21);
             this.cbxPartList.TabIndex = 6;
             // 
             // btnAddPart
             // 
-            this.btnAddPart.Location = new System.Drawing.Point(342, 93);
+            this.btnAddPart.Location = new System.Drawing.Point(341, 113);
             this.btnAddPart.Name = "btnAddPart";
             this.btnAddPart.Size = new System.Drawing.Size(75, 23);
             this.btnAddPart.TabIndex = 7;
@@ -225,11 +232,75 @@
             this.btnAddPart.UseVisualStyleBackColor = true;
             this.btnAddPart.Click += new System.EventHandler(this.btnAddPart_Click);
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(11, 30);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(55, 13);
+            this.label3.TabIndex = 8;
+            this.label3.Text = "Load Ship";
+            // 
+            // cbxShipList
+            // 
+            this.cbxShipList.DisplayMember = "Name";
+            this.cbxShipList.FormattingEnabled = true;
+            this.cbxShipList.Location = new System.Drawing.Point(102, 27);
+            this.cbxShipList.Name = "cbxShipList";
+            this.cbxShipList.Size = new System.Drawing.Size(232, 21);
+            this.cbxShipList.TabIndex = 9;
+            // 
+            // btnLoadShip
+            // 
+            this.btnLoadShip.Location = new System.Drawing.Point(341, 25);
+            this.btnLoadShip.Name = "btnLoadShip";
+            this.btnLoadShip.Size = new System.Drawing.Size(48, 23);
+            this.btnLoadShip.TabIndex = 10;
+            this.btnLoadShip.Text = "Load";
+            this.btnLoadShip.UseVisualStyleBackColor = true;
+            this.btnLoadShip.Click += new System.EventHandler(this.btnLoadShip_Click);
+            // 
+            // btnSaveShip
+            // 
+            this.btnSaveShip.Location = new System.Drawing.Point(14, 494);
+            this.btnSaveShip.Name = "btnSaveShip";
+            this.btnSaveShip.Size = new System.Drawing.Size(124, 40);
+            this.btnSaveShip.TabIndex = 11;
+            this.btnSaveShip.Text = "Save Ship";
+            this.btnSaveShip.UseVisualStyleBackColor = true;
+            this.btnSaveShip.Click += new System.EventHandler(this.btnSaveShip_Click);
+            // 
+            // btnClear
+            // 
+            this.btnClear.Location = new System.Drawing.Point(292, 494);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(124, 40);
+            this.btnClear.TabIndex = 12;
+            this.btnClear.Text = "Clear";
+            this.btnClear.UseVisualStyleBackColor = true;
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            // 
+            // btnDeleteShip
+            // 
+            this.btnDeleteShip.Location = new System.Drawing.Point(395, 25);
+            this.btnDeleteShip.Name = "btnDeleteShip";
+            this.btnDeleteShip.Size = new System.Drawing.Size(21, 23);
+            this.btnDeleteShip.TabIndex = 13;
+            this.btnDeleteShip.Text = "X";
+            this.btnDeleteShip.UseVisualStyleBackColor = true;
+            this.btnDeleteShip.Click += new System.EventHandler(this.btnDeleteShip_Click);
+            // 
             // ShipEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(653, 546);
+            this.Controls.Add(this.btnDeleteShip);
+            this.Controls.Add(this.btnClear);
+            this.Controls.Add(this.btnSaveShip);
+            this.Controls.Add(this.btnLoadShip);
+            this.Controls.Add(this.cbxShipList);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.btnAddPart);
             this.Controls.Add(this.cbxPartList);
             this.Controls.Add(this.drpPartList);
@@ -274,6 +345,12 @@
         private Microsoft.VisualBasic.PowerPacks.DataRepeater drpPartList;
         private System.Windows.Forms.ComboBox cbxPartList;
         private System.Windows.Forms.Button btnAddPart;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ComboBox cbxShipList;
+        private System.Windows.Forms.Button btnLoadShip;
+        private System.Windows.Forms.Button btnSaveShip;
+        private System.Windows.Forms.Button btnClear;
+        private System.Windows.Forms.Button btnDeleteShip;
     }
 }
 

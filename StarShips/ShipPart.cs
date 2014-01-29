@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using StarShips.Interfaces;
 using System.Xml.Linq;
+using StarShips.PartBase;
 
 namespace StarShips
 {
@@ -23,7 +24,6 @@ namespace StarShips
         public abstract override string ToString();
         public abstract string Repair(int amount);
         public abstract void GetObjectXML(XDocument sourceDoc);
-
 
         public string DoAction(Ship target)
         {
@@ -81,6 +81,63 @@ namespace StarShips
                 }
                 this._actions.Add(newAction);
             }
+        }
+
+        public ShipPart Clone()
+        {
+            ShipPart result;
+            if (this is WeaponPart)
+            {
+                WeaponPart source = (WeaponPart)this;
+                List<IShipPartAction> newActions = new List<IShipPartAction>();
+                foreach (IShipPartAction oldAct in this.Actions)
+                {
+                    int[] oldValues = new int[oldAct.ActionValues.Length];
+                    for (int i = 0; i < oldValues.Length; i++)
+                    {
+                        oldValues[i] = oldAct.ActionValues[i];
+                    }   
+                    Type t = oldAct.GetType();
+                    IShipPartAction newAct = (IShipPartAction)Activator.CreateInstance(t,oldValues);
+                    newActions.Add(newAct);
+                }
+                result = new WeaponPart(source.Name, source.HP.Max, source.WeaponDamage, source.CritMultiplier, source.ReloadTime, newActions);
+            }
+            else if (this is DefensePart)
+            {
+                DefensePart source = (DefensePart)this;
+                List<IShipPartAction> newActions = new List<IShipPartAction>();
+                foreach (IShipPartAction oldAct in this.Actions)
+                {
+                    int[] oldValues = new int[oldAct.ActionValues.Length];
+                    for (int i = 0; i < oldValues.Length; i++)
+                    {
+                        oldValues[i] = oldAct.ActionValues[i];
+                    }   
+                    Type t = oldAct.GetType();
+                    IShipPartAction newAct = (IShipPartAction)Activator.CreateInstance(t,oldValues);
+                    newActions.Add(newAct);
+                }
+                result = new DefensePart(source.Name, source.HP.Max, source.DR, source.DownAdjective, source.PenetrateVerb, newActions);
+            }
+            else
+            {
+                ActionPart source = (ActionPart)this;
+                List<IShipPartAction> newActions = new List<IShipPartAction>();
+                foreach (IShipPartAction oldAct in this.Actions)
+                {
+                    int[] oldValues = new int[oldAct.ActionValues.Length];
+                    for (int i = 0; i < oldValues.Length; i++)
+                    {
+                        oldValues[i] = oldAct.ActionValues[i];
+                    }   
+                    Type t = oldAct.GetType();
+                    IShipPartAction newAct = (IShipPartAction)Activator.CreateInstance(t,oldValues);
+                    newActions.Add(newAct);
+                }
+                result = new ActionPart(source.Name, source.HP.Max, source.Description, newActions);
+            }
+            return result;
         }
     }
 }

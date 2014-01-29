@@ -14,11 +14,14 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using StarShips.Actions;
 using StarShips.PartBase;
+using System.Xml.Linq;
 
 namespace Dalek
 {
     public partial class ShipSim : Form
     {
+        List<Ship> ExistingShips = new List<Ship>();
+        List<ShipPart> ExistingParts = new List<ShipPart>();
         Ship Ship1;
         Ship Ship2;
         List<string> results = new List<string>();
@@ -28,8 +31,47 @@ namespace Dalek
         public ShipSim()
         {
             InitializeComponent();
+            LoadShips();
+            cbxShipList1.SelectedIndexChanged += new EventHandler(cbxShipList1_SelectedIndexChanged);
+            cbxShipList2.SelectedIndexChanged += new EventHandler(cbxShipList2_SelectedIndexChanged);
         }
 
+        #region Load Parts/Ships
+        private void LoadParts()
+        {
+            ExistingParts.Clear();
+            XDocument doc = XDocument.Load("ShipParts.xml");
+            XElement weaponParts = doc.Element("shipParts").Element("weaponParts");
+            foreach (XElement weaponPart in weaponParts.Elements())
+                ExistingParts.Add(new WeaponPart(weaponPart));
+            XElement defenseParts = doc.Element("shipParts").Element("defenseParts");
+            foreach (XElement defensePart in defenseParts.Elements())
+                ExistingParts.Add(new DefensePart(defensePart));
+            XElement actionParts = doc.Element("shipParts").Element("actionParts");
+            foreach (XElement actionPart in actionParts.Elements())
+                ExistingParts.Add(new ActionPart(actionPart));
+        }
+
+        void LoadShipList(XDocument shipDoc)
+        {
+            ExistingShips.Clear();
+            foreach (var EShip in shipDoc.Element("ships").Elements())
+                ExistingShips.Add(new Ship(EShip, ExistingParts));
+        }
+
+        private void LoadShips()
+        {
+            LoadParts();
+            XDocument shipsDoc = XDocument.Load("Ships.xml");
+            LoadShipList(shipsDoc);
+            BindingList<Ship> ships1Source = new BindingList<Ship>(ExistingShips);
+            BindingList<Ship> ships2Source = new BindingList<Ship>(ExistingShips);
+            cbxShipList1.DataSource = ships1Source;
+            cbxShipList2.DataSource = ships2Source;
+        }
+        #endregion
+
+        #region Buttons/Events
         private void btnResetShips_Click(object sender, EventArgs e)
         {
             if (Ship1 != null && Ship2 != null)
@@ -46,6 +88,7 @@ namespace Dalek
                 GridBind(new List<string>());
 
                 victory = false;
+                btnResetShips.Enabled = false;
                 btnFight.Enabled = true;
                 btnToTheDeath.Enabled = true;
             }
@@ -53,10 +96,53 @@ namespace Dalek
 
         private void btnFight_Click(object sender, EventArgs e)
         {
-            if(Ship1!=null&&Ship2!=null)
+            if (Ship1 != null && Ship2 != null)
                 FightRound();
         }
 
+        private void btnToTheDeath_Click(object sender, EventArgs e)
+        {
+            if (Ship1 != null && Ship2 != null)
+            {
+                while (!victory)
+                    FightRound();
+                btnResetShips.Enabled = true;
+                btnFight.Enabled = false;
+                btnToTheDeath.Enabled = false;
+            }
+        }
+
+        void cbxShipList1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Ship1 = (Ship)cbxShipList1.SelectedItem;
+            gbxShip1.Text = Ship1.Name;
+            ShowShipDetails(Ship1, tlpShip1);
+            if (Ship1 != null && Ship2 != null)
+            {
+                victory = false;
+                btnFight.Enabled = true;
+                btnToTheDeath.Enabled = true;
+                btnResetShips.Enabled = true;
+            }
+        }
+
+        void cbxShipList2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Ship2 = (Ship)cbxShipList2.SelectedItem;
+            gbxShip2.Text = Ship2.Name;
+            ShowShipDetails(Ship2, tlpShip2);
+            if (Ship1 != null && Ship2 != null)
+            {
+                victory = false;
+                btnFight.Enabled = true;
+                btnToTheDeath.Enabled = true;
+                btnResetShips.Enabled = true;
+            }
+        }
+
+        #endregion
+
+        #region Utility
         private void FightRound()
         {
             List<string> roundResults = new List<string>();
@@ -93,24 +179,27 @@ namespace Dalek
 
             if (Ship1.HP.Current <= 0 && Ship2.HP.Current <= 0)
             {
-                MessageBox.Show(string.Format("Stalemate in {0} rounds!",Round.ToString()));
+                MessageBox.Show(string.Format("Stalemate in {0} rounds!", Round.ToString()));
                 victory = true;
                 btnFight.Enabled = false;
-                btnToTheDeath.Enabled = false; 
+                btnToTheDeath.Enabled = false;
+                btnResetShips.Enabled = true;
             }
             else if (Ship1.HP.Current <= 0)
             {
-                MessageBox.Show(string.Format("Ship 2 Wins in {0} rounds!",Round.ToString()));
+                MessageBox.Show(string.Format("{0} (Ship 2) Wins in {1} rounds!",Ship2.Name, Round.ToString()));
                 victory = true;
                 btnFight.Enabled = false;
-                btnToTheDeath.Enabled = false; 
+                btnToTheDeath.Enabled = false;
+                btnResetShips.Enabled = true;
             }
             else if (Ship2.HP.Current <= 0)
             {
-                MessageBox.Show(string.Format("Ship 1 Wins in {0} rounds!", Round.ToString()));
+                MessageBox.Show(string.Format("{0} (Ship 1) Wins in {1} rounds!",Ship1.Name, Round.ToString()));
                 victory = true;
                 btnFight.Enabled = false;
-                btnToTheDeath.Enabled = false; 
+                btnToTheDeath.Enabled = false;
+                btnResetShips.Enabled = true;
             }
 
             Round++;
@@ -121,10 +210,10 @@ namespace Dalek
             var ds = new BindingList<string>(results);
             lbxResults.DataSource = ds;
             lbxResults.DisplayMember = "Value";
-                        
+
             ShowShipDetails(Ship1, tlpShip1);
             ShowShipDetails(Ship2, tlpShip2);
-            
+
         }
 
         private void ShowShipDetails(Ship ship, TableLayoutPanel tlp)
@@ -151,105 +240,7 @@ namespace Dalek
             label.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             tlp.Controls.Add(label, 0, row);
         }
+        #endregion
 
-        private void btnSelectShip1_Click(object sender, EventArgs e)
-        {
-            ofdShip1.ShowDialog();
-        }
-
-        private void btnSelectShip2_Click(object sender, EventArgs e)
-        {
-            ofdShip2.ShowDialog();
-        }
-
-        private void ofdShip1_FileOk(object sender, CancelEventArgs e)
-        {
-            string fileName = ofdShip1.FileName;
-            IFormatter formatter = new BinaryFormatter();
-            Stream stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-            Ship1 = (Ship)formatter.Deserialize(stream);
-            stream.Close();
-            gbxShip1.Text = Ship1.Name;
-            ShowShipDetails(Ship1, tlpShip1);
-            if (Ship1 != null && Ship2 != null)
-            {
-                btnFight.Enabled = true;
-                btnToTheDeath.Enabled = true;
-                btnResetShips.Enabled = true;
-            }
-        }
-
-        private void ofdShip2_FileOk(object sender, CancelEventArgs e)
-        {
-            string fileName = ofdShip2.FileName;
-            IFormatter formatter = new BinaryFormatter();
-            Stream stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-            Ship2 = (Ship)formatter.Deserialize(stream);
-            stream.Close();
-            gbxShip2.Text = Ship2.Name;
-            ShowShipDetails(Ship2, tlpShip2);
-            if (Ship1 != null && Ship2 != null)
-            {
-                btnFight.Enabled = true;
-                btnToTheDeath.Enabled = true;
-                btnResetShips.Enabled = true;
-            }
-        }
-
-        private void btnToTheDeath_Click(object sender, EventArgs e)
-        {
-            if (Ship1 != null && Ship2 != null)
-                while (!victory)
-                    FightRound();
-        }
-
-        private void btnTestShip2_Click(object sender, EventArgs e)
-        {
-            Ship1 = new Ship();
-            Ship1.Name = "Test Ship";
-            Ship1.HP.Max = 50;
-            Ship1.HP.Current = 50;
-            Ship1.Equipment.Add(new WeaponPart("Laser Beam", 1, 5, 2, 0, new List<IShipPartAction>()));
-            Ship1.Equipment.Add(new WeaponPart("Laser Beam", 1, 5, 2, 0, new List<IShipPartAction>()));
-            Ship1.Equipment.Add(new WeaponPart("Plasma Cannon", 1, 12, 3, 2, new List<IShipPartAction>()));
-            Ship1.Equipment.Add(new WeaponPart("Torpedo", 1, 20, 2, 4, new List<IShipPartAction>()));
-            List<IShipPartAction> ShieldGenAction = new List<IShipPartAction>();
-            ShieldGenAction.Add(new RepairThisPart(2));
-            Ship1.Equipment.Add(new DefensePart("Shield Generator", 15, 1, "Down", "Penetrating", ShieldGenAction));
-            Ship1.Equipment.Add(new DefensePart("Shield Generator", 15, 1, "Down", "Penetrating", ShieldGenAction));
-            Ship1.Equipment.Add(new DefensePart("Armor Plate", 15, 3, "Destroyed", "Shattering", new List<IShipPartAction>()));
-            List<IShipPartAction> DmgControlAction = new List<IShipPartAction>();
-            DmgControlAction.Add(new RepairTargetShip(5));
-            //Ship1.Equipment.Add(new ActionPart("Damage Control", 1, "Regen: 5 HPs", DmgControlAction));
-            ShowShipDetails(Ship1, tlpShip1);
-
-            Ship2 = new Ship();
-            Ship2.Name = "Test Ship";
-            Ship2.HP.Max = 50;
-            Ship2.HP.Current = 50;
-            Ship2.Equipment.Add(new WeaponPart("Laser Beam", 1, 5, 2, 0, new List<IShipPartAction>()));
-            Ship2.Equipment.Add(new WeaponPart("Laser Beam", 1, 5, 2, 0, new List<IShipPartAction>()));
-            Ship2.Equipment.Add(new WeaponPart("Laser Beam", 1, 5, 2, 0, new List<IShipPartAction>()));
-            Ship2.Equipment.Add(new WeaponPart("Laser Beam", 1, 5, 2, 0, new List<IShipPartAction>()));
-            ShieldGenAction = new List<IShipPartAction>();
-            ShieldGenAction.Add(new RepairThisPart(2));
-            Ship2.Equipment.Add(new DefensePart("Shield Generator", 15,1, "Down", "Penetrating", ShieldGenAction));
-            Ship2.Equipment.Add(new DefensePart("Shield Generator", 15,1, "Down", "Penetrating", ShieldGenAction));
-            Ship2.Equipment.Add(new DefensePart("Armor Plate", 15, 3, "Destroyed", "Shattering", new List<IShipPartAction>()));
-            DmgControlAction = new List<IShipPartAction>();
-            DmgControlAction.Add(new RepairTargetShip(5));
-            Ship2.Equipment.Add(new ActionPart("Damage Control", 1, "Regen: 5 HPs", DmgControlAction));
-            //Ship2.Equipment.Add(new DamageControl());
-            ShowShipDetails(Ship2, tlpShip2);
-
-            if (Ship1 != null && Ship2 != null)
-            {
-                btnFight.Enabled = true;
-                btnToTheDeath.Enabled = true;
-                btnResetShips.Enabled = true;
-            }
-        }
-
-        
     }
 }
