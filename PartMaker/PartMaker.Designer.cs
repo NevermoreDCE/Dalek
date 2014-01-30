@@ -30,25 +30,12 @@
         {
             this.tcPartTypes = new System.Windows.Forms.TabControl();
             this.tbpWeapon = new System.Windows.Forms.TabPage();
-            this.nudWeapPartReload = new System.Windows.Forms.NumericUpDown();
-            this.label7 = new System.Windows.Forms.Label();
-            this.nudWeapPartCritMultiplier = new System.Windows.Forms.NumericUpDown();
-            this.label6 = new System.Windows.Forms.Label();
-            this.nudWeapPartWeaponDamage = new System.Windows.Forms.NumericUpDown();
-            this.label5 = new System.Windows.Forms.Label();
-            this.tbpDefense = new System.Windows.Forms.TabPage();
-            this.tbxDefPartPenetrateVerb = new System.Windows.Forms.TextBox();
-            this.label10 = new System.Windows.Forms.Label();
-            this.tbxDefPartDownAdjective = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.nudDefPartDR = new System.Windows.Forms.NumericUpDown();
-            this.label8 = new System.Windows.Forms.Label();
-            this.tbpAction = new System.Windows.Forms.TabPage();
-            this.tbxActPartDescr = new System.Windows.Forms.TextBox();
-            this.label11 = new System.Windows.Forms.Label();
-            this.cbxExistingParts = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.btnLoadPart = new System.Windows.Forms.Button();
+            this.nudWeapPartPointCost = new System.Windows.Forms.NumericUpDown();
+            this.label20 = new System.Windows.Forms.Label();
+            this.nudWeapPartHP = new System.Windows.Forms.NumericUpDown();
+            this.label21 = new System.Windows.Forms.Label();
+            this.tbxWeapPartName = new System.Windows.Forms.TextBox();
+            this.label22 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.drpWeapPartActionList = new Microsoft.VisualBasic.PowerPacks.DataRepeater();
             this.lblWeapPartActionTitle = new System.Windows.Forms.Label();
@@ -59,6 +46,19 @@
             this.cbxWeapPartActions = new System.Windows.Forms.ComboBox();
             this.btnWeapPartClear = new System.Windows.Forms.Button();
             this.btnWeapPartSavePart = new System.Windows.Forms.Button();
+            this.nudWeapPartReload = new System.Windows.Forms.NumericUpDown();
+            this.label7 = new System.Windows.Forms.Label();
+            this.nudWeapPartCritMultiplier = new System.Windows.Forms.NumericUpDown();
+            this.label6 = new System.Windows.Forms.Label();
+            this.nudWeapPartWeaponDamage = new System.Windows.Forms.NumericUpDown();
+            this.label5 = new System.Windows.Forms.Label();
+            this.tbpDefense = new System.Windows.Forms.TabPage();
+            this.nudDefPartPointCost = new System.Windows.Forms.NumericUpDown();
+            this.label17 = new System.Windows.Forms.Label();
+            this.nudDefPartHP = new System.Windows.Forms.NumericUpDown();
+            this.label18 = new System.Windows.Forms.Label();
+            this.tbxDefPartName = new System.Windows.Forms.TextBox();
+            this.label19 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.drpDefPartActionList = new Microsoft.VisualBasic.PowerPacks.DataRepeater();
             this.lblDefPartActionTitle = new System.Windows.Forms.Label();
@@ -69,6 +69,19 @@
             this.cbxDefPartActions = new System.Windows.Forms.ComboBox();
             this.btnDefPartClear = new System.Windows.Forms.Button();
             this.btnDefPartSavePart = new System.Windows.Forms.Button();
+            this.tbxDefPartPenetrateVerb = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.tbxDefPartDownAdjective = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.nudDefPartDR = new System.Windows.Forms.NumericUpDown();
+            this.label8 = new System.Windows.Forms.Label();
+            this.tbpAction = new System.Windows.Forms.TabPage();
+            this.nudActPartPointCost = new System.Windows.Forms.NumericUpDown();
+            this.label4 = new System.Windows.Forms.Label();
+            this.nudActPartHP = new System.Windows.Forms.NumericUpDown();
+            this.label3 = new System.Windows.Forms.Label();
+            this.tbxActPartName = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.drpActPartActionList = new Microsoft.VisualBasic.PowerPacks.DataRepeater();
             this.lblActPartActionTitle = new System.Windows.Forms.Label();
@@ -79,50 +92,41 @@
             this.cbxActPartActions = new System.Windows.Forms.ComboBox();
             this.btnActPartClear = new System.Windows.Forms.Button();
             this.btnActPartSavePart = new System.Windows.Forms.Button();
-            this.nudActPartPointCost = new System.Windows.Forms.NumericUpDown();
-            this.label4 = new System.Windows.Forms.Label();
-            this.nudActPartHP = new System.Windows.Forms.NumericUpDown();
-            this.label3 = new System.Windows.Forms.Label();
-            this.tbxActPartName = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.nudDefPartPointCost = new System.Windows.Forms.NumericUpDown();
-            this.label17 = new System.Windows.Forms.Label();
-            this.nudDefPartHP = new System.Windows.Forms.NumericUpDown();
-            this.label18 = new System.Windows.Forms.Label();
-            this.tbxDefPartName = new System.Windows.Forms.TextBox();
-            this.label19 = new System.Windows.Forms.Label();
-            this.nudWeapPartPointCost = new System.Windows.Forms.NumericUpDown();
-            this.label20 = new System.Windows.Forms.Label();
-            this.nudWeapPartHP = new System.Windows.Forms.NumericUpDown();
-            this.label21 = new System.Windows.Forms.Label();
-            this.tbxWeapPartName = new System.Windows.Forms.TextBox();
-            this.label22 = new System.Windows.Forms.Label();
+            this.tbxActPartDescr = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.cbxExistingParts = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.btnLoadPart = new System.Windows.Forms.Button();
+            this.label13 = new System.Windows.Forms.Label();
+            this.cbxFiringTypes = new System.Windows.Forms.ComboBox();
+            this.label15 = new System.Windows.Forms.Label();
+            this.cbxDamageTypes = new System.Windows.Forms.ComboBox();
             this.tcPartTypes.SuspendLayout();
             this.tbpWeapon.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartReload)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartCritMultiplier)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartWeaponDamage)).BeginInit();
-            this.tbpDefense.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudDefPartDR)).BeginInit();
-            this.tbpAction.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartPointCost)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartHP)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.drpWeapPartActionList.ItemTemplate.SuspendLayout();
             this.drpWeapPartActionList.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartActionValue)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartReload)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartCritMultiplier)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartWeaponDamage)).BeginInit();
+            this.tbpDefense.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDefPartPointCost)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDefPartHP)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.drpDefPartActionList.ItemTemplate.SuspendLayout();
             this.drpDefPartActionList.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudDefPartActionValue)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDefPartDR)).BeginInit();
+            this.tbpAction.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudActPartPointCost)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudActPartHP)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.drpActPartActionList.ItemTemplate.SuspendLayout();
             this.drpActPartActionList.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudActPartActionValue)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudActPartPointCost)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudActPartHP)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudDefPartPointCost)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudDefPartHP)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartPointCost)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartHP)).BeginInit();
             this.SuspendLayout();
             // 
             // tcPartTypes
@@ -133,11 +137,15 @@
             this.tcPartTypes.Location = new System.Drawing.Point(0, 33);
             this.tcPartTypes.Name = "tcPartTypes";
             this.tcPartTypes.SelectedIndex = 0;
-            this.tcPartTypes.Size = new System.Drawing.Size(285, 366);
+            this.tcPartTypes.Size = new System.Drawing.Size(593, 366);
             this.tcPartTypes.TabIndex = 0;
             // 
             // tbpWeapon
             // 
+            this.tbpWeapon.Controls.Add(this.label15);
+            this.tbpWeapon.Controls.Add(this.cbxDamageTypes);
+            this.tbpWeapon.Controls.Add(this.label13);
+            this.tbpWeapon.Controls.Add(this.cbxFiringTypes);
             this.tbpWeapon.Controls.Add(this.nudWeapPartPointCost);
             this.tbpWeapon.Controls.Add(this.label20);
             this.tbpWeapon.Controls.Add(this.nudWeapPartHP);
@@ -156,200 +164,70 @@
             this.tbpWeapon.Location = new System.Drawing.Point(4, 22);
             this.tbpWeapon.Name = "tbpWeapon";
             this.tbpWeapon.Padding = new System.Windows.Forms.Padding(3);
-            this.tbpWeapon.Size = new System.Drawing.Size(277, 340);
+            this.tbpWeapon.Size = new System.Drawing.Size(585, 340);
             this.tbpWeapon.TabIndex = 0;
             this.tbpWeapon.Text = "Weapon Part";
             this.tbpWeapon.UseVisualStyleBackColor = true;
             // 
-            // nudWeapPartReload
+            // nudWeapPartPointCost
             // 
-            this.nudWeapPartReload.Location = new System.Drawing.Point(148, 118);
-            this.nudWeapPartReload.Name = "nudWeapPartReload";
-            this.nudWeapPartReload.Size = new System.Drawing.Size(120, 20);
-            this.nudWeapPartReload.TabIndex = 5;
-            this.nudWeapPartReload.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudWeapPartPointCost.Location = new System.Drawing.Point(189, 40);
+            this.nudWeapPartPointCost.Name = "nudWeapPartPointCost";
+            this.nudWeapPartPointCost.Size = new System.Drawing.Size(79, 20);
+            this.nudWeapPartPointCost.TabIndex = 21;
+            this.nudWeapPartPointCost.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
-            // label7
+            // label20
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(5, 120);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(77, 13);
-            this.label7.TabIndex = 4;
-            this.label7.Text = "Reload (Turns)";
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(128, 42);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(55, 13);
+            this.label20.TabIndex = 20;
+            this.label20.Text = "Point Cost";
             // 
-            // nudWeapPartCritMultiplier
+            // nudWeapPartHP
             // 
-            this.nudWeapPartCritMultiplier.Location = new System.Drawing.Point(148, 92);
-            this.nudWeapPartCritMultiplier.Name = "nudWeapPartCritMultiplier";
-            this.nudWeapPartCritMultiplier.Size = new System.Drawing.Size(120, 20);
-            this.nudWeapPartCritMultiplier.TabIndex = 3;
-            this.nudWeapPartCritMultiplier.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudWeapPartHP.Location = new System.Drawing.Point(60, 40);
+            this.nudWeapPartHP.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudWeapPartHP.Name = "nudWeapPartHP";
+            this.nudWeapPartHP.Size = new System.Drawing.Size(62, 20);
+            this.nudWeapPartHP.TabIndex = 19;
+            this.nudWeapPartHP.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudWeapPartHP.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
-            // label6
+            // label21
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(5, 94);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(66, 13);
-            this.label6.TabIndex = 2;
-            this.label6.Text = "Crit Multiplier";
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(5, 42);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(49, 13);
+            this.label21.TabIndex = 18;
+            this.label21.Text = "Part HPs";
             // 
-            // nudWeapPartWeaponDamage
+            // tbxWeapPartName
             // 
-            this.nudWeapPartWeaponDamage.Location = new System.Drawing.Point(148, 66);
-            this.nudWeapPartWeaponDamage.Name = "nudWeapPartWeaponDamage";
-            this.nudWeapPartWeaponDamage.Size = new System.Drawing.Size(120, 20);
-            this.nudWeapPartWeaponDamage.TabIndex = 1;
-            this.nudWeapPartWeaponDamage.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.tbxWeapPartName.Location = new System.Drawing.Point(68, 14);
+            this.tbxWeapPartName.Name = "tbxWeapPartName";
+            this.tbxWeapPartName.Size = new System.Drawing.Size(200, 20);
+            this.tbxWeapPartName.TabIndex = 17;
             // 
-            // label5
+            // label22
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(5, 68);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(91, 13);
-            this.label5.TabIndex = 0;
-            this.label5.Text = "Weapon Damage";
-            // 
-            // tbpDefense
-            // 
-            this.tbpDefense.Controls.Add(this.nudDefPartPointCost);
-            this.tbpDefense.Controls.Add(this.label17);
-            this.tbpDefense.Controls.Add(this.nudDefPartHP);
-            this.tbpDefense.Controls.Add(this.label18);
-            this.tbpDefense.Controls.Add(this.tbxDefPartName);
-            this.tbpDefense.Controls.Add(this.label19);
-            this.tbpDefense.Controls.Add(this.groupBox2);
-            this.tbpDefense.Controls.Add(this.btnDefPartClear);
-            this.tbpDefense.Controls.Add(this.btnDefPartSavePart);
-            this.tbpDefense.Controls.Add(this.tbxDefPartPenetrateVerb);
-            this.tbpDefense.Controls.Add(this.label10);
-            this.tbpDefense.Controls.Add(this.tbxDefPartDownAdjective);
-            this.tbpDefense.Controls.Add(this.label9);
-            this.tbpDefense.Controls.Add(this.nudDefPartDR);
-            this.tbpDefense.Controls.Add(this.label8);
-            this.tbpDefense.Location = new System.Drawing.Point(4, 22);
-            this.tbpDefense.Name = "tbpDefense";
-            this.tbpDefense.Padding = new System.Windows.Forms.Padding(3);
-            this.tbpDefense.Size = new System.Drawing.Size(277, 340);
-            this.tbpDefense.TabIndex = 1;
-            this.tbpDefense.Text = "Defense Part";
-            this.tbpDefense.UseVisualStyleBackColor = true;
-            // 
-            // tbxDefPartPenetrateVerb
-            // 
-            this.tbxDefPartPenetrateVerb.Location = new System.Drawing.Point(124, 112);
-            this.tbxDefPartPenetrateVerb.Name = "tbxDefPartPenetrateVerb";
-            this.tbxDefPartPenetrateVerb.Size = new System.Drawing.Size(147, 20);
-            this.tbxDefPartPenetrateVerb.TabIndex = 7;
-            this.tbxDefPartPenetrateVerb.Text = "Penetrating";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(5, 115);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(111, 13);
-            this.label10.TabIndex = 6;
-            this.label10.Text = "Verb for \"Penetrating\"";
-            // 
-            // tbxDefPartDownAdjective
-            // 
-            this.tbxDefPartDownAdjective.Location = new System.Drawing.Point(124, 86);
-            this.tbxDefPartDownAdjective.Name = "tbxDefPartDownAdjective";
-            this.tbxDefPartDownAdjective.Size = new System.Drawing.Size(147, 20);
-            this.tbxDefPartDownAdjective.TabIndex = 5;
-            this.tbxDefPartDownAdjective.Text = "Down";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(5, 89);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(107, 13);
-            this.label9.TabIndex = 4;
-            this.label9.Text = "Adjective for \"Down\"";
-            // 
-            // nudDefPartDR
-            // 
-            this.nudDefPartDR.Location = new System.Drawing.Point(151, 61);
-            this.nudDefPartDR.Name = "nudDefPartDR";
-            this.nudDefPartDR.Size = new System.Drawing.Size(120, 20);
-            this.nudDefPartDR.TabIndex = 3;
-            this.nudDefPartDR.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(5, 63);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(99, 13);
-            this.label8.TabIndex = 2;
-            this.label8.Text = "Damage Reduction";
-            // 
-            // tbpAction
-            // 
-            this.tbpAction.Controls.Add(this.nudActPartPointCost);
-            this.tbpAction.Controls.Add(this.label4);
-            this.tbpAction.Controls.Add(this.nudActPartHP);
-            this.tbpAction.Controls.Add(this.label3);
-            this.tbpAction.Controls.Add(this.tbxActPartName);
-            this.tbpAction.Controls.Add(this.label2);
-            this.tbpAction.Controls.Add(this.groupBox3);
-            this.tbpAction.Controls.Add(this.btnActPartClear);
-            this.tbpAction.Controls.Add(this.btnActPartSavePart);
-            this.tbpAction.Controls.Add(this.tbxActPartDescr);
-            this.tbpAction.Controls.Add(this.label11);
-            this.tbpAction.Location = new System.Drawing.Point(4, 22);
-            this.tbpAction.Name = "tbpAction";
-            this.tbpAction.Size = new System.Drawing.Size(277, 340);
-            this.tbpAction.TabIndex = 2;
-            this.tbpAction.Text = "Action Part";
-            this.tbpAction.UseVisualStyleBackColor = true;
-            // 
-            // tbxActPartDescr
-            // 
-            this.tbxActPartDescr.Location = new System.Drawing.Point(121, 61);
-            this.tbxActPartDescr.Name = "tbxActPartDescr";
-            this.tbxActPartDescr.Size = new System.Drawing.Size(147, 20);
-            this.tbxActPartDescr.TabIndex = 7;
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(5, 64);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(93, 13);
-            this.label11.TabIndex = 6;
-            this.label11.Text = "Action Description";
-            // 
-            // cbxExistingParts
-            // 
-            this.cbxExistingParts.FormattingEnabled = true;
-            this.cbxExistingParts.Location = new System.Drawing.Point(77, 4);
-            this.cbxExistingParts.Name = "cbxExistingParts";
-            this.cbxExistingParts.Size = new System.Drawing.Size(159, 21);
-            this.cbxExistingParts.TabIndex = 1;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(1, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(70, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Load Existing";
-            // 
-            // btnLoadPart
-            // 
-            this.btnLoadPart.Location = new System.Drawing.Point(242, 4);
-            this.btnLoadPart.Name = "btnLoadPart";
-            this.btnLoadPart.Size = new System.Drawing.Size(39, 23);
-            this.btnLoadPart.TabIndex = 3;
-            this.btnLoadPart.Text = "Load";
-            this.btnLoadPart.UseVisualStyleBackColor = true;
-            this.btnLoadPart.Click += new System.EventHandler(this.btnLoadPart_Click);
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(5, 17);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(57, 13);
+            this.label22.TabIndex = 16;
+            this.label22.Text = "Part Name";
             // 
             // groupBox1
             // 
@@ -454,6 +332,142 @@
             this.btnWeapPartSavePart.UseVisualStyleBackColor = true;
             this.btnWeapPartSavePart.Click += new System.EventHandler(this.btnWeapPartSavePart_Click);
             // 
+            // nudWeapPartReload
+            // 
+            this.nudWeapPartReload.Location = new System.Drawing.Point(148, 118);
+            this.nudWeapPartReload.Name = "nudWeapPartReload";
+            this.nudWeapPartReload.Size = new System.Drawing.Size(120, 20);
+            this.nudWeapPartReload.TabIndex = 5;
+            this.nudWeapPartReload.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(5, 120);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(77, 13);
+            this.label7.TabIndex = 4;
+            this.label7.Text = "Reload (Turns)";
+            // 
+            // nudWeapPartCritMultiplier
+            // 
+            this.nudWeapPartCritMultiplier.Location = new System.Drawing.Point(148, 92);
+            this.nudWeapPartCritMultiplier.Name = "nudWeapPartCritMultiplier";
+            this.nudWeapPartCritMultiplier.Size = new System.Drawing.Size(120, 20);
+            this.nudWeapPartCritMultiplier.TabIndex = 3;
+            this.nudWeapPartCritMultiplier.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(5, 94);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(66, 13);
+            this.label6.TabIndex = 2;
+            this.label6.Text = "Crit Multiplier";
+            // 
+            // nudWeapPartWeaponDamage
+            // 
+            this.nudWeapPartWeaponDamage.Location = new System.Drawing.Point(148, 66);
+            this.nudWeapPartWeaponDamage.Name = "nudWeapPartWeaponDamage";
+            this.nudWeapPartWeaponDamage.Size = new System.Drawing.Size(120, 20);
+            this.nudWeapPartWeaponDamage.TabIndex = 1;
+            this.nudWeapPartWeaponDamage.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(5, 68);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(91, 13);
+            this.label5.TabIndex = 0;
+            this.label5.Text = "Weapon Damage";
+            // 
+            // tbpDefense
+            // 
+            this.tbpDefense.Controls.Add(this.nudDefPartPointCost);
+            this.tbpDefense.Controls.Add(this.label17);
+            this.tbpDefense.Controls.Add(this.nudDefPartHP);
+            this.tbpDefense.Controls.Add(this.label18);
+            this.tbpDefense.Controls.Add(this.tbxDefPartName);
+            this.tbpDefense.Controls.Add(this.label19);
+            this.tbpDefense.Controls.Add(this.groupBox2);
+            this.tbpDefense.Controls.Add(this.btnDefPartClear);
+            this.tbpDefense.Controls.Add(this.btnDefPartSavePart);
+            this.tbpDefense.Controls.Add(this.tbxDefPartPenetrateVerb);
+            this.tbpDefense.Controls.Add(this.label10);
+            this.tbpDefense.Controls.Add(this.tbxDefPartDownAdjective);
+            this.tbpDefense.Controls.Add(this.label9);
+            this.tbpDefense.Controls.Add(this.nudDefPartDR);
+            this.tbpDefense.Controls.Add(this.label8);
+            this.tbpDefense.Location = new System.Drawing.Point(4, 22);
+            this.tbpDefense.Name = "tbpDefense";
+            this.tbpDefense.Padding = new System.Windows.Forms.Padding(3);
+            this.tbpDefense.Size = new System.Drawing.Size(277, 340);
+            this.tbpDefense.TabIndex = 1;
+            this.tbpDefense.Text = "Defense Part";
+            this.tbpDefense.UseVisualStyleBackColor = true;
+            // 
+            // nudDefPartPointCost
+            // 
+            this.nudDefPartPointCost.Location = new System.Drawing.Point(189, 35);
+            this.nudDefPartPointCost.Name = "nudDefPartPointCost";
+            this.nudDefPartPointCost.Size = new System.Drawing.Size(82, 20);
+            this.nudDefPartPointCost.TabIndex = 21;
+            this.nudDefPartPointCost.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(128, 37);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(55, 13);
+            this.label17.TabIndex = 20;
+            this.label17.Text = "Point Cost";
+            // 
+            // nudDefPartHP
+            // 
+            this.nudDefPartHP.Location = new System.Drawing.Point(60, 35);
+            this.nudDefPartHP.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudDefPartHP.Name = "nudDefPartHP";
+            this.nudDefPartHP.Size = new System.Drawing.Size(62, 20);
+            this.nudDefPartHP.TabIndex = 19;
+            this.nudDefPartHP.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudDefPartHP.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(5, 37);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(49, 13);
+            this.label18.TabIndex = 18;
+            this.label18.Text = "Part HPs";
+            // 
+            // tbxDefPartName
+            // 
+            this.tbxDefPartName.Location = new System.Drawing.Point(68, 9);
+            this.tbxDefPartName.Name = "tbxDefPartName";
+            this.tbxDefPartName.Size = new System.Drawing.Size(203, 20);
+            this.tbxDefPartName.TabIndex = 17;
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(5, 12);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(57, 13);
+            this.label19.TabIndex = 16;
+            this.label19.Text = "Part Name";
+            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.drpDefPartActionList);
@@ -556,6 +570,137 @@
             this.btnDefPartSavePart.Text = "Save";
             this.btnDefPartSavePart.UseVisualStyleBackColor = true;
             this.btnDefPartSavePart.Click += new System.EventHandler(this.btnDefPartSavePart_Click);
+            // 
+            // tbxDefPartPenetrateVerb
+            // 
+            this.tbxDefPartPenetrateVerb.Location = new System.Drawing.Point(124, 112);
+            this.tbxDefPartPenetrateVerb.Name = "tbxDefPartPenetrateVerb";
+            this.tbxDefPartPenetrateVerb.Size = new System.Drawing.Size(147, 20);
+            this.tbxDefPartPenetrateVerb.TabIndex = 7;
+            this.tbxDefPartPenetrateVerb.Text = "Penetrating";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(5, 115);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(111, 13);
+            this.label10.TabIndex = 6;
+            this.label10.Text = "Verb for \"Penetrating\"";
+            // 
+            // tbxDefPartDownAdjective
+            // 
+            this.tbxDefPartDownAdjective.Location = new System.Drawing.Point(124, 86);
+            this.tbxDefPartDownAdjective.Name = "tbxDefPartDownAdjective";
+            this.tbxDefPartDownAdjective.Size = new System.Drawing.Size(147, 20);
+            this.tbxDefPartDownAdjective.TabIndex = 5;
+            this.tbxDefPartDownAdjective.Text = "Down";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(5, 89);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(107, 13);
+            this.label9.TabIndex = 4;
+            this.label9.Text = "Adjective for \"Down\"";
+            // 
+            // nudDefPartDR
+            // 
+            this.nudDefPartDR.Location = new System.Drawing.Point(151, 61);
+            this.nudDefPartDR.Name = "nudDefPartDR";
+            this.nudDefPartDR.Size = new System.Drawing.Size(120, 20);
+            this.nudDefPartDR.TabIndex = 3;
+            this.nudDefPartDR.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(5, 63);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(99, 13);
+            this.label8.TabIndex = 2;
+            this.label8.Text = "Damage Reduction";
+            // 
+            // tbpAction
+            // 
+            this.tbpAction.Controls.Add(this.nudActPartPointCost);
+            this.tbpAction.Controls.Add(this.label4);
+            this.tbpAction.Controls.Add(this.nudActPartHP);
+            this.tbpAction.Controls.Add(this.label3);
+            this.tbpAction.Controls.Add(this.tbxActPartName);
+            this.tbpAction.Controls.Add(this.label2);
+            this.tbpAction.Controls.Add(this.groupBox3);
+            this.tbpAction.Controls.Add(this.btnActPartClear);
+            this.tbpAction.Controls.Add(this.btnActPartSavePart);
+            this.tbpAction.Controls.Add(this.tbxActPartDescr);
+            this.tbpAction.Controls.Add(this.label11);
+            this.tbpAction.Location = new System.Drawing.Point(4, 22);
+            this.tbpAction.Name = "tbpAction";
+            this.tbpAction.Size = new System.Drawing.Size(277, 340);
+            this.tbpAction.TabIndex = 2;
+            this.tbpAction.Text = "Action Part";
+            this.tbpAction.UseVisualStyleBackColor = true;
+            // 
+            // nudActPartPointCost
+            // 
+            this.nudActPartPointCost.Location = new System.Drawing.Point(189, 35);
+            this.nudActPartPointCost.Name = "nudActPartPointCost";
+            this.nudActPartPointCost.Size = new System.Drawing.Size(79, 20);
+            this.nudActPartPointCost.TabIndex = 21;
+            this.nudActPartPointCost.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(128, 37);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(55, 13);
+            this.label4.TabIndex = 20;
+            this.label4.Text = "Point Cost";
+            // 
+            // nudActPartHP
+            // 
+            this.nudActPartHP.Location = new System.Drawing.Point(60, 35);
+            this.nudActPartHP.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudActPartHP.Name = "nudActPartHP";
+            this.nudActPartHP.Size = new System.Drawing.Size(62, 20);
+            this.nudActPartHP.TabIndex = 19;
+            this.nudActPartHP.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudActPartHP.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(5, 37);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(49, 13);
+            this.label3.TabIndex = 18;
+            this.label3.Text = "Part HPs";
+            // 
+            // tbxActPartName
+            // 
+            this.tbxActPartName.Location = new System.Drawing.Point(68, 9);
+            this.tbxActPartName.Name = "tbxActPartName";
+            this.tbxActPartName.Size = new System.Drawing.Size(200, 20);
+            this.tbxActPartName.TabIndex = 17;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(5, 12);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(57, 13);
+            this.label2.TabIndex = 16;
+            this.label2.Text = "Part Name";
             // 
             // groupBox3
             // 
@@ -660,191 +805,88 @@
             this.btnActPartSavePart.UseVisualStyleBackColor = true;
             this.btnActPartSavePart.Click += new System.EventHandler(this.btnActPartSavePart_Click);
             // 
-            // nudActPartPointCost
+            // tbxActPartDescr
             // 
-            this.nudActPartPointCost.Location = new System.Drawing.Point(189, 35);
-            this.nudActPartPointCost.Name = "nudActPartPointCost";
-            this.nudActPartPointCost.Size = new System.Drawing.Size(79, 20);
-            this.nudActPartPointCost.TabIndex = 21;
-            this.nudActPartPointCost.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.tbxActPartDescr.Location = new System.Drawing.Point(121, 61);
+            this.tbxActPartDescr.Name = "tbxActPartDescr";
+            this.tbxActPartDescr.Size = new System.Drawing.Size(147, 20);
+            this.tbxActPartDescr.TabIndex = 7;
             // 
-            // label4
+            // label11
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(128, 37);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(55, 13);
-            this.label4.TabIndex = 20;
-            this.label4.Text = "Point Cost";
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(5, 64);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(93, 13);
+            this.label11.TabIndex = 6;
+            this.label11.Text = "Action Description";
             // 
-            // nudActPartHP
+            // cbxExistingParts
             // 
-            this.nudActPartHP.Location = new System.Drawing.Point(60, 35);
-            this.nudActPartHP.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudActPartHP.Name = "nudActPartHP";
-            this.nudActPartHP.Size = new System.Drawing.Size(62, 20);
-            this.nudActPartHP.TabIndex = 19;
-            this.nudActPartHP.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.nudActPartHP.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+            this.cbxExistingParts.FormattingEnabled = true;
+            this.cbxExistingParts.Location = new System.Drawing.Point(77, 4);
+            this.cbxExistingParts.Name = "cbxExistingParts";
+            this.cbxExistingParts.Size = new System.Drawing.Size(467, 21);
+            this.cbxExistingParts.TabIndex = 1;
             // 
-            // label3
+            // label1
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(5, 37);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(49, 13);
-            this.label3.TabIndex = 18;
-            this.label3.Text = "Part HPs";
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(1, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(70, 13);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Load Existing";
             // 
-            // tbxActPartName
+            // btnLoadPart
             // 
-            this.tbxActPartName.Location = new System.Drawing.Point(68, 9);
-            this.tbxActPartName.Name = "tbxActPartName";
-            this.tbxActPartName.Size = new System.Drawing.Size(200, 20);
-            this.tbxActPartName.TabIndex = 17;
+            this.btnLoadPart.Location = new System.Drawing.Point(550, 4);
+            this.btnLoadPart.Name = "btnLoadPart";
+            this.btnLoadPart.Size = new System.Drawing.Size(39, 23);
+            this.btnLoadPart.TabIndex = 3;
+            this.btnLoadPart.Text = "Load";
+            this.btnLoadPart.UseVisualStyleBackColor = true;
+            this.btnLoadPart.Click += new System.EventHandler(this.btnLoadPart_Click);
             // 
-            // label2
+            // label13
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(5, 12);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(57, 13);
-            this.label2.TabIndex = 16;
-            this.label2.Text = "Part Name";
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(286, 19);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(59, 13);
+            this.label13.TabIndex = 23;
+            this.label13.Text = "Firing Type";
             // 
-            // nudDefPartPointCost
+            // cbxFiringTypes
             // 
-            this.nudDefPartPointCost.Location = new System.Drawing.Point(189, 35);
-            this.nudDefPartPointCost.Name = "nudDefPartPointCost";
-            this.nudDefPartPointCost.Size = new System.Drawing.Size(82, 20);
-            this.nudDefPartPointCost.TabIndex = 21;
-            this.nudDefPartPointCost.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.cbxFiringTypes.FormattingEnabled = true;
+            this.cbxFiringTypes.Location = new System.Drawing.Point(386, 14);
+            this.cbxFiringTypes.Name = "cbxFiringTypes";
+            this.cbxFiringTypes.Size = new System.Drawing.Size(193, 21);
+            this.cbxFiringTypes.TabIndex = 22;
             // 
-            // label17
+            // label15
             // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(128, 37);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(55, 13);
-            this.label17.TabIndex = 20;
-            this.label17.Text = "Point Cost";
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(286, 42);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(74, 13);
+            this.label15.TabIndex = 25;
+            this.label15.Text = "Damage Type";
             // 
-            // nudDefPartHP
+            // cbxDamageTypes
             // 
-            this.nudDefPartHP.Location = new System.Drawing.Point(60, 35);
-            this.nudDefPartHP.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudDefPartHP.Name = "nudDefPartHP";
-            this.nudDefPartHP.Size = new System.Drawing.Size(62, 20);
-            this.nudDefPartHP.TabIndex = 19;
-            this.nudDefPartHP.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.nudDefPartHP.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
-            // label18
-            // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(5, 37);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(49, 13);
-            this.label18.TabIndex = 18;
-            this.label18.Text = "Part HPs";
-            // 
-            // tbxDefPartName
-            // 
-            this.tbxDefPartName.Location = new System.Drawing.Point(68, 9);
-            this.tbxDefPartName.Name = "tbxDefPartName";
-            this.tbxDefPartName.Size = new System.Drawing.Size(203, 20);
-            this.tbxDefPartName.TabIndex = 17;
-            // 
-            // label19
-            // 
-            this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(5, 12);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(57, 13);
-            this.label19.TabIndex = 16;
-            this.label19.Text = "Part Name";
-            // 
-            // nudWeapPartPointCost
-            // 
-            this.nudWeapPartPointCost.Location = new System.Drawing.Point(189, 40);
-            this.nudWeapPartPointCost.Name = "nudWeapPartPointCost";
-            this.nudWeapPartPointCost.Size = new System.Drawing.Size(79, 20);
-            this.nudWeapPartPointCost.TabIndex = 21;
-            this.nudWeapPartPointCost.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(128, 42);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(55, 13);
-            this.label20.TabIndex = 20;
-            this.label20.Text = "Point Cost";
-            // 
-            // nudWeapPartHP
-            // 
-            this.nudWeapPartHP.Location = new System.Drawing.Point(60, 40);
-            this.nudWeapPartHP.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudWeapPartHP.Name = "nudWeapPartHP";
-            this.nudWeapPartHP.Size = new System.Drawing.Size(62, 20);
-            this.nudWeapPartHP.TabIndex = 19;
-            this.nudWeapPartHP.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.nudWeapPartHP.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(5, 42);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(49, 13);
-            this.label21.TabIndex = 18;
-            this.label21.Text = "Part HPs";
-            // 
-            // tbxWeapPartName
-            // 
-            this.tbxWeapPartName.Location = new System.Drawing.Point(68, 14);
-            this.tbxWeapPartName.Name = "tbxWeapPartName";
-            this.tbxWeapPartName.Size = new System.Drawing.Size(200, 20);
-            this.tbxWeapPartName.TabIndex = 17;
-            // 
-            // label22
-            // 
-            this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(5, 17);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(57, 13);
-            this.label22.TabIndex = 16;
-            this.label22.Text = "Part Name";
+            this.cbxDamageTypes.FormattingEnabled = true;
+            this.cbxDamageTypes.Location = new System.Drawing.Point(386, 39);
+            this.cbxDamageTypes.Name = "cbxDamageTypes";
+            this.cbxDamageTypes.Size = new System.Drawing.Size(193, 21);
+            this.cbxDamageTypes.TabIndex = 24;
             // 
             // PartMaker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 411);
+            this.ClientSize = new System.Drawing.Size(605, 411);
             this.Controls.Add(this.btnLoadPart);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cbxExistingParts);
@@ -854,38 +896,38 @@
             this.tcPartTypes.ResumeLayout(false);
             this.tbpWeapon.ResumeLayout(false);
             this.tbpWeapon.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartReload)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartCritMultiplier)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartWeaponDamage)).EndInit();
-            this.tbpDefense.ResumeLayout(false);
-            this.tbpDefense.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudDefPartDR)).EndInit();
-            this.tbpAction.ResumeLayout(false);
-            this.tbpAction.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartPointCost)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartHP)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.drpWeapPartActionList.ItemTemplate.ResumeLayout(false);
             this.drpWeapPartActionList.ItemTemplate.PerformLayout();
             this.drpWeapPartActionList.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartActionValue)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartReload)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartCritMultiplier)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartWeaponDamage)).EndInit();
+            this.tbpDefense.ResumeLayout(false);
+            this.tbpDefense.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDefPartPointCost)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDefPartHP)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.drpDefPartActionList.ItemTemplate.ResumeLayout(false);
             this.drpDefPartActionList.ItemTemplate.PerformLayout();
             this.drpDefPartActionList.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.nudDefPartActionValue)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDefPartDR)).EndInit();
+            this.tbpAction.ResumeLayout(false);
+            this.tbpAction.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudActPartPointCost)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudActPartHP)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.drpActPartActionList.ItemTemplate.ResumeLayout(false);
             this.drpActPartActionList.ItemTemplate.PerformLayout();
             this.drpActPartActionList.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.nudActPartActionValue)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudActPartPointCost)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudActPartHP)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudDefPartPointCost)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudDefPartHP)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartPointCost)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartHP)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -962,6 +1004,10 @@
         private System.Windows.Forms.ComboBox cbxActPartActions;
         private System.Windows.Forms.Button btnActPartClear;
         private System.Windows.Forms.Button btnActPartSavePart;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.ComboBox cbxDamageTypes;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.ComboBox cbxFiringTypes;
     }
 }
 

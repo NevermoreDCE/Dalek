@@ -54,6 +54,7 @@
     <Compile Include="ShipAction.cs" />
     <Compile Include="ShipPart.cs" />
     <Compile Include="PartBase\WeaponPart.cs" />
+    <Compile Include="ThemeSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Utility\" />

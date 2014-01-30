@@ -16,6 +16,7 @@ namespace PartMaker
     public partial class PartMaker : Form
     {
         XDocument doc;
+        ThemeSettings themeSettings;
         List<ShipPart> ExistingParts = new List<ShipPart>();
         ShipPart Part;
         List<ShipAction> PartActions = new List<ShipAction>();
@@ -25,7 +26,10 @@ namespace PartMaker
         public PartMaker()
         {
             InitializeComponent();
-            
+            doc = XDocument.Load(filename);
+            // ThemeSettings
+            themeSettings = new ThemeSettings(XDocument.Load("ThemeSettings.xml"));
+
             // Action Grids
             drpWeapPartActionList.ItemValueNeeded += new Microsoft.VisualBasic.PowerPacks.DataRepeaterItemValueEventHandler(drpWeapPartActionList_ItemValueNeeded);
             drpDefPartActionList.ItemValueNeeded += new Microsoft.VisualBasic.PowerPacks.DataRepeaterItemValueEventHandler(drpDefPartActionList_ItemValueNeeded);
@@ -40,6 +44,12 @@ namespace PartMaker
             
             // Available Action DDLs
             ShowActions();
+
+            // Weapon Tab - Damage Types DDL
+            ShowDamageTypes();
+
+            // Weapon Table - Firing Types DDL
+            ShowFiringTypes();
         }
 
         #region ItemValueNeeded
@@ -85,17 +95,7 @@ namespace PartMaker
 
         private void LoadParts()
         {
-            ExistingParts.Clear();
-            doc = XDocument.Load(filename);
-            XElement weaponParts = doc.Element("shipParts").Element("weaponParts");
-            foreach (XElement weaponPart in weaponParts.Elements())
-                ExistingParts.Add(new WeaponPart(weaponPart));
-            XElement defenseParts = doc.Element("shipParts").Element("defenseParts");
-            foreach (XElement defensePart in defenseParts.Elements())
-                ExistingParts.Add(new DefensePart(defensePart));
-            XElement actionParts = doc.Element("shipParts").Element("actionParts");
-            foreach (XElement actionPart in actionParts.Elements())
-                ExistingParts.Add(new ActionPart(actionPart));
+            ExistingParts = ShipPart.GetShipPartList(doc);
             cbxExistingParts.DataSource = ExistingParts;
             cbxExistingParts.DisplayMember = "Name";
         }
@@ -139,6 +139,18 @@ namespace PartMaker
             ActionList.DataSource = bs;
             ActionList.BeginResetItemTemplate();
             ActionList.EndResetItemTemplate();
+        }
+
+        private void ShowDamageTypes()
+        {
+            cbxDamageTypes.DataSource = themeSettings.DamageTypes;
+            cbxDamageTypes.SelectedIndex = -1;
+        }
+
+        private void ShowFiringTypes()
+        {
+            cbxFiringTypes.DataSource = themeSettings.FiringTypes;
+            cbxFiringTypes.SelectedIndex = -1;
         }
         
         #region Add Action
@@ -213,6 +225,8 @@ namespace PartMaker
             nudWeapPartPointCost.Value = 0;
             bs.Clear();
             ShowPartActions(drpWeapPartActionList);
+            ShowDamageTypes();
+            ShowFiringTypes();
 
             nudWeapPartWeaponDamage.Value = 0;
             nudWeapPartCritMultiplier.Value = 0;
@@ -228,7 +242,9 @@ namespace PartMaker
             int Dmg = int.Parse(nudWeapPartWeaponDamage.Value.ToString());
             int Crit = int.Parse(nudWeapPartCritMultiplier.Value.ToString());
             int Reload = int.Parse(nudWeapPartReload.Value.ToString());
-            Part = new WeaponPart(Name, HP, Dmg, Crit, Reload, PartActions);
+            string DamageType = cbxDamageTypes.SelectedItem.ToString();
+            string FiringType = cbxFiringTypes.SelectedItem.ToString();
+            Part = new WeaponPart(Name, HP, Dmg, DamageType, FiringType, Crit, Reload, PartActions);
             
             Part.GetObjectXML(doc);
             doc.Save(filename);
@@ -284,6 +300,14 @@ namespace PartMaker
             WeaponPart weap = (WeaponPart)Part;
             tbxWeapPartName.Text = weap.Name;
             nudWeapPartHP.Value = weap.HP.Max;
+            if (themeSettings.FiringTypes.Where(f => f == weap.FiringType).Count() > 0)
+                cbxFiringTypes.SelectedItem = weap.FiringType;
+            else
+                cbxFiringTypes.SelectedIndex = -1;
+            if (themeSettings.DamageTypes.Where(f => f == weap.DamageType).Count() > 0)
+                cbxDamageTypes.SelectedItem = weap.DamageType;
+            else
+                cbxDamageTypes.SelectedIndex = -1;
             PartActions = weap.Actions;
             ShowPartActions(drpWeapPartActionList); 
             

@@ -103,6 +103,10 @@ namespace StarShips
 
         public List<string> HitFor(int Damage)
         {
+            return HitFor(Damage, string.Empty);
+        }
+        public List<string> HitFor(int Damage, string DamageType)
+        {
             List<string> result = new List<string>();
 
             foreach (IDefense defense in Equipment.Where(f => f is IDefense && !f.IsDestroyed))
@@ -121,14 +125,14 @@ namespace StarShips
                 // chance to destroy ship part
                 using (RNG rand = new RNG())
                 {
-                    int countOfEquipment = Equipment.Count*2;
+                    int countOfEquipment = Equipment.Count * 2;
                     int random = rand.d(countOfEquipment);
                     if (random <= Equipment.Count)
                     {
-                        if (!Equipment[random-1].IsDestroyed)
+                        if (!Equipment[random - 1].IsDestroyed)
                         {
-                            Equipment[random-1].IsDestroyed = true;
-                            result.Add(string.Format("{0} is destroyed by the damage!", Equipment[random-1].Name));
+                            Equipment[random - 1].IsDestroyed = true;
+                            result.Add(string.Format("{0} is destroyed by the damage!", Equipment[random - 1].Name));
                         }
                     }
 
