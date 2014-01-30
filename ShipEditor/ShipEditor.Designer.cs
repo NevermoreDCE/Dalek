@@ -41,7 +41,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.tbxShipName = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.nudHitpoints = new System.Windows.Forms.NumericUpDown();
             this.ItemTemplate = new Microsoft.VisualBasic.PowerPacks.DataRepeaterItem();
             this.btnDeletePart = new System.Windows.Forms.Button();
             this.lblPartName = new System.Windows.Forms.Label();
@@ -54,8 +53,8 @@
             this.btnSaveShip = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
             this.btnDeleteShip = new System.Windows.Forms.Button();
+            this.cbxShipHullTypes = new System.Windows.Forms.ComboBox();
             this.menuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudHitpoints)).BeginInit();
             this.drpPartList.ItemTemplate.SuspendLayout();
             this.drpPartList.SuspendLayout();
             this.SuspendLayout();
@@ -159,22 +158,9 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(11, 82);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(71, 13);
+            this.label2.Size = new System.Drawing.Size(52, 13);
             this.label2.TabIndex = 3;
-            this.label2.Text = "Max Hitpoints";
-            // 
-            // nudHitpoints
-            // 
-            this.nudHitpoints.Location = new System.Drawing.Point(102, 80);
-            this.nudHitpoints.Name = "nudHitpoints";
-            this.nudHitpoints.Size = new System.Drawing.Size(55, 20);
-            this.nudHitpoints.TabIndex = 4;
-            this.nudHitpoints.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.nudHitpoints.Value = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
+            this.label2.Text = "Hull Type";
             // 
             // ItemTemplate
             // 
@@ -290,11 +276,21 @@
             this.btnDeleteShip.UseVisualStyleBackColor = true;
             this.btnDeleteShip.Click += new System.EventHandler(this.btnDeleteShip_Click);
             // 
+            // cbxShipHullTypes
+            // 
+            this.cbxShipHullTypes.DisplayMember = "Name";
+            this.cbxShipHullTypes.FormattingEnabled = true;
+            this.cbxShipHullTypes.Location = new System.Drawing.Point(102, 79);
+            this.cbxShipHullTypes.Name = "cbxShipHullTypes";
+            this.cbxShipHullTypes.Size = new System.Drawing.Size(232, 21);
+            this.cbxShipHullTypes.TabIndex = 14;
+            // 
             // ShipEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(653, 546);
+            this.Controls.Add(this.cbxShipHullTypes);
             this.Controls.Add(this.btnDeleteShip);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnSaveShip);
@@ -304,7 +300,6 @@
             this.Controls.Add(this.btnAddPart);
             this.Controls.Add(this.cbxPartList);
             this.Controls.Add(this.drpPartList);
-            this.Controls.Add(this.nudHitpoints);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.tbxShipName);
             this.Controls.Add(this.label1);
@@ -314,7 +309,6 @@
             this.Text = "ShipEditor";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudHitpoints)).EndInit();
             this.drpPartList.ItemTemplate.ResumeLayout(false);
             this.drpPartList.ItemTemplate.PerformLayout();
             this.drpPartList.ResumeLayout(false);
@@ -338,7 +332,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbxShipName;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.NumericUpDown nudHitpoints;
         private Microsoft.VisualBasic.PowerPacks.DataRepeaterItem ItemTemplate;
         private System.Windows.Forms.Button btnDeletePart;
         private System.Windows.Forms.Label lblPartName;
@@ -351,6 +344,7 @@
         private System.Windows.Forms.Button btnSaveShip;
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Button btnDeleteShip;
+        private System.Windows.Forms.ComboBox cbxShipHullTypes;
     }
 }
 

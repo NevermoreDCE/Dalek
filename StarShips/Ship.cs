@@ -6,69 +6,20 @@ using StarShips.Interfaces;
 using StarShips.Randomizer;
 using System.Runtime.Serialization;
 using System.Xml.Linq;
+using StarShips.Utility;
 
 namespace StarShips
 {
     [Serializable]
-    public class StatWithMax:ISerializable
-    {
-        int _max = 0;
-        int _current = 0;
-        public int Max { get { return _max; } set { _max = value; _current = value; } }
-        public int Current { get { return _current; } set { _current = value; } }
-        public override string ToString()
-        {
-            return string.Format("{0}/{1}", Current.ToString("D" + Max.ToString().Length.ToString()), Max.ToString());
-        }
-        public int Add(int amount)
-        {
-            int result;
-            if (amount == int.MaxValue)
-            {
-                result = Max;
-                Current = Max;
-            }
-            else
-            {
-                result = Math.Min(Max, Current + amount) - Current;
-                Current = Math.Min(Max, Current + amount);
-            }
-            return result;
-        }
-        public int Reduce(int amount)
-        {
-            int result = Math.Max(0, Current - amount) + Current;
-            Current = Math.Max(0, Current - amount);
-            return result;
-        }
-
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            info.AddValue("Max", Max);
-            info.AddValue("Current", Current);
-        }
-
-        public StatWithMax(SerializationInfo info, StreamingContext ctxt)
-        {
-            Max = (int)info.GetValue("Max", typeof(int));
-            Current = (int)info.GetValue("Current", typeof(int));
-        }
-
-        public StatWithMax()
-        {
-
-        }
-    }
-
-    [Serializable]
     public class Ship : ISerializable
     {
         #region Properties
-        public StatWithMax HP = new StatWithMax();
+        public StatWithMax HP { get { return HullType.HullPoints; } set { HullType.HullPoints = value; } }
         public StatWithMax MP = new StatWithMax();
         public List<ShipPart> Equipment = new List<ShipPart>();
         public string Name;
         public int PointCost { get { int result = HP.Max * 5; foreach (ShipPart part in Equipment)result += part.PointCost; return result; } }
+        public ShipHull HullType = new ShipHull();
         #endregion
 
         #region Public Methods
@@ -156,7 +107,11 @@ namespace StarShips
 
         public override string ToString()
         {
-            return string.Format("{0} (HP:{1}/{2})", this.Name, this.HP.Current, this.HP.Max);
+            return string.Format("{0}{1} (HP:{2}/{3})",
+                this.Name,
+                (this.HullType.Name != string.Empty ? string.Format(" ({0})", this.HullType.Name) : string.Empty),
+                this.HP.Current,
+                this.HP.Max);
         }
         #endregion
 
@@ -169,6 +124,7 @@ namespace StarShips
                 part.Target = null;
             info.AddValue("Equipment", Equipment);
             info.AddValue("Name", Name);
+            info.AddValue("HullType", HullType);
         }
 
         public void GetObjectXML(XDocument sourceDoc)
@@ -182,7 +138,10 @@ namespace StarShips
                 ship.Element("MaxHP").Value = HP.Max.ToString();
                 ship.Element("MaxMP").Value = MP.Max.ToString();
                 addPartsXML(ship.Element("shipParts"));
-
+                if (ship.Element("ShipHull") == null)
+                    ship.Add(new XElement("ShipHull", this.HullType.Name));
+                else
+                    ship.Element("ShipHull").Value = this.HullType.Name;
             }
             else
             {
@@ -194,6 +153,7 @@ namespace StarShips
                     new XElement("ship", new XAttribute("name", this.Name),
                         new XElement("MaxHP", HP.Max.ToString()),
                         new XElement("MaxMP", MP.Max.ToString()),
+                        new XElement("ShipHull",this.HullType.Name),
                         parts);
                 sourceDoc.Element("ships").Add(ship);
             }
@@ -222,6 +182,7 @@ namespace StarShips
             MP = (StatWithMax)info.GetValue("MP", typeof(StatWithMax));
             Equipment = (List<ShipPart>)info.GetValue("Equipment", typeof(List<ShipPart>));
             Name = (string)info.GetValue("Name", typeof(string));
+            HullType = (ShipHull)info.GetValue("HullType", typeof(ShipHull));
         }
         public Ship(XElement description, List<ShipPart> partsList)
         {
@@ -230,6 +191,17 @@ namespace StarShips
             this.MP.Max = int.Parse(description.Element("MaxMP").Value);
             foreach (XElement SPE in description.Element("shipParts").Elements())
                 this.Equipment.Add(partsList.First(f => f.Name == SPE.Value).Clone());
+        }
+        public Ship(XElement description, List<ShipPart> partsList, List<ShipHull> hullsList)
+        {
+            this.Name = description.Attribute("name").Value;
+            this.HP.Max = int.Parse(description.Element("MaxHP").Value);
+            this.MP.Max = int.Parse(description.Element("MaxMP").Value);
+            foreach (XElement SPE in description.Element("shipParts").Elements())
+                this.Equipment.Add(partsList.First(f => f.Name == SPE.Value).Clone());
+            if (description.Element("ShipHull") != null)
+                if (hullsList.Where(f => f.Name == description.Element("ShipHull").Value).Count() > 0)
+                    this.HullType = hullsList.First(f => f.Name == description.Element("ShipHull").Value).Clone();
         }
 
         #endregion

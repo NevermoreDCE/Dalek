@@ -5,6 +5,7 @@ using System.Text;
 using StarShips.Interfaces;
 using System.Runtime.Serialization;
 using System.Xml.Linq;
+using StarShips.Utility;
 
 namespace StarShips.PartBase
 {

@@ -6,6 +6,7 @@ using StarShips.Interfaces;
 using StarShips.Randomizer;
 using System.Runtime.Serialization;
 using System.Xml.Linq;
+using StarShips.Utility;
 
 namespace StarShips.PartBase
 {

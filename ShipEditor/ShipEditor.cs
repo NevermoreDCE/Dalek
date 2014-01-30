@@ -12,27 +12,36 @@ namespace ShipEditor
     public partial class ShipEditor : Form
     {
         List<Ship> ExistingShips = new List<Ship>();
+        List<ShipHull> ExistingHulls = new List<ShipHull>();
         Ship ship = new Ship();
         BindingSource bsShipParts = new BindingSource();
         List<ShipPart> ExistingParts = new List<ShipPart>();
         string defaultShipPartsFileName = "ShipParts.xml";
         XDocument shipDoc = new XDocument(new XElement("ships"));
-        string currentShipDocFileName;
+        string currentShipDocFileName = "Ships.xml";
         
         public ShipEditor()
         {
             InitializeComponent();
             drpPartList.ItemValueNeeded += new Microsoft.VisualBasic.PowerPacks.DataRepeaterItemValueEventHandler(drpPartList_ItemValueNeeded);
             tbxShipName.TextChanged += new EventHandler(tbxShipName_TextChanged);
-            nudHitpoints.ValueChanged += new EventHandler(nudHitpoints_ValueChanged);
             lblPartName.DataBindings.Add("Text", ship.Equipment, "Name");
             bsShipParts.DataSource = ship.Equipment;
-
+            LoadHulls();
             LoadParts();
             shipDoc = XDocument.Load("Ships.xml");
             LoadShipList(shipDoc);
             ShowShipList();
             ShowShip();
+        }
+
+        private void LoadHulls()
+        {
+            XDocument doc = XDocument.Load("ShipHulls.xml");
+            ExistingHulls = ShipHull.GetShipHulls(doc);
+            cbxShipHullTypes.DataSource = ExistingHulls;
+            cbxShipHullTypes.DisplayMember = "Name";
+            cbxShipHullTypes.SelectedIndex = -1;
         }
 
         private void LoadParts()
@@ -41,12 +50,7 @@ namespace ShipEditor
             ExistingParts = ShipPart.GetShipPartList(doc);
             cbxPartList.DataSource = ExistingParts;
             cbxPartList.DisplayMember = "Name";
-        }
-
-        void nudHitpoints_ValueChanged(object sender, EventArgs e)
-        {
-            ship.HP.Max = int.Parse(nudHitpoints.Value.ToString());
-            ship.HP.Current = int.Parse(nudHitpoints.Value.ToString());
+            cbxPartList.SelectedIndex = -1;
         }
 
         void tbxShipName_TextChanged(object sender, EventArgs e)
@@ -71,7 +75,7 @@ namespace ShipEditor
         {
             ExistingShips.Clear();
             foreach (var EShip in shipDoc.Element("ships").Elements())
-                ExistingShips.Add(new Ship(EShip, ExistingParts));
+                ExistingShips.Add(new Ship(EShip, ExistingParts, ExistingHulls));
         }
 
         private void ShowShipList()
@@ -86,7 +90,14 @@ namespace ShipEditor
         private void ShowShip()
         {
             tbxShipName.Text = ship.Name;
-            nudHitpoints.Value = ship.HP.Max;
+            if (ship.HullType != null)
+            {
+                int i = -1;
+                foreach (var item in cbxShipHullTypes.Items)
+                    if (((ShipHull)item).Name == ship.HullType.Name)
+                        i = cbxShipHullTypes.Items.IndexOf(item);
+                cbxShipHullTypes.SelectedIndex = i;
+            }
             bsShipParts.DataSource = ship.Equipment;
             drpPartList.DataSource = bsShipParts;
             drpPartList.BeginResetItemTemplate();
@@ -182,7 +193,7 @@ namespace ShipEditor
         private void btnSaveShip_Click(object sender, EventArgs e)
         {
             ship.Name = tbxShipName.Text;
-            ship.HP.Max = int.Parse(nudHitpoints.Value.ToString());
+            ship.HullType = ((ShipHull)cbxShipHullTypes.SelectedItem).Clone();
             ship.GetObjectXML(shipDoc);
             LoadShipList(shipDoc);
             ShowShipList();

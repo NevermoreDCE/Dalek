@@ -14,6 +14,7 @@ namespace Dalek
     {
         List<Ship> ExistingShips = new List<Ship>();
         List<ShipPart> ExistingParts = new List<ShipPart>();
+        List<ShipHull> ExistingHulls = new List<ShipHull>();
         Ship Ship1;
         Ship Ship2;
         List<string> results = new List<string>();
@@ -28,23 +29,30 @@ namespace Dalek
             cbxShipList2.SelectedIndexChanged += new EventHandler(cbxShipList2_SelectedIndexChanged);
         }
 
+        
         #region Load Parts/Ships
         private void LoadParts()
         {
             XDocument doc = XDocument.Load("ShipParts.xml");
             ExistingParts = ShipPart.GetShipPartList(doc);
         }
+        private void LoadHulls()
+        {
+            XDocument doc = XDocument.Load("ShipHulls.xml");
+            ExistingHulls = ShipHull.GetShipHulls(doc);
+        }
 
         void LoadShipList(XDocument shipDoc)
         {
             ExistingShips.Clear();
             foreach (var EShip in shipDoc.Element("ships").Elements())
-                ExistingShips.Add(new Ship(EShip, ExistingParts));
+                ExistingShips.Add(new Ship(EShip, ExistingParts,ExistingHulls));
         }
 
         private void LoadShips()
         {
             LoadParts();
+            LoadHulls();
             XDocument shipsDoc = XDocument.Load("Ships.xml");
             LoadShipList(shipsDoc);
             BindingList<Ship> ships1Source = new BindingList<Ship>(ExistingShips);
