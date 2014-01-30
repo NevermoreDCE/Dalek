@@ -70,7 +70,7 @@ namespace StarShips.PartBase
         #endregion
 
         #region Constructors
-        public ActionPart(string Name, int MaxHP, string ActionDescription, List<IShipPartAction> Actions)
+        public ActionPart(string Name, int MaxHP, string ActionDescription, List<ShipAction> Actions)
         {
             this.Name = Name;
             HP.Max = MaxHP;
@@ -84,7 +84,7 @@ namespace StarShips.PartBase
             Name = (string)info.GetValue("Name", typeof(string));
             HP = (StatWithMax)info.GetValue("HP", typeof(StatWithMax));
             _actionDescription = (string)info.GetValue("ActionDescription", typeof(string));
-            _actions = (List<IShipPartAction>)info.GetValue("Actions", typeof(List<IShipPartAction>));
+            _actions = (List<ShipAction>)info.GetValue("Actions", typeof(List<ShipAction>));
         }
 
         public ActionPart(XElement description)

@@ -119,7 +119,7 @@ namespace StarShips.PartBase
         #endregion
 
         #region Constructors
-        public DefensePart(string Name, int MaxHP, int DR, string DownAdjective, string PenetrateVerb, List<IShipPartAction> Actions)
+        public DefensePart(string Name, int MaxHP, int DR, string DownAdjective, string PenetrateVerb, List<ShipAction> Actions)
         {
             this.Name = Name;
             HP.Max = MaxHP;
@@ -137,7 +137,7 @@ namespace StarShips.PartBase
             HP = (StatWithMax)info.GetValue("HP", typeof(StatWithMax));
             _downAdjective = (string)info.GetValue("DownAdjective", typeof(string));
             _penetrateVerb = (string)info.GetValue("PenetrateVerb", typeof(string));
-            _actions = (List<IShipPartAction>)info.GetValue("Actions", typeof(List<IShipPartAction>));
+            _actions = (List<ShipAction>)info.GetValue("Actions", typeof(List<ShipAction>));
         }
 
         public DefensePart(XElement description)

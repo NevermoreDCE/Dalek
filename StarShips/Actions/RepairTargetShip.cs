@@ -9,15 +9,10 @@ using StarShips.Randomizer;
 namespace StarShips.Actions
 {
     [Serializable]
-    public class RepairTargetShip : IShipPartAction, ISerializable
+    public class RepairTargetShip : ShipAction, ISerializable
     {
-        #region Private Variables
-        int[] _actionValues = new int[1];
-        public int[] ActionValues { get { return _actionValues; } set { _actionValues = value; } }
-        #endregion
-
         #region Public Methods
-        public string DoAction(ShipPart target)
+        public override string DoAction(ShipPart target)
         {
             Ship _target = target.Target;
             List<string> repaired = new List<string>();
@@ -27,25 +22,25 @@ namespace StarShips.Actions
                 foreach (ShipPart part in _target.Equipment.Where(f => f.IsDestroyed))
                     if (rand.d100() > 50)
                     {
-                        result = part.Repair(ActionValues[0]);
+                        result = part.Repair((int)ActionValues[0]);
                         repaired.Add(part.Name + (!string.IsNullOrEmpty(result) ? string.Format(" ({0} HPs)", result) : string.Empty));
                     }
             }
-            result = string.Format("Repaired {0} for {1} HPs", _target.Name, _target.HP.Add(ActionValues[0]).ToString());
+            result = string.Format("Repaired {0} for {1} HPs", _target.Name, _target.HP.Add((int)ActionValues[0]).ToString());
             if (repaired.Count > 0)
                 result = result + string.Format(", and Repaired {0}", string.Join(", ", repaired.ToArray()));
 
             return result;
         }
 
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("Amount", ActionValues[0]);
+            info.AddValue("Amount", (int)ActionValues[0]);
         }
 
         public override string ToString()
         {
-            return string.Format("Repair target Ship  for {0} HPs, 50% chance to repair Parts", ActionValues[0].ToString());
+            return string.Format("Repair target Ship  for {0} HPs, 50% chance to repair Parts", ((int)ActionValues[0]).ToString());
         }
         #endregion
 
@@ -54,7 +49,7 @@ namespace StarShips.Actions
         {
             ActionValues[0] = Amount;
         }
-        public RepairTargetShip(int[] ActionValues)
+        public RepairTargetShip(object[] ActionValues)
         {
             this.ActionValues = ActionValues;
         }

@@ -1,20 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using StarShips;
-using StarShips.Randomizer;
-using StarShips.Interfaces;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.IO;
-using StarShips.Actions;
-using StarShips.PartBase;
 using System.Xml.Linq;
+using StarShips;
+using StarShips.PartBase;
+using StarShips.Randomizer;
 
 namespace Dalek
 {
@@ -39,17 +31,8 @@ namespace Dalek
         #region Load Parts/Ships
         private void LoadParts()
         {
-            ExistingParts.Clear();
             XDocument doc = XDocument.Load("ShipParts.xml");
-            XElement weaponParts = doc.Element("shipParts").Element("weaponParts");
-            foreach (XElement weaponPart in weaponParts.Elements())
-                ExistingParts.Add(new WeaponPart(weaponPart));
-            XElement defenseParts = doc.Element("shipParts").Element("defenseParts");
-            foreach (XElement defensePart in defenseParts.Elements())
-                ExistingParts.Add(new DefensePart(defensePart));
-            XElement actionParts = doc.Element("shipParts").Element("actionParts");
-            foreach (XElement actionPart in actionParts.Elements())
-                ExistingParts.Add(new ActionPart(actionPart));
+            ExistingParts = ShipPart.GetShipPartList(doc);
         }
 
         void LoadShipList(XDocument shipDoc)

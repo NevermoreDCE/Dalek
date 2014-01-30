@@ -18,7 +18,7 @@ namespace PartMaker
         XDocument doc;
         List<ShipPart> ExistingParts = new List<ShipPart>();
         ShipPart Part;
-        List<IShipPartAction> PartActions = new List<IShipPartAction>();
+        List<ShipAction> PartActions = new List<ShipAction>();
         BindingSource bs = new BindingSource();
         string filename = "ShipParts.xml";
 
@@ -102,11 +102,11 @@ namespace PartMaker
 
         void ShowActions()
         {
-            var type = typeof(IShipPartAction);
+            var type = typeof(ShipAction);
             IEnumerable<Type> partListE = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(s => s.GetTypes())
                 .Where(p => type.IsAssignableFrom(p) && p.GetType() != type);
-            List<Type> partList = new List<Type>(partListE.Where(t => t != typeof(IShipPartAction)));
+            List<Type> partList = new List<Type>(partListE.Where(t => t != typeof(ShipAction)));
             cbxWeapPartActions.DataSource = partList;
             cbxWeapPartActions.DisplayMember = "Name";
             cbxWeapPartActions.SelectedIndex = 0;
@@ -123,7 +123,7 @@ namespace PartMaker
             Type newActType = (Type)PartActions.SelectedItem;
             int[] ActionValues = new int[1];
             ActionValues[0] = int.Parse(ActionValue.Value.ToString());
-            IShipPartAction newAct = (IShipPartAction)Activator.CreateInstance(newActType, ActionValues);
+            ShipAction newAct = (ShipAction)Activator.CreateInstance(newActType, ActionValues);
             bs.Add(newAct);
         }
 

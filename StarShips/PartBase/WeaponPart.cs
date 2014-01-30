@@ -125,7 +125,7 @@ namespace StarShips.PartBase
         #endregion
 
         #region Constructors
-        public WeaponPart(string Name, int MaxHP, int Damage, int CritMultiplier, int ReloadTime, List<IShipPartAction> Actions)
+        public WeaponPart(string Name, int MaxHP, int Damage, int CritMultiplier, int ReloadTime, List<ShipAction> Actions)
         {
             this.Name = Name;
             HP.Max = MaxHP;
@@ -143,7 +143,7 @@ namespace StarShips.PartBase
             _critMultiplier = (int)info.GetValue("CritMultiplier", typeof(int));
             _reloadTime = (int)info.GetValue("ReloadTime", typeof(int));
             _currentReload = (int)info.GetValue("CurrentReload", typeof(int));
-            _actions = (List<IShipPartAction>)info.GetValue("Actions", typeof(List<IShipPartAction>));
+            _actions = (List<ShipAction>)info.GetValue("Actions", typeof(List<ShipAction>));
         }
         public WeaponPart(XElement description)
         {

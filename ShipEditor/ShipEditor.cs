@@ -37,17 +37,8 @@ namespace ShipEditor
 
         private void LoadParts()
         {
-            ExistingParts.Clear();
-            XDocument doc = XDocument.Load(defaultShipPartsFileName);
-            XElement weaponParts = doc.Element("shipParts").Element("weaponParts");
-            foreach (XElement weaponPart in weaponParts.Elements())
-                ExistingParts.Add(new WeaponPart(weaponPart));
-            XElement defenseParts = doc.Element("shipParts").Element("defenseParts");
-            foreach (XElement defensePart in defenseParts.Elements())
-                ExistingParts.Add(new DefensePart(defensePart));
-            XElement actionParts = doc.Element("shipParts").Element("actionParts");
-            foreach (XElement actionPart in actionParts.Elements())
-                ExistingParts.Add(new ActionPart(actionPart));
+            XDocument doc = XDocument.Load("ShipParts.xml");
+            ExistingParts = ShipPart.GetShipPartList(doc);
             cbxPartList.DataSource = ExistingParts;
             cbxPartList.DisplayMember = "Name";
         }
