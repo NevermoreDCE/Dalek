@@ -16,6 +16,14 @@ namespace StarShips
         public string ActionMechanism = string.Empty;
         public int CountOfParts;
 
+        public override string ToString()
+        {
+            return string.Format("{0}{1} ({2})",
+                PartType.Name,
+                (ActionMechanism != string.Empty ? string.Format(" ({0})", ActionMechanism) : string.Empty),
+                CountOfParts.ToString());
+        }
+
         #region Serialization
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -73,6 +81,7 @@ namespace StarShips
             }
         }
         public StatWithMax HullPoints { get { return _hullPoints; } set { _hullPoints = value; } }
+        public List<PartCount> AllowedParts { get { return _allowedParts; } }
         
         #endregion
 
@@ -111,13 +120,32 @@ namespace StarShips
         }
         public void GetObjectXML(XDocument doc)
         {
-            XElement parts = new XElement("AllowedParts");
-            foreach(PartCount pc in _allowedParts)
-                parts.Add(pc.GetObjectXML());
-            doc.Element("shipHulls").Add(
-                new XElement("shipHull", new XAttribute("name", this.Name),
-                    new XElement("MaxHP", this._hullPoints.Max),
-                    parts));
+            XElement hull;
+            if (doc.Descendants("shipHull").Where(f => f.Attribute("name").Value == this.Name).Count() > 0)
+            {
+                // Update Existing
+                hull = doc.Descendants("shipHull").First(f => f.Attribute("name").Value == this.Name);
+                hull.Element("MaxHP").Value = this._hullPoints.Max.ToString();
+                AddAllowedParts(hull.Element("AllowedParts"));
+            }
+            else
+            {
+                // Create New
+                XElement parts = new XElement("AllowedParts");
+                AddAllowedParts(parts);
+                hull = new XElement("shipHull", new XAttribute("name", this.Name),
+                        new XElement("MaxHP", this._hullPoints.Max),
+                        parts);
+                doc.Element("shipHulls").Add(hull);
+            }
+            
+        }
+
+        private void AddAllowedParts(XElement allowedParts)
+        {
+            allowedParts.RemoveAll();
+            foreach (PartCount pc in _allowedParts)
+                allowedParts.Add(pc.GetObjectXML());
         }
         #endregion
 
