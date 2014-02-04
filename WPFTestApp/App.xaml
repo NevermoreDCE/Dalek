@@ -1,0 +1,44 @@
+﻿<Application x:Class="WPFTestApp.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <DrawingBrush x:Key="GridTile" Stretch="None" TileMode="Tile"
+              Viewport="0,0 20,20" ViewportUnits="Absolute">
+            <!-- ^^^^^^^^^^^ set the size of the tile-->
+            <DrawingBrush.Drawing>
+                <GeometryDrawing>
+                    <GeometryDrawing.Geometry>
+                        <!-- draw a single X -->
+                        <GeometryGroup>
+                            <!-- top-left to bottom-right -->
+                            <LineGeometry StartPoint="0,0" EndPoint="0,20" />
+
+                            <!-- bottom-left to top-right -->
+                            <LineGeometry StartPoint="0,0" EndPoint="20,0" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                    <GeometryDrawing.Pen>
+                        <!-- set color and thickness of lines -->
+                        <Pen Thickness="1" Brush="Black" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+        <DrawingBrush x:Key="OffsetGrid" Stretch="None" AlignmentX="Left" AlignmentY="Top">
+            <DrawingBrush.Transform>
+                <!-- set the left and top offsets -->
+                <TranslateTransform X="0" Y="0" />
+            </DrawingBrush.Transform>
+            <DrawingBrush.Drawing>
+                <GeometryDrawing Brush="{StaticResource GridTile}" >
+                    <GeometryDrawing.Geometry>
+                        <!-- set the width and height filled with the tile from the origin -->
+                        <RectangleGeometry Rect="0,0 525,350" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+
+    </Application.Resources>
+</Application>

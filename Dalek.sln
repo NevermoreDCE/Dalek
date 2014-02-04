@@ -13,6 +13,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PartXMLTest", "PartXMLTest\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HullMaker", "HullMaker\HullMaker.csproj", "{A90B9C9F-C361-4526-A12B-7D68DE56FCAE}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Prototypes", "Prototypes", "{319F416B-7B50-43EA-AD84-4035C732F5E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PathfindingTest", "PathfindingTest\PathfindingTest.csproj", "{EA176993-A93B-4951-80FB-6373B77D588E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFTestApp", "WPFTestApp\WPFTestApp.csproj", "{A1DF50B9-60B5-4203-ABCD-0A12C803EFE3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,8 +89,33 @@ Global
 		{A90B9C9F-C361-4526-A12B-7D68DE56FCAE}.Release|Mixed Platforms.Build.0 = Release|x86
 		{A90B9C9F-C361-4526-A12B-7D68DE56FCAE}.Release|x86.ActiveCfg = Release|x86
 		{A90B9C9F-C361-4526-A12B-7D68DE56FCAE}.Release|x86.Build.0 = Release|x86
+		{EA176993-A93B-4951-80FB-6373B77D588E}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{EA176993-A93B-4951-80FB-6373B77D588E}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{EA176993-A93B-4951-80FB-6373B77D588E}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{EA176993-A93B-4951-80FB-6373B77D588E}.Debug|x86.ActiveCfg = Debug|x86
+		{EA176993-A93B-4951-80FB-6373B77D588E}.Debug|x86.Build.0 = Debug|x86
+		{EA176993-A93B-4951-80FB-6373B77D588E}.Release|Any CPU.ActiveCfg = Release|x86
+		{EA176993-A93B-4951-80FB-6373B77D588E}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{EA176993-A93B-4951-80FB-6373B77D588E}.Release|Mixed Platforms.Build.0 = Release|x86
+		{EA176993-A93B-4951-80FB-6373B77D588E}.Release|x86.ActiveCfg = Release|x86
+		{EA176993-A93B-4951-80FB-6373B77D588E}.Release|x86.Build.0 = Release|x86
+		{A1DF50B9-60B5-4203-ABCD-0A12C803EFE3}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{A1DF50B9-60B5-4203-ABCD-0A12C803EFE3}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{A1DF50B9-60B5-4203-ABCD-0A12C803EFE3}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{A1DF50B9-60B5-4203-ABCD-0A12C803EFE3}.Debug|x86.ActiveCfg = Debug|x86
+		{A1DF50B9-60B5-4203-ABCD-0A12C803EFE3}.Debug|x86.Build.0 = Debug|x86
+		{A1DF50B9-60B5-4203-ABCD-0A12C803EFE3}.Release|Any CPU.ActiveCfg = Release|x86
+		{A1DF50B9-60B5-4203-ABCD-0A12C803EFE3}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{A1DF50B9-60B5-4203-ABCD-0A12C803EFE3}.Release|Mixed Platforms.Build.0 = Release|x86
+		{A1DF50B9-60B5-4203-ABCD-0A12C803EFE3}.Release|x86.ActiveCfg = Release|x86
+		{A1DF50B9-60B5-4203-ABCD-0A12C803EFE3}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{20D52362-BA79-4843-AD9A-D77C3BD446C3} = {319F416B-7B50-43EA-AD84-4035C732F5E6}
+		{EA176993-A93B-4951-80FB-6373B77D588E} = {319F416B-7B50-43EA-AD84-4035C732F5E6}
+		{A1DF50B9-60B5-4203-ABCD-0A12C803EFE3} = {319F416B-7B50-43EA-AD84-4035C732F5E6}
 	EndGlobalSection
 EndGlobal
