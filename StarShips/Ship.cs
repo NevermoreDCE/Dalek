@@ -7,6 +7,7 @@ using StarShips.Randomizer;
 using System.Runtime.Serialization;
 using System.Xml.Linq;
 using StarShips.Utility;
+using System.Drawing;
 
 namespace StarShips
 {
@@ -20,6 +21,7 @@ namespace StarShips
         public string Name;
         public int PointCost { get { int result = HP.Max * 5; foreach (ShipPart part in Equipment)result += part.PointCost; return result; } }
         public ShipHull HullType = new ShipHull();
+        public Point Position = new Point(-1, -1);
         #endregion
 
         #region Public Methods

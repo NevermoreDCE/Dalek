@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -42,6 +43,9 @@
   <ItemGroup>
     <Compile Include="Actions\RepairTargetShip.cs" />
     <Compile Include="Actions\RepairThisPart.cs" />
+    <Compile Include="Locations\Location.cs" />
+    <Compile Include="Locations\LocationCollection.cs" />
+    <Compile Include="Locations\Node.cs" />
     <Compile Include="PartBase\ActionPart.cs" />
     <Compile Include="PartBase\DefensePart.cs" />
     <Compile Include="Interfaces\IDefense.cs" />
