@@ -31,14 +31,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\RepairTargetShip.cs" />
@@ -46,8 +50,16 @@
     <Compile Include="Locations\Location.cs" />
     <Compile Include="Locations\LocationCollection.cs" />
     <Compile Include="Locations\Node.cs" />
-    <Compile Include="PartBase\ActionPart.cs" />
-    <Compile Include="PartBase\DefensePart.cs" />
+    <Compile Include="Orders\Delegates\OrderDelegates.cs" />
+    <Compile Include="Orders\FireWeaponAtTarget.cs" />
+    <Compile Include="Orders\Interfaces\IMoveOrder.cs" />
+    <Compile Include="Orders\Interfaces\IWeaponOrder.cs" />
+    <Compile Include="Orders\MoveToLocation.cs" />
+    <Compile Include="Orders\Delegates\OrderEventArgs.cs" />
+    <Compile Include="Orders\MoveToShip.cs" />
+    <Compile Include="Orders\MoveToShipAtRange.cs" />
+    <Compile Include="Parts\ActionPart.cs" />
+    <Compile Include="Parts\DefensePart.cs" />
     <Compile Include="Interfaces\IDefense.cs" />
     <Compile Include="Interfaces\IShipPartAction.cs" />
     <Compile Include="Interfaces\IWeapon.cs" />
@@ -57,8 +69,9 @@
     <Compile Include="Ship.cs" />
     <Compile Include="ShipAction.cs" />
     <Compile Include="ShipHull.cs" />
+    <Compile Include="ShipOrder.cs" />
     <Compile Include="ShipPart.cs" />
-    <Compile Include="PartBase\WeaponPart.cs" />
+    <Compile Include="Parts\WeaponPart.cs" />
     <Compile Include="ThemeSettings.cs" />
     <Compile Include="Utility\StatWithMax.cs" />
   </ItemGroup>

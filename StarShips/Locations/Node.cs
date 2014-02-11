@@ -12,6 +12,7 @@ namespace StarShips.Locations
         public int F { get { return G + H; } }
         public int G;
         public int H;
+        public int Depth=0;
         public Node Parent;
         public Node()
         {

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using StarShips;
-using StarShips.PartBase;
+using StarShips.Parts;
 using StarShips.Interfaces;
 using StarShips.Actions;
 using System.Xml.Linq;

@@ -8,18 +8,19 @@ using System.Runtime.Serialization;
 using System.Xml.Linq;
 using StarShips.Utility;
 
-namespace StarShips.PartBase
+namespace StarShips.Parts
 {
     [Serializable]
     public class WeaponPart : ShipPart, IWeapon, ISerializable
     {
+        
         #region Private Variables
         int _weaponDamage;
         int _critMultiplier;
         int _reloadTime;
         int _currentReload = 0;
-        string _damageType;
-        string _firingType;
+        string _damageType = string.Empty;
+        string _firingType = string.Empty;
         #endregion
 
         #region Public Properties
@@ -53,7 +54,8 @@ namespace StarShips.PartBase
                 _weaponDamage.ToString(),
                 (_damageType != string.Empty ? string.Format(" - ({0})", _damageType) : string.Empty),
                 _critMultiplier.ToString(),
-                _reloadTime.ToString());
+                (_currentReload>0?string.Format("{0}/{1}",_currentReload,_reloadTime):_reloadTime.ToString())
+                );
         }
 
         public override string Repair(int amount)
@@ -82,6 +84,7 @@ namespace StarShips.PartBase
                 else 
                     result = "Missed!";
             }
+            
             return result;
         }
 
@@ -104,6 +107,7 @@ namespace StarShips.PartBase
             info.AddValue("ReloadTime", _reloadTime);
             info.AddValue("CurrentReload", _currentReload);
             info.AddValue("Actions", _actions);
+            info.AddValue("Parent", _parent);
         }
 
         public override void GetObjectXML(XDocument sourceDoc)
@@ -150,8 +154,9 @@ namespace StarShips.PartBase
         #endregion
 
         #region Constructors
-        private void initWeaponPart(string Name, int MaxHP, int Damage, string DamageType, string FiringType, int CritMultiplier, int ReloadTime, List<ShipAction> Actions)
+        private void initWeaponPart(Ship Parent, string Name, int MaxHP, int Damage, string DamageType, string FiringType, int CritMultiplier, int ReloadTime, List<ShipAction> Actions)
         {
+            this._parent = Parent;
             this.Name = Name;
             HP.Max = MaxHP;
             HP.Current = MaxHP;
@@ -163,20 +168,13 @@ namespace StarShips.PartBase
             _actions = Actions;
         }
 
-        public WeaponPart(string Name, int MaxHP, int Damage, int CritMultiplier, int ReloadTime, List<ShipAction> Actions)
+        public WeaponPart(Ship Parent, string Name, int MaxHP, int Damage, string DamageType, string FiringType, int CritMultiplier, int ReloadTime, List<ShipAction> Actions)
         {
-            initWeaponPart(Name, MaxHP, Damage, string.Empty,string.Empty, CritMultiplier, ReloadTime, Actions);
-        }
-        public WeaponPart(string Name, int MaxHP, int Damage, string DamageType, int CritMultiplier, int ReloadTime, List<ShipAction> Actions)
-        {
-            initWeaponPart(Name, MaxHP, Damage, DamageType,string.Empty, CritMultiplier, ReloadTime, Actions);
-        }
-        public WeaponPart(string Name, int MaxHP, int Damage, string DamageType, string FiringType, int CritMultiplier, int ReloadTime, List<ShipAction> Actions)
-        {
-            initWeaponPart(Name, MaxHP, Damage, DamageType, FiringType, CritMultiplier, ReloadTime, Actions);
+            initWeaponPart(Parent, Name, MaxHP, Damage, DamageType, FiringType, CritMultiplier, ReloadTime, Actions);
         }
         public WeaponPart(SerializationInfo info, StreamingContext ctxt)
         {
+            this._parent = (Ship)info.GetValue("Parent", typeof(Ship));
             this.Name = (string)info.GetValue("Name", typeof(string));
             HP = (StatWithMax)info.GetValue("HP", typeof(StatWithMax));
             _weaponDamage = (int)info.GetValue("Damage", typeof(int));
@@ -187,8 +185,9 @@ namespace StarShips.PartBase
             _currentReload = (int)info.GetValue("CurrentReload", typeof(int));
             _actions = (List<ShipAction>)info.GetValue("Actions", typeof(List<ShipAction>));
         }
-        public WeaponPart(XElement description)
+        public WeaponPart(XElement description, Ship parent)
         {
+            this._parent = parent;
             this.Name = description.Attribute("name").Value;
             this.HP.Max = int.Parse(description.Element("MaxHP").Value);
             this._weaponDamage = int.Parse(description.Element("WeaponDamage").Value);

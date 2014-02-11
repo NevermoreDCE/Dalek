@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 using System.Xml.Linq;
 using StarShips.Utility;
 
-namespace StarShips.PartBase
+namespace StarShips.Parts
 {
     [Serializable]
     public class DefensePart : ShipPart, IDefense, ISerializable
@@ -78,6 +78,7 @@ namespace StarShips.PartBase
         #region Serialization
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
+            info.AddValue("Parent", _parent);
             info.AddValue("Name", Name);
             info.AddValue("HP", HP);
             info.AddValue("DR", _dr);
@@ -120,8 +121,9 @@ namespace StarShips.PartBase
         #endregion
 
         #region Constructors
-        public DefensePart(string Name, int MaxHP, int DR, string DownAdjective, string PenetrateVerb, List<ShipAction> Actions)
+        public DefensePart(Ship parent, string Name, int MaxHP, int DR, string DownAdjective, string PenetrateVerb, List<ShipAction> Actions)
         {
+            this._parent = parent;
             this.Name = Name;
             HP.Max = MaxHP;
             HP.Current = MaxHP;
@@ -133,6 +135,7 @@ namespace StarShips.PartBase
 
         public DefensePart(SerializationInfo info, StreamingContext ctxt)
         {
+            _parent = (Ship)info.GetValue("Parent", typeof(Ship));
             Name = (string)info.GetValue("Name", typeof(string));
             _dr = (int)info.GetValue("DR", typeof(int));
             HP = (StatWithMax)info.GetValue("HP", typeof(StatWithMax));
@@ -141,8 +144,9 @@ namespace StarShips.PartBase
             _actions = (List<ShipAction>)info.GetValue("Actions", typeof(List<ShipAction>));
         }
 
-        public DefensePart(XElement description)
+        public DefensePart(XElement description, Ship parent)
         {
+            this._parent = parent;
             this.Name = description.Attribute("name").Value;
             this.HP.Max = int.Parse(description.Element("MaxHP").Value);
             this._dr = int.Parse(description.Element("DR").Value);

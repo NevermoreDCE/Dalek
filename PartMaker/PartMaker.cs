@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using StarShips.Interfaces;
 using StarShips;
 using System.Xml.Linq;
-using StarShips.PartBase;
+using StarShips.Parts;
 
 namespace PartMaker
 {
@@ -95,7 +95,7 @@ namespace PartMaker
 
         private void LoadParts()
         {
-            ExistingParts = ShipPart.GetShipPartList(doc);
+            ExistingParts = ShipPart.GetShipPartList(doc, new Ship());
             cbxExistingParts.DataSource = ExistingParts;
             cbxExistingParts.DisplayMember = "Name";
         }
@@ -244,7 +244,7 @@ namespace PartMaker
             int Reload = int.Parse(nudWeapPartReload.Value.ToString());
             string DamageType = cbxDamageTypes.SelectedItem.ToString();
             string FiringType = cbxFiringTypes.SelectedItem.ToString();
-            Part = new WeaponPart(Name, HP, Dmg, DamageType, FiringType, Crit, Reload, PartActions);
+            Part = new WeaponPart(new Ship(), Name, HP, Dmg, DamageType, FiringType, Crit, Reload, PartActions);
             
             Part.GetObjectXML(doc);
             doc.Save(filename);
@@ -259,7 +259,7 @@ namespace PartMaker
             int DR = int.Parse(nudDefPartDR.Value.ToString());
             string Down = tbxDefPartDownAdjective.Text;
             string Pen = tbxDefPartPenetrateVerb.Text;
-            Part = new DefensePart(Name, HP, DR, Down, Pen, PartActions);
+            Part = new DefensePart(new Ship(),Name, HP, DR, Down, Pen, PartActions);
 
             Part.GetObjectXML(doc);
             doc.Save(filename);
@@ -272,7 +272,7 @@ namespace PartMaker
             string Name = tbxActPartName.Text;
             int HP = int.Parse(nudActPartHP.Value.ToString());
             string Descr = tbxActPartDescr.Text;
-            Part = new ActionPart(Name, HP, Descr, PartActions);
+            Part = new ActionPart(new Ship(), Name, HP, Descr, PartActions);
 
             Part.GetObjectXML(doc);
             doc.Save(filename);

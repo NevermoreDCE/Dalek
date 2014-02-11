@@ -9,6 +9,7 @@ using System.Xml.Linq;
 using StarShips.Utility;
 using System.Drawing;
 
+
 namespace StarShips
 {
     [Serializable]
@@ -18,10 +19,14 @@ namespace StarShips
         public StatWithMax HP { get { return HullType.HullPoints; } set { HullType.HullPoints = value; } }
         public StatWithMax MP = new StatWithMax();
         public List<ShipPart> Equipment = new List<ShipPart>();
+        public List<ShipOrder> Orders = new List<ShipOrder>();
+        public List<ShipOrder> CompletedOrders = new List<ShipOrder>();
         public string Name;
         public int PointCost { get { int result = HP.Max * 5; foreach (ShipPart part in Equipment)result += part.PointCost; return result; } }
         public ShipHull HullType = new ShipHull();
         public Point Position = new Point(-1, -1);
+        public Point Origin;
+        public System.Windows.Controls.Image Image;
         #endregion
 
         #region Public Methods
@@ -93,6 +98,22 @@ namespace StarShips
             }
 
             return result;
+        }
+
+        public List<string> ExecuteOrders()
+        {
+            List<string> result = new List<string>();
+            foreach (ShipOrder order in Orders)
+            {
+                result.Add(order.ExecuteOrder(this));
+            }
+            if (CompletedOrders.Count > 0)
+            {
+                foreach (ShipOrder order in CompletedOrders)
+                    Orders.Remove(order);
+                CompletedOrders.Clear();
+            }
+            return result.Where(f => f != string.Empty).ToList<string>();
         }
 
         public List<string> EndOfTurn()

@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<shipHulls>
+  <shipHull name="Frigate">
+    <MaxHP>50</MaxHP>
+    <AllowedParts>
+      <allowedPart type="StarShips.PartBase.ActionPart">
+        <ActionMechanism></ActionMechanism>
+        <CountOfParts>2</CountOfParts>
+      </allowedPart>
+      <allowedPart type="StarShips.PartBase.DefensePart">
+        <ActionMechanism></ActionMechanism>
+        <CountOfParts>3</CountOfParts>
+      </allowedPart>
+      <allowedPart type="StarShips.PartBase.WeaponPart">
+        <ActionMechanism>Beam</ActionMechanism>
+        <CountOfParts>3</CountOfParts>
+      </allowedPart>
+      <allowedPart type="StarShips.PartBase.WeaponPart">
+        <ActionMechanism>Cannon</ActionMechanism>
+        <CountOfParts>2</CountOfParts>
+      </allowedPart>
+      <allowedPart type="StarShips.PartBase.WeaponPart">
+        <ActionMechanism>Torpedo</ActionMechanism>
+        <CountOfParts>1</CountOfParts>
+      </allowedPart>
+    </AllowedParts>
+    <ImageURL>Ship1.png</ImageURL>
+  </shipHull>
+  <shipHull name="Galaxy">
+    <MaxHP>50</MaxHP>
+    <AllowedParts>
+      <allowedPart type="StarShips.PartBase.DefensePart">
+        <ActionMechanism></ActionMechanism>
+        <CountOfParts>3</CountOfParts>
+      </allowedPart>
+      <allowedPart type="StarShips.PartBase.ActionPart">
+        <ActionMechanism></ActionMechanism>
+        <CountOfParts>2</CountOfParts>
+      </allowedPart>
+      <allowedPart type="StarShips.PartBase.WeaponPart">
+        <ActionMechanism>Beam</ActionMechanism>
+        <CountOfParts>2</CountOfParts>
+      </allowedPart>
+      <allowedPart type="StarShips.PartBase.WeaponPart">
+        <ActionMechanism>Cannon</ActionMechanism>
+        <CountOfParts>1</CountOfParts>
+      </allowedPart>
+      <allowedPart type="StarShips.PartBase.WeaponPart">
+        <ActionMechanism>Torpedo</ActionMechanism>
+        <CountOfParts>1</CountOfParts>
+      </allowedPart>
+    </AllowedParts>
+    <ImageURL>Ship2.png</ImageURL>
+  </shipHull>
+</shipHulls>

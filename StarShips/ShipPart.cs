@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using StarShips.Interfaces;
 using System.Xml.Linq;
-using StarShips.PartBase;
+using StarShips.Parts;
 using StarShips.Utility;
 
 namespace StarShips
@@ -17,6 +17,8 @@ namespace StarShips
         public bool IsDestroyed = false;
         internal Ship _target;
         public Ship Target { get { return _target; } set { _target = value; } }
+        internal Ship _parent;
+        public Ship Parent { get { return _parent; } }
         internal List<ShipAction> _actions = new List<ShipAction>();
         public List<ShipAction> Actions { get { return _actions; } set { _actions = value; } }
         public int PointCost = 0;
@@ -102,7 +104,7 @@ namespace StarShips
                     ShipAction newAct = (ShipAction)Activator.CreateInstance(t,oldValues);
                     newActions.Add(newAct);
                 }
-                result = new WeaponPart(source.Name, source.HP.Max, source.WeaponDamage, source.CritMultiplier, source.ReloadTime, newActions);
+                result = new WeaponPart(source.Parent, source.Name, source.HP.Max, source.WeaponDamage,source.DamageType,source.FiringType, source.CritMultiplier, source.ReloadTime, newActions);
             }
             else if (this is DefensePart)
             {
@@ -119,7 +121,7 @@ namespace StarShips
                     ShipAction newAct = (ShipAction)Activator.CreateInstance(t,oldValues);
                     newActions.Add(newAct);
                 }
-                result = new DefensePart(source.Name, source.HP.Max, source.DR, source.DownAdjective, source.PenetrateVerb, newActions);
+                result = new DefensePart(source.Parent, source.Name, source.HP.Max, source.DR, source.DownAdjective, source.PenetrateVerb, newActions);
             }
             else
             {
@@ -136,23 +138,23 @@ namespace StarShips
                     ShipAction newAct = (ShipAction)Activator.CreateInstance(t,oldValues);
                     newActions.Add(newAct);
                 }
-                result = new ActionPart(source.Name, source.HP.Max, source.Description, newActions);
+                result = new ActionPart(source.Parent, source.Name, source.HP.Max, source.Description, newActions);
             }
             return result;
         }
 
-        public static List<ShipPart> GetShipPartList(XDocument sourceDoc)
+        public static List<ShipPart> GetShipPartList(XDocument sourceDoc, Ship parent)
         {
             List<ShipPart> ShipPartList = new List<ShipPart>();
             XElement weaponParts = sourceDoc.Element("shipParts").Element("weaponParts");
             foreach (XElement weaponPart in weaponParts.Elements())
-                ShipPartList.Add(new WeaponPart(weaponPart));
+                ShipPartList.Add(new WeaponPart(weaponPart, parent));
             XElement defenseParts = sourceDoc.Element("shipParts").Element("defenseParts");
             foreach (XElement defensePart in defenseParts.Elements())
-                ShipPartList.Add(new DefensePart(defensePart));
+                ShipPartList.Add(new DefensePart(defensePart, parent));
             XElement actionParts = sourceDoc.Element("shipParts").Element("actionParts");
             foreach (XElement actionPart in actionParts.Elements())
-                ShipPartList.Add(new ActionPart(actionPart));
+                ShipPartList.Add(new ActionPart(actionPart, parent));
             return ShipPartList;
         }
     }

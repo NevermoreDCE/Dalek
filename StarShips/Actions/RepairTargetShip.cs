@@ -49,6 +49,10 @@ namespace StarShips.Actions
         {
             ActionValues[0] = Amount;
         }
+        /// <summary>
+        /// Instantiates RepairTargetShip with specified ActionValues.
+        /// </summary>
+        /// <param name="ActionValues">ActionValue[0] will be cast to int</param>
         public RepairTargetShip(object[] ActionValues)
         {
             this.ActionValues = ActionValues;

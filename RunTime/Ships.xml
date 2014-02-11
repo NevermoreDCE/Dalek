@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ships>
+  <ship name="Hunter">
+    <MaxHP>50</MaxHP>
+    <MaxMP>3</MaxMP>
+    <ShipHull>Frigate</ShipHull>
+    <shipParts>
+      <shipPart>Laser Beam</shipPart>
+      <shipPart>Laser Beam</shipPart>
+      <shipPart>Plasma Cannon</shipPart>
+      <shipPart>Torpedo</shipPart>
+      <shipPart>Shield Generator</shipPart>
+      <shipPart>Shield Generator</shipPart>
+      <shipPart>Armor Plate</shipPart>
+      <shipPart>Damage Control</shipPart>
+    </shipParts>
+  </ship>
+  <ship name="Prey">
+    <MaxHP>50</MaxHP>
+    <MaxMP>3</MaxMP>
+    <ShipHull>Galaxy</ShipHull>
+    <shipParts>
+      <shipPart>Laser Beam</shipPart>
+      <shipPart>Laser Beam</shipPart>
+      <shipPart>Laser Beam</shipPart>
+      <shipPart>Laser Beam</shipPart>
+      <shipPart>Shield Generator</shipPart>
+      <shipPart>Shield Generator</shipPart>
+      <shipPart>Armor Plate</shipPart>
+      <shipPart>Damage Control</shipPart>
+    </shipParts>
+  </ship>
+</ships>

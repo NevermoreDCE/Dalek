@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<shipParts>
+  <weaponParts>
+    <weaponPart name="Laser Beam">
+      <MaxHP>1</MaxHP>
+      <WeaponDamage>5</WeaponDamage>
+      <CritMultiplier>2</CritMultiplier>
+      <ReloadTime>0</ReloadTime>
+      <Actions />
+    </weaponPart>
+    <weaponPart name="Plasma Cannon">
+      <MaxHP>1</MaxHP>
+      <WeaponDamage>12</WeaponDamage>
+      <CritMultiplier>3</CritMultiplier>
+      <ReloadTime>2</ReloadTime>
+      <Actions />
+    </weaponPart>
+    <weaponPart name="Torpedo">
+      <MaxHP>1</MaxHP>
+      <WeaponDamage>20</WeaponDamage>
+      <CritMultiplier>2</CritMultiplier>
+      <ReloadTime>4</ReloadTime>
+      <Actions />
+    </weaponPart>
+  </weaponParts>
+  <defenseParts>
+    <defensePart name="Shield Generator">
+      <MaxHP>15</MaxHP>
+      <DR>1</DR>
+      <DownAdjective>Down</DownAdjective>
+      <PenetrateVerb>Penetrating</PenetrateVerb>
+      <Actions>
+        <action type="StarShips.Actions.RepairThisPart">
+          <Value index="0">2</Value>
+        </action>
+      </Actions>
+    </defensePart>
+    <defensePart name="Armor Plate">
+      <MaxHP>15</MaxHP>
+      <DR>3</DR>
+      <DownAdjective>Destroyed</DownAdjective>
+      <PenetrateVerb>Shattering</PenetrateVerb>
+      <Actions />
+    </defensePart>
+  </defenseParts>
+  <actionParts>
+    <actionPart name="Damage Control">
+      <MaxHP>1</MaxHP>
+      <ActionDescription>Regen: 5 HPs</ActionDescription>
+      <Actions>
+        <action type="StarShips.Actions.RepairTargetShip">
+          <Value index="0">5</Value>
+        </action>
+      </Actions>
+    </actionPart>
+  </actionParts>
+</shipParts>

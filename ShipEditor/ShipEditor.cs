@@ -5,7 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using StarShips;
-using StarShips.PartBase;
+using StarShips.Parts;
 
 namespace ShipEditor
 {
@@ -16,7 +16,7 @@ namespace ShipEditor
         Ship ship = new Ship();
         BindingSource bsShipParts = new BindingSource();
         List<ShipPart> ExistingParts = new List<ShipPart>();
-        string defaultShipPartsFileName = "ShipParts.xml";
+        //string defaultShipPartsFileName = "ShipParts.xml";
         XDocument shipDoc = new XDocument(new XElement("ships"));
         string currentShipDocFileName = "Ships.xml";
         
@@ -47,7 +47,7 @@ namespace ShipEditor
         private void LoadParts()
         {
             XDocument doc = XDocument.Load("ShipParts.xml");
-            ExistingParts = ShipPart.GetShipPartList(doc);
+            ExistingParts = ShipPart.GetShipPartList(doc, new Ship());
             cbxPartList.DataSource = ExistingParts;
             cbxPartList.DisplayMember = "Name";
             cbxPartList.SelectedIndex = -1;
@@ -74,6 +74,7 @@ namespace ShipEditor
         void LoadShipList(XDocument shipDoc)
         {
             ExistingShips.Clear();
+            if(shipDoc.Element("ships").Elements().Count()>0)
             foreach (var EShip in shipDoc.Element("ships").Elements())
                 ExistingShips.Add(new Ship(EShip, ExistingParts, ExistingHulls));
         }
@@ -194,6 +195,7 @@ namespace ShipEditor
         {
             ship.Name = tbxShipName.Text;
             ship.HullType = ((ShipHull)cbxShipHullTypes.SelectedItem).Clone();
+            ship.MP.Max = 3;
             ship.GetObjectXML(shipDoc);
             LoadShipList(shipDoc);
             ShowShipList();

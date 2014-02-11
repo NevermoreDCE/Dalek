@@ -1,0 +1,14 @@
+
+<themeSettings>
+	<firingTypes>
+		<firingType>Beam</firingType>
+		<firingType>Cannon</firingType>
+		<firingType>Torpedo</firingType>
+	</firingTypes>
+	<damageTypes>
+		<damageType>Laser</damageType>
+		<damageType>Plasma</damageType>
+		<damageType>Kinetic</damageType>
+		<damageType>Explosive</damageType>
+	</damageTypes>
+</themeSettings>

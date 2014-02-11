@@ -48,6 +48,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.btnClear = new System.Windows.Forms.Button();
             this.btnSaveHull = new System.Windows.Forms.Button();
+            this.tbxImage = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.nudHullPointsMax)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.drpPartLimits.ItemTemplate.SuspendLayout();
@@ -125,9 +127,9 @@
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Location = new System.Drawing.Point(15, 85);
+            this.groupBox1.Location = new System.Drawing.Point(15, 115);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(379, 367);
+            this.groupBox1.Size = new System.Drawing.Size(379, 337);
             this.groupBox1.TabIndex = 22;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Part Limits";
@@ -142,7 +144,7 @@
             this.drpPartLimits.ItemTemplate.Size = new System.Drawing.Size(354, 23);
             this.drpPartLimits.Location = new System.Drawing.Point(9, 73);
             this.drpPartLimits.Name = "drpPartLimits";
-            this.drpPartLimits.Size = new System.Drawing.Size(362, 288);
+            this.drpPartLimits.Size = new System.Drawing.Size(362, 254);
             this.drpPartLimits.TabIndex = 7;
             this.drpPartLimits.Text = "dataRepeater1";
             this.drpPartLimits.VirtualMode = true;
@@ -246,11 +248,29 @@
             this.btnSaveHull.UseVisualStyleBackColor = true;
             this.btnSaveHull.Click += new System.EventHandler(this.btnSaveHull_Click);
             // 
+            // tbxImage
+            // 
+            this.tbxImage.Location = new System.Drawing.Point(88, 85);
+            this.tbxImage.Name = "tbxImage";
+            this.tbxImage.Size = new System.Drawing.Size(200, 20);
+            this.tbxImage.TabIndex = 26;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(12, 88);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(67, 13);
+            this.label6.TabIndex = 25;
+            this.label6.Text = "Image Name";
+            // 
             // HullMaker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(410, 495);
+            this.Controls.Add(this.tbxImage);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnSaveHull);
             this.Controls.Add(this.groupBox1);
@@ -297,6 +317,8 @@
         private System.Windows.Forms.Button btnPartLimitRemove;
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Button btnSaveHull;
+        private System.Windows.Forms.TextBox tbxImage;
+        private System.Windows.Forms.Label label6;
     }
 }
 

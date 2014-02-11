@@ -5,7 +5,7 @@ using System.Text;
 using StarShips.Utility;
 using System.Runtime.Serialization;
 using System.Xml.Linq;
-using StarShips.PartBase;
+using StarShips.Parts;
 
 namespace StarShips
 {
@@ -36,7 +36,8 @@ namespace StarShips
             XElement result = new XElement("allowedPart",
                 new XAttribute("type", PartType.ToString()),
                 new XElement("ActionMechanism", ActionMechanism),
-                new XElement("CountOfParts", CountOfParts.ToString()));
+                new XElement("CountOfParts", CountOfParts.ToString())
+                );
             return result;
         }
         #endregion
@@ -68,20 +69,16 @@ namespace StarShips
     {
         #region Private Variables
         string _name = "No Name";
+        string _imageURL = string.Empty;
         StatWithMax _hullPoints = new StatWithMax();
         List<PartCount> _allowedParts = new List<PartCount>();
         #endregion
 
         #region Public Properties
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-        }
+        public string Name { get { return _name; } }
         public StatWithMax HullPoints { get { return _hullPoints; } set { _hullPoints = value; } }
         public List<PartCount> AllowedParts { get { return _allowedParts; } }
+        public string ImageURL { get { return _imageURL; } }
         
         #endregion
 
@@ -96,7 +93,7 @@ namespace StarShips
             {
                 newParts.Add(new PartCount(oldPart.PartType,oldPart.ActionMechanism,oldPart.CountOfParts));
             }
-            result = new ShipHull(source.Name, source._hullPoints.Max, newParts);
+            result = new ShipHull(source.Name, source._hullPoints.Max, newParts, source.ImageURL);
             return result;
         }
 
@@ -117,6 +114,7 @@ namespace StarShips
             info.AddValue("Name", this._name);
             info.AddValue("HullPoints", this._hullPoints);
             info.AddValue("AllowedParts", this._allowedParts);
+            info.AddValue("ImageURL", this._imageURL);
         }
         public void GetObjectXML(XDocument doc)
         {
@@ -127,6 +125,10 @@ namespace StarShips
                 hull = doc.Descendants("shipHull").First(f => f.Attribute("name").Value == this.Name);
                 hull.Element("MaxHP").Value = this._hullPoints.Max.ToString();
                 AddAllowedParts(hull.Element("AllowedParts"));
+                if (hull.Element("ImageURL") == null)
+                    hull.Add(new XElement("ImageURL"), this._imageURL);
+                else
+                    hull.Element("ImageURL").Value = this._imageURL;
             }
             else
             {
@@ -135,7 +137,8 @@ namespace StarShips
                 AddAllowedParts(parts);
                 hull = new XElement("shipHull", new XAttribute("name", this.Name),
                         new XElement("MaxHP", this._hullPoints.Max),
-                        parts);
+                        parts,
+                        new XElement("ImageURL",this._imageURL));
                 doc.Element("shipHulls").Add(hull);
             }
             
@@ -156,15 +159,21 @@ namespace StarShips
         }
         public ShipHull(string Name, int MaxHP, List<PartCount> AllowedParts)
         {
+            new ShipHull(Name, MaxHP, AllowedParts, string.Empty);
+        }
+        public ShipHull(string Name, int MaxHP, List<PartCount> AllowedParts, string ImageURL)
+        {
             this._name = Name;
             this._hullPoints.Max = MaxHP;
             this._allowedParts = AllowedParts;
+            this._imageURL = ImageURL;
         }
         public ShipHull(SerializationInfo info, StreamingContext ctxt)
         {
             this._name = (string)info.GetValue("Name", typeof(string));
             this._hullPoints = (StatWithMax)info.GetValue("HullPoints", typeof(StatWithMax));
             this._allowedParts = (List<PartCount>)info.GetValue("AllowedParts", typeof(List<PartCount>));
+            this._imageURL = (string)info.GetValue("ImageURL", typeof(string));
         }
         public ShipHull(XElement description)
         {
@@ -174,6 +183,8 @@ namespace StarShips
             {
                 this._allowedParts.Add(new PartCount(part));
             }
+            if(description.Element("ImageURL")!=null)
+                this._imageURL = description.Element("ImageURL").Value;
         }
         #endregion
 

@@ -8,7 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using StarShips;
 using System.Xml.Linq;
-using StarShips.PartBase;
+using StarShips.Parts;
 
 namespace HullMaker
 {
@@ -138,9 +138,11 @@ namespace HullMaker
             string Name = tbxHullName.Text;
             int MaxHP = int.Parse(nudHullPointsMax.Value.ToString());
 
-            hull = new ShipHull(Name, MaxHP, PartCounts);
+            hull = new ShipHull(Name, MaxHP, PartCounts,tbxImage.Text);
+            
             hull.GetObjectXML(hullsDoc);
             hullsDoc.Save("ShipHulls.xml");
+            LoadHulls();
 
         }
         #endregion
@@ -150,6 +152,7 @@ namespace HullMaker
         {
             tbxHullName.Text = hull.Name;
             nudHullPointsMax.Value = hull.HullPoints.Max;
+            tbxImage.Text = hull.ImageURL;
             PartCounts = hull.AllowedParts;
             ShowParts();
         }

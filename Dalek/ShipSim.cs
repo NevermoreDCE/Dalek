@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using StarShips;
-using StarShips.PartBase;
+using StarShips.Parts;
 using StarShips.Randomizer;
 
 namespace Dalek
@@ -34,7 +34,7 @@ namespace Dalek
         private void LoadParts()
         {
             XDocument doc = XDocument.Load("ShipParts.xml");
-            ExistingParts = ShipPart.GetShipPartList(doc);
+            ExistingParts = ShipPart.GetShipPartList(doc, new Ship());
         }
         private void LoadHulls()
         {

@@ -7,7 +7,7 @@ using StarShips.Interfaces;
 using System.Xml.Linq;
 using StarShips.Utility;
 
-namespace StarShips.PartBase
+namespace StarShips.Parts
 {
     [Serializable]
     public class ActionPart : ShipPart, ISerializable
@@ -40,6 +40,7 @@ namespace StarShips.PartBase
             info.AddValue("HP", HP);
             info.AddValue("ActionDescription", _actionDescription);
             info.AddValue("Actions", _actions);
+            info.AddValue("Parent", _parent);
         }
 
         public override void GetObjectXML(XDocument sourceDoc)
@@ -71,8 +72,9 @@ namespace StarShips.PartBase
         #endregion
 
         #region Constructors
-        public ActionPart(string Name, int MaxHP, string ActionDescription, List<ShipAction> Actions)
+        public ActionPart(Ship Parent, string Name, int MaxHP, string ActionDescription, List<ShipAction> Actions)
         {
+            this._parent = Parent;
             this.Name = Name;
             HP.Max = MaxHP;
             HP.Current = MaxHP;
@@ -82,14 +84,16 @@ namespace StarShips.PartBase
 
         public ActionPart(SerializationInfo info, StreamingContext ctxt)
         {
+            _parent = (Ship)info.GetValue("Parent", typeof(Ship));
             Name = (string)info.GetValue("Name", typeof(string));
             HP = (StatWithMax)info.GetValue("HP", typeof(StatWithMax));
             _actionDescription = (string)info.GetValue("ActionDescription", typeof(string));
             _actions = (List<ShipAction>)info.GetValue("Actions", typeof(List<ShipAction>));
         }
 
-        public ActionPart(XElement description)
+        public ActionPart(XElement description, Ship parent)
         {
+            this._parent = parent;
             this.Name = description.Attribute("name").Value;
             this.HP.Max = int.Parse(description.Element("MaxHP").Value);
             this._actionDescription = description.Element("ActionDescription").Value;
