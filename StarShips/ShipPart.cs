@@ -104,7 +104,7 @@ namespace StarShips
                     ShipAction newAct = (ShipAction)Activator.CreateInstance(t,oldValues);
                     newActions.Add(newAct);
                 }
-                result = new WeaponPart(source.Parent, source.Name, source.HP.Max, source.WeaponDamage,source.DamageType,source.FiringType, source.CritMultiplier, source.ReloadTime, newActions);
+                result = new WeaponPart(source.Parent, source.Name, source.HP.Max, source.WeaponDamage,source.Range,source.DamageType,source.FiringType, source.CritMultiplier, source.ReloadTime, newActions);
             }
             else if (this is DefensePart)
             {

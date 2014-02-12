@@ -21,6 +21,7 @@ namespace StarShips.Parts
         int _currentReload = 0;
         string _damageType = string.Empty;
         string _firingType = string.Empty;
+        double _weaponRange = 0d;
         #endregion
 
         #region Public Properties
@@ -41,6 +42,7 @@ namespace StarShips.Parts
         public int ReloadTime { get { return _reloadTime; } }
         public string DamageType { get { return _damageType; } }
         public string FiringType { get { return _firingType; } }
+        public double Range { get { return _weaponRange; } }
 
         #endregion
 
@@ -48,13 +50,14 @@ namespace StarShips.Parts
 
         public override string ToString()
         {
-            return string.Format("{0} ({1}DMG: {2}{3}, {4}x on Crit, {5} Reload)",
+            return string.Format("{0} ({1}{2}DMG: {3}{4}, {5}x on Crit, {6} Reload)",
                 this.Name,
                 (_firingType != string.Empty ? string.Format("{0} ", _firingType) : string.Empty),
+                (_weaponRange > 0d ? string.Format("Rng: {0} ", _weaponRange.ToString()) : string.Empty),
                 _weaponDamage.ToString(),
                 (_damageType != string.Empty ? string.Format(" - ({0})", _damageType) : string.Empty),
                 _critMultiplier.ToString(),
-                (_currentReload>0?string.Format("{0}/{1}",_currentReload,_reloadTime):_reloadTime.ToString())
+                (_currentReload > 0 ? string.Format("{0}/{1}", _currentReload, _reloadTime) : _reloadTime.ToString())
                 );
         }
 
@@ -78,11 +81,21 @@ namespace StarShips.Parts
                 int hitNum = rng.d100();
 
                 if (hitNum >= critAbove) 
-                    result = "Crit! " + string.Join(", ", Target.HitFor(_weaponDamage * _critMultiplier));
+                    result = string.Format("{0} CRITS {1} for {2}: {3}",
+                        this.Name,
+                        Target.Name,
+                        this.WeaponDamage,
+                        string.Join(", ", Target.HitFor(_weaponDamage * _critMultiplier))
+                        );
                 else if (hitNum >= hitAbove) 
-                    result = string.Join(", ", Target.HitFor(_weaponDamage));
+                    result = string.Format("{0} hits {1} for {2}: {3}",
+                        this.Name,
+                        Target.Name,
+                        this.WeaponDamage,
+                        string.Join(", ", Target.HitFor(_weaponDamage))
+                        );
                 else 
-                    result = "Missed!";
+                    result = string.Format("{0} Missed!", this.Name);
             }
             
             return result;
@@ -108,6 +121,7 @@ namespace StarShips.Parts
             info.AddValue("CurrentReload", _currentReload);
             info.AddValue("Actions", _actions);
             info.AddValue("Parent", _parent);
+            info.AddValue("WeaponRange", _weaponRange);
         }
 
         public override void GetObjectXML(XDocument sourceDoc)
@@ -129,6 +143,10 @@ namespace StarShips.Parts
                     weap.Element("FiringType").Value = this._firingType;
                 else
                     weap.Add(new XElement("FiringType", this._firingType));
+                if (weap.Element("WeaponRange") != null)
+                    weap.Element("WeaponRange").Value = this._weaponRange.ToString();
+                else
+                    weap.Add(new XElement("WeaponRange", this._weaponRange.ToString()));
                 weap.Element("ReloadTime").Value = this._reloadTime.ToString();
 
                 addActions(weap.Element("Actions"));
@@ -146,6 +164,7 @@ namespace StarShips.Parts
                         new XElement("DamageType",this._damageType),
                         new XElement("FiringType",this._firingType),
                         new XElement("ReloadTime", this._reloadTime.ToString()),
+                        new XElement("WeaponRange",this._weaponRange.ToString()),
                         actions);
                 sourceDoc.Descendants("weaponParts").First().Add(weap);
             }
@@ -154,7 +173,7 @@ namespace StarShips.Parts
         #endregion
 
         #region Constructors
-        private void initWeaponPart(Ship Parent, string Name, int MaxHP, int Damage, string DamageType, string FiringType, int CritMultiplier, int ReloadTime, List<ShipAction> Actions)
+        private void initWeaponPart(Ship Parent, string Name, int MaxHP, int Damage,double Range, string DamageType, string FiringType, int CritMultiplier, int ReloadTime, List<ShipAction> Actions)
         {
             this._parent = Parent;
             this.Name = Name;
@@ -166,11 +185,16 @@ namespace StarShips.Parts
             _firingType = FiringType;
             _reloadTime = ReloadTime;
             _actions = Actions;
+            _weaponRange = Range;
         }
 
         public WeaponPart(Ship Parent, string Name, int MaxHP, int Damage, string DamageType, string FiringType, int CritMultiplier, int ReloadTime, List<ShipAction> Actions)
         {
-            initWeaponPart(Parent, Name, MaxHP, Damage, DamageType, FiringType, CritMultiplier, ReloadTime, Actions);
+            initWeaponPart(Parent, Name, MaxHP, Damage, 0d, DamageType, FiringType, CritMultiplier, ReloadTime, Actions);
+        }
+        public WeaponPart(Ship Parent, string Name, int MaxHP, int Damage, double Range, string DamageType, string FiringType, int CritMultiplier, int ReloadTime, List<ShipAction> Actions)
+        {
+            initWeaponPart(Parent, Name, MaxHP, Damage, Range, DamageType, FiringType, CritMultiplier, ReloadTime, Actions);
         }
         public WeaponPart(SerializationInfo info, StreamingContext ctxt)
         {
@@ -184,6 +208,7 @@ namespace StarShips.Parts
             _reloadTime = (int)info.GetValue("ReloadTime", typeof(int));
             _currentReload = (int)info.GetValue("CurrentReload", typeof(int));
             _actions = (List<ShipAction>)info.GetValue("Actions", typeof(List<ShipAction>));
+            _weaponRange = (double)info.GetValue("WeaponRange", typeof(double));
         }
         public WeaponPart(XElement description, Ship parent)
         {
@@ -197,6 +222,8 @@ namespace StarShips.Parts
             if (description.Element("FiringType") != null)
                 this._firingType = description.Element("FiringType").Value;
             this._reloadTime = int.Parse(description.Element("ReloadTime").Value);
+            if (description.Element("WeaponRange") != null)
+                this._weaponRange = double.Parse(description.Element("WeaponRange").Value);
             loadActions(description.Element("Actions"));
         }
         #endregion

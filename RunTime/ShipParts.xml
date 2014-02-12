@@ -7,6 +7,9 @@
       <CritMultiplier>2</CritMultiplier>
       <ReloadTime>0</ReloadTime>
       <Actions />
+      <DamageType>Laser</DamageType>
+      <FiringType>Beam</FiringType>
+      <WeaponRange>2</WeaponRange>
     </weaponPart>
     <weaponPart name="Plasma Cannon">
       <MaxHP>1</MaxHP>
@@ -14,6 +17,9 @@
       <CritMultiplier>3</CritMultiplier>
       <ReloadTime>2</ReloadTime>
       <Actions />
+      <DamageType>Plasma</DamageType>
+      <FiringType>Cannon</FiringType>
+      <WeaponRange>3</WeaponRange>
     </weaponPart>
     <weaponPart name="Torpedo">
       <MaxHP>1</MaxHP>
@@ -21,6 +27,9 @@
       <CritMultiplier>2</CritMultiplier>
       <ReloadTime>4</ReloadTime>
       <Actions />
+      <DamageType>Explosive</DamageType>
+      <FiringType>Torpedo</FiringType>
+      <WeaponRange>5</WeaponRange>
     </weaponPart>
   </weaponParts>
   <defenseParts>

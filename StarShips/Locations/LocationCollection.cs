@@ -140,20 +140,11 @@ namespace StarShips.Locations
             foreach (Node node in getNeighbors(new Node(sourceLoc.X, sourceLoc.Y), (int)facing, targetLoc))
             {
                 openList.Add(node);
-                Debug.WriteLine(node);
             }
 
             Node previous = new Node();
             while (openList.Count > 0)
             {
-                foreach (var n in openList)
-                {
-                    Debug.WriteLine(n);
-                }
-                foreach (var n in closedList)
-                {
-                    Debug.WriteLine(n);
-                }
                 // current lowest G+H
                 int indexS = openList.Min(f => f.F);
                 // get next node with lowest G+H that is not the previous node

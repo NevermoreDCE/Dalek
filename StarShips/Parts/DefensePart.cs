@@ -49,7 +49,7 @@ namespace StarShips.Parts
                 return result;
             }
 
-            if (Damage <= -_dr)
+            if (Damage <= _dr)
             {
                 result.Remainder = 0;
                 result.Message = string.Format("Bounces off {0} for No Damage!",this.Name);

@@ -1,40 +1,24 @@
 ﻿<Window x:Class="WPFPathfinding.ShipSim"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="ShipSim" Height="860" Width="1110" Loaded="Window_Loaded" Background="Black">
-    <StackPanel Height="850" Background="Black">
+        Title="ShipSim" Height="1024" Width="1280" Loaded="Window_Loaded" Background="Black">
+    <StackPanel Background="Black" VerticalAlignment="Top">
         <StackPanel Orientation="Horizontal">
-            <StackPanel Width="830" Name="gridStack">
-                <StackPanel Orientation="Horizontal" Width="820">
-                    <StackPanel Orientation="Horizontal" Width="605">
-                        <Button Name="btnRefreshMap" Content="Refresh Map" Click="btnRefreshMap_Click" Width="80" HorizontalAlignment="Left"/>
-                        <Button Name="btnResetShipLocations" Content="Reset Ships" Click="btnResetShipLocations_Click" Width="80" Margin="5 0 5 0" HorizontalAlignment="Left"/>
+            <StackPanel Width="820" Name="gridStack">
+                <StackPanel Orientation="Horizontal" Width="820" Height="25">
                         <Button Name="btnEndTurn" Content="End Turn" Click="btnEndTurn_Click" Width="80" Margin="5 0 5 0"/>
-                        <Button Name="btnFireWeapon" Content="Fire Beam" Click="btnFireWeapon_Click" Width="80" Margin="5 0 5 0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Width="210">
-                        <Button Name="btnFindOneStep" Content="Find Next Step" Width="100" Margin="5 0 5 0" HorizontalAlignment="Right" Click="btnFindOneStep_Click"/>
-                        <Button Name="btnFindPath" Content="Find Full Path" Width="100" Margin="5 0 5 0" HorizontalAlignment="Right" Click="btnFindPath_Click"/>
-                    </StackPanel>
+                        <Button Name="btnFireWeapon" Content="Show Beams" Click="btnFireWeapon_Click" Width="80" Margin="5 0 5 0"/>
                 </StackPanel>
-                
-                <Grid Name="g" Width="820" Height="820" HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="0">
-            
-                </Grid>
-                <Border BorderBrush="Azure" BorderThickness="2">
-                    <Canvas Name="c" Width="820" Height="820" HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="80" />
-                </Border>
+                <Grid Name="g" Width="820" Height="820" HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="0"/>
+                <ListBox Name="statusWindow" Height="130" Width="820" Background="Black" Foreground="WhiteSmoke"/>
+                <Canvas Name="c" Width="820" Height="820" HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="80" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <StackPanel>
-                    <Button Name="btnEndPlayer1Turn" Content="Player 1 End Turn" Click="btnEndPlayer1Turn_Click"/>
-                    <StackPanel Name="spPlayer1"></StackPanel>
-                    <Label Name="lblPathTaken1" Content="Path Taken:" Foreground="White" HorizontalAlignment="Left"/>
+                    <StackPanel Name="spCurrentShip"></StackPanel>
                 </StackPanel>
                 <StackPanel>
-                    <Button Name="btnEndPlayer2Turn" Content="Player 2 End Turn" Click="btnEndPlayer2Turn_Click"/>
-                    <StackPanel Name="spPlayer2"></StackPanel>
-                    <Label Name="lblPathTaken2" Content="Path Taken:" Foreground="White" HorizontalAlignment="Left"/>
+                    <StackPanel Name="spTargetShip"></StackPanel>
                 </StackPanel>
             </StackPanel>
             

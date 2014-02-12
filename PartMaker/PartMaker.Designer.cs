@@ -30,6 +30,10 @@
         {
             this.tcPartTypes = new System.Windows.Forms.TabControl();
             this.tbpWeapon = new System.Windows.Forms.TabPage();
+            this.label15 = new System.Windows.Forms.Label();
+            this.cbxDamageTypes = new System.Windows.Forms.ComboBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.cbxFiringTypes = new System.Windows.Forms.ComboBox();
             this.nudWeapPartPointCost = new System.Windows.Forms.NumericUpDown();
             this.label20 = new System.Windows.Forms.Label();
             this.nudWeapPartHP = new System.Windows.Forms.NumericUpDown();
@@ -97,10 +101,8 @@
             this.cbxExistingParts = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.btnLoadPart = new System.Windows.Forms.Button();
-            this.label13 = new System.Windows.Forms.Label();
-            this.cbxFiringTypes = new System.Windows.Forms.ComboBox();
-            this.label15 = new System.Windows.Forms.Label();
-            this.cbxDamageTypes = new System.Windows.Forms.ComboBox();
+            this.nudWeaponRange = new System.Windows.Forms.NumericUpDown();
+            this.label23 = new System.Windows.Forms.Label();
             this.tcPartTypes.SuspendLayout();
             this.tbpWeapon.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartPointCost)).BeginInit();
@@ -127,6 +129,7 @@
             this.drpActPartActionList.ItemTemplate.SuspendLayout();
             this.drpActPartActionList.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudActPartActionValue)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWeaponRange)).BeginInit();
             this.SuspendLayout();
             // 
             // tcPartTypes
@@ -142,6 +145,8 @@
             // 
             // tbpWeapon
             // 
+            this.tbpWeapon.Controls.Add(this.nudWeaponRange);
+            this.tbpWeapon.Controls.Add(this.label23);
             this.tbpWeapon.Controls.Add(this.label15);
             this.tbpWeapon.Controls.Add(this.cbxDamageTypes);
             this.tbpWeapon.Controls.Add(this.label13);
@@ -168,6 +173,40 @@
             this.tbpWeapon.TabIndex = 0;
             this.tbpWeapon.Text = "Weapon Part";
             this.tbpWeapon.UseVisualStyleBackColor = true;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(286, 42);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(74, 13);
+            this.label15.TabIndex = 25;
+            this.label15.Text = "Damage Type";
+            // 
+            // cbxDamageTypes
+            // 
+            this.cbxDamageTypes.FormattingEnabled = true;
+            this.cbxDamageTypes.Location = new System.Drawing.Point(386, 39);
+            this.cbxDamageTypes.Name = "cbxDamageTypes";
+            this.cbxDamageTypes.Size = new System.Drawing.Size(193, 21);
+            this.cbxDamageTypes.TabIndex = 24;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(286, 19);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(59, 13);
+            this.label13.TabIndex = 23;
+            this.label13.Text = "Firing Type";
+            // 
+            // cbxFiringTypes
+            // 
+            this.cbxFiringTypes.FormattingEnabled = true;
+            this.cbxFiringTypes.Location = new System.Drawing.Point(386, 14);
+            this.cbxFiringTypes.Name = "cbxFiringTypes";
+            this.cbxFiringTypes.Size = new System.Drawing.Size(193, 21);
+            this.cbxFiringTypes.TabIndex = 22;
             // 
             // nudWeapPartPointCost
             // 
@@ -403,7 +442,7 @@
             this.tbpDefense.Location = new System.Drawing.Point(4, 22);
             this.tbpDefense.Name = "tbpDefense";
             this.tbpDefense.Padding = new System.Windows.Forms.Padding(3);
-            this.tbpDefense.Size = new System.Drawing.Size(277, 340);
+            this.tbpDefense.Size = new System.Drawing.Size(585, 340);
             this.tbpDefense.TabIndex = 1;
             this.tbpDefense.Text = "Defense Part";
             this.tbpDefense.UseVisualStyleBackColor = true;
@@ -637,7 +676,7 @@
             this.tbpAction.Controls.Add(this.label11);
             this.tbpAction.Location = new System.Drawing.Point(4, 22);
             this.tbpAction.Name = "tbpAction";
-            this.tbpAction.Size = new System.Drawing.Size(277, 340);
+            this.tbpAction.Size = new System.Drawing.Size(585, 340);
             this.tbpAction.TabIndex = 2;
             this.tbpAction.Text = "Action Part";
             this.tbpAction.UseVisualStyleBackColor = true;
@@ -848,39 +887,22 @@
             this.btnLoadPart.UseVisualStyleBackColor = true;
             this.btnLoadPart.Click += new System.EventHandler(this.btnLoadPart_Click);
             // 
-            // label13
+            // nudWeaponRange
             // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(286, 19);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(59, 13);
-            this.label13.TabIndex = 23;
-            this.label13.Text = "Firing Type";
+            this.nudWeaponRange.Location = new System.Drawing.Point(459, 66);
+            this.nudWeaponRange.Name = "nudWeaponRange";
+            this.nudWeaponRange.Size = new System.Drawing.Size(120, 20);
+            this.nudWeaponRange.TabIndex = 27;
+            this.nudWeaponRange.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
-            // cbxFiringTypes
+            // label23
             // 
-            this.cbxFiringTypes.FormattingEnabled = true;
-            this.cbxFiringTypes.Location = new System.Drawing.Point(386, 14);
-            this.cbxFiringTypes.Name = "cbxFiringTypes";
-            this.cbxFiringTypes.Size = new System.Drawing.Size(193, 21);
-            this.cbxFiringTypes.TabIndex = 22;
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(286, 42);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(74, 13);
-            this.label15.TabIndex = 25;
-            this.label15.Text = "Damage Type";
-            // 
-            // cbxDamageTypes
-            // 
-            this.cbxDamageTypes.FormattingEnabled = true;
-            this.cbxDamageTypes.Location = new System.Drawing.Point(386, 39);
-            this.cbxDamageTypes.Name = "cbxDamageTypes";
-            this.cbxDamageTypes.Size = new System.Drawing.Size(193, 21);
-            this.cbxDamageTypes.TabIndex = 24;
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(286, 68);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(83, 13);
+            this.label23.TabIndex = 26;
+            this.label23.Text = "Weapon Range";
             // 
             // PartMaker
             // 
@@ -928,6 +950,7 @@
             this.drpActPartActionList.ItemTemplate.PerformLayout();
             this.drpActPartActionList.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.nudActPartActionValue)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWeaponRange)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1008,6 +1031,8 @@
         private System.Windows.Forms.ComboBox cbxDamageTypes;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.ComboBox cbxFiringTypes;
+        private System.Windows.Forms.NumericUpDown nudWeaponRange;
+        private System.Windows.Forms.Label label23;
     }
 }
 

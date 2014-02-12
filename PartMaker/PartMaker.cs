@@ -223,6 +223,7 @@ namespace PartMaker
             tbxWeapPartName.Text = string.Empty;
             nudWeapPartHP.Value = 1;
             nudWeapPartPointCost.Value = 0;
+            nudWeaponRange.Value = 0;
             bs.Clear();
             ShowPartActions(drpWeapPartActionList);
             ShowDamageTypes();
@@ -244,7 +245,8 @@ namespace PartMaker
             int Reload = int.Parse(nudWeapPartReload.Value.ToString());
             string DamageType = cbxDamageTypes.SelectedItem.ToString();
             string FiringType = cbxFiringTypes.SelectedItem.ToString();
-            Part = new WeaponPart(new Ship(), Name, HP, Dmg, DamageType, FiringType, Crit, Reload, PartActions);
+            double WeaponRange = double.Parse(nudWeaponRange.Value.ToString());
+            Part = new WeaponPart(new Ship(), Name, HP, Dmg,WeaponRange, DamageType, FiringType, Crit, Reload, PartActions);
             
             Part.GetObjectXML(doc);
             doc.Save(filename);
@@ -300,6 +302,7 @@ namespace PartMaker
             WeaponPart weap = (WeaponPart)Part;
             tbxWeapPartName.Text = weap.Name;
             nudWeapPartHP.Value = weap.HP.Max;
+            nudWeaponRange.Value = decimal.Parse(weap.Range.ToString());
             if (themeSettings.FiringTypes.Where(f => f == weap.FiringType).Count() > 0)
                 cbxFiringTypes.SelectedItem = weap.FiringType;
             else

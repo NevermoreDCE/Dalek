@@ -28,9 +28,9 @@ namespace WPFPathfinding
         Image[,] contextImages = new Image[GridDimensionX, GridDimensionY];
         List<Ship> Ships = new List<Ship>();
         Ship currentShip;
-        List<Label> PathTaken = new List<Label>();
         Image highlightCurrentShip;
         Image moveTarget;
+        Image explosionImg;
         BitmapImage contextMenuTransparency;
         
         public ShipSim()
@@ -70,8 +70,7 @@ namespace WPFPathfinding
                     }
                 }
             }
-            btnEndPlayer2Turn.IsEnabled = false;
-            ShowShipStatus(currentShip, spPlayer1);
+            ShowShipStatus(currentShip, spCurrentShip);
         }
 
         #region Initalize Methods
@@ -180,6 +179,7 @@ namespace WPFPathfinding
                 img.Stretch = Stretch.None;
                 img.SetValue(Panel.ZIndexProperty, 10);
                 ship.Image = img;
+                ship.OnShipDestroyed+=new StarShips.Delegates.ShipDelegates.ShipDestroyedEvent(onShipDestroyedHandler);
                 Ships.Add(ship);
             }
 
@@ -205,6 +205,17 @@ namespace WPFPathfinding
             moveTarget.Stretch = Stretch.None;
             moveTarget.SetValue(Panel.ZIndexProperty, 101);
 
+            explosionImg = new Image();
+            BitmapImage expSrc = new BitmapImage();
+            expSrc.BeginInit();
+            expSrc.UriSource = new Uri("Explosion.png", UriKind.Relative);
+            expSrc.CacheOption = BitmapCacheOption.OnLoad;
+            expSrc.EndInit();
+            moveTarget.Source = expSrc;
+            moveTarget.Height = 32;
+            moveTarget.Width = 32;
+            moveTarget.Stretch = Stretch.None;
+            moveTarget.SetValue(Panel.ZIndexProperty, 200);
 
             contextMenuTransparency = new BitmapImage();
             contextMenuTransparency.BeginInit();
@@ -270,7 +281,6 @@ namespace WPFPathfinding
             Grid.SetColumn(img, y);
             g.Children.Add(img);
         }
-
         private void AddShipsToMenu(int x, int y, ContextMenu menu)
         {
             foreach (Ship ship in Ships)
@@ -300,12 +310,11 @@ namespace WPFPathfinding
                 }
             }
         }
-
         private void AddWeaponsToMenu(Ship ship, ContextMenu menu)
         {
             MenuItem MenuFireOnShip = new MenuItem();
             MenuFireOnShip.Header = string.Format("Fire on {0}", ship.Name);
-            foreach (WeaponPart weapon in currentShip.Equipment.Where(f => f is WeaponPart))
+            foreach (WeaponPart weapon in currentShip.Equipment.Where(f => f is WeaponPart && !f.IsDestroyed))
             {
                 MenuItem MenuWeapon = new MenuItem();
                 MenuWeapon.Header = string.Format("With {0}", weapon.Name);
@@ -318,14 +327,13 @@ namespace WPFPathfinding
             MenuItem fireAll = new MenuItem();
             fireAll.Header = "With All Weapons";
             List<WeaponPart> allWeaponList = new List<WeaponPart>();
-            foreach (WeaponPart weapon in currentShip.Equipment.Where(f => f is WeaponPart))
+            foreach (WeaponPart weapon in currentShip.Equipment.Where(f => f is WeaponPart && !f.IsDestroyed))
                 allWeaponList.Add(weapon);
             fireAll.CommandParameter = new Tuple<Ship, List<WeaponPart>>(ship, allWeaponList);
             fireAll.Click += new RoutedEventHandler(MenuWeapon_Click);
             MenuFireOnShip.Items.Add(fireAll);
             menu.Items.Add(MenuFireOnShip);
         }
-
         private void RemoveContextMenuImage(System.Drawing.Point point)
         {
             RemoveContextMenuImage(point.X, point.Y);
@@ -456,6 +464,20 @@ namespace WPFPathfinding
                 if (moveTarget.Parent != null)
                     ((Grid)moveTarget.Parent).Children.Remove(moveTarget);
         }
+
+        private void AddExplosionImage(Ship shipToExplode)
+        {
+            Grid.SetRow(explosionImg, shipToExplode.Position.X);
+            Grid.SetColumn(explosionImg, shipToExplode.Position.Y);
+            g.Children.Add(explosionImg);
+            Action<Image, Ship> removeExpImage = new Action<Image, Ship>(removeExplosionImage);
+            DelayedExecutionService.RemoveExplosion(removeExpImage, explosionImg, shipToExplode);
+        }
+        private void removeExplosionImage(Image explosionImage, Ship shipToExplode)
+        {
+            ((Grid)explosionImg.Parent).Children.Remove(explosionImg);
+            ((Grid)shipToExplode.Image.Parent).Children.Remove(shipToExplode.Image);
+        }
         #endregion
         #endregion
 
@@ -475,20 +497,6 @@ namespace WPFPathfinding
             Grid.SetColumn(lbl, y);
             g.Children.Add(lbl);
             return lbl;
-        }
-
-        private void AddPathLabel(System.Drawing.Point current)
-        {
-            PathTaken.Add(AddLabel(current.X, current.Y, "X", Brushes.GreenYellow));
-        }
-
-        private void ResetPathLabels()
-        {
-            foreach (Label path in PathTaken)
-            {
-                ((Grid)path.Parent).Children.Remove(path);
-            }
-            PathTaken = new List<Label>();
         }
 
         void ShowShipStatus(Ship ship, StackPanel panel)
@@ -515,33 +523,6 @@ namespace WPFPathfinding
             lbl.Content = text;
             lbl.Foreground = color;
             panel.Children.Add(lbl);
-        }
-
-        #endregion
-
-        #region Pathfinding Methods
-        private void FindPath()
-        {
-            Ship Hunter = Ships.First(f => f.Name == "Hunter");
-            Ship Prey = Ships.First(f => f.Name == "Prey");
-            while (Hunter.Position != Prey.Position)
-            {
-                FindOneStep();
-                
-            }
-        }
-        private void FindOneStep()
-        {
-            Ship Hunter = Ships.First(f => f.Name == "Hunter");
-            Ship Prey = Ships.First(f => f.Name == "Prey");
-            System.Drawing.Point current = Hunter.Position;
-            AddPathLabel(current);
-            RemoveShipImage(Hunter);
-            System.Drawing.Point next = locations.MoveShipToPoint(Hunter, Prey.Position);
-            AddShipImage(next.X, next.Y, Hunter);
-            
-            //lblPathTaken.Content += Environment.NewLine + string.Format("{0}, {1}", next.X, next.Y);
-            Hunter.MP.Current = Hunter.MP.Max;
         }
         #endregion
 
@@ -570,7 +551,7 @@ namespace WPFPathfinding
         public void onWeaponFiredHandler(object sender, EventArgs e, System.Drawing.Point sourceLoc, System.Drawing.Point targetLoc, string firingType)
         {
             DrawShipFiringBeam(sourceLoc, targetLoc);
-            ShowShipStatus(Ships.First(f => f.Position == targetLoc), spPlayer2);
+            ShowShipStatus(Ships.First(f => f.Position == targetLoc), spTargetShip);
         }
         private void DrawShipFiringBeam(System.Drawing.Point firingShip, System.Drawing.Point targetShip)
         {
@@ -599,6 +580,14 @@ namespace WPFPathfinding
             ((Canvas)pathToRemove.Parent).Children.Remove(pathToRemove);
         }
         #endregion
+
+        public void onShipDestroyedHandler(object sender, EventArgs e, Ship shipDestroyed)
+        {
+            statusWindow.Items.Insert(0, string.Format("{0} is Destroyed!", shipDestroyed.Name));
+            AddExplosionImage(shipDestroyed);
+            System.Windows.MessageBox.Show(string.Format("Victory! {0} is destroyed!", shipDestroyed.Name));
+        }
+
         #region Menu Items
         void MenuMoveTo_Click(object sender, RoutedEventArgs e)
         {
@@ -619,13 +608,14 @@ namespace WPFPathfinding
             MoveToShipAtRange mtsar = new MoveToShipAtRange(moveToRange.Item1, moveToRange.Item2, locations);
             mtsar.OnShipMove += new OrderDelegates.ShipMoveEvent(onShipMoveHandler);
             currentShip.Orders.Add(mtsar);
-            mtsar.ExecuteOrder(currentShip);
+            statusWindow.Items.Insert(0,mtsar.ExecuteOrder(currentShip));
             AddHighlightImage(currentShip.Position.X, currentShip.Position.Y);
         }
         void ClearMoveOrders_Click(object sender, RoutedEventArgs e)
         {
             RemoveMoveTargetImage();
             currentShip.Orders.RemoveAll(f => f is IMoveOrder);
+            statusWindow.Items.Insert(0, string.Format("Cleared Move Orders from {0}", currentShip.Name));
         }
         void ContextMenuImage_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -633,7 +623,7 @@ namespace WPFPathfinding
             if (Ships.Any(f => f.Position == targetLoc))
             {
                 Ship ship = Ships.First(f => f.Position == targetLoc);
-                ShowShipStatus(ship, spPlayer2);
+                ShowShipStatus(ship, spTargetShip);
             }
         }
         void MenuWeapon_Click(object sender, RoutedEventArgs e)
@@ -644,97 +634,15 @@ namespace WPFPathfinding
                 FireWeaponAtTarget fwat = new FireWeaponAtTarget(weapon, fireWeapons.Item1);
                 fwat.OnWeaponFired += new OrderDelegates.WeaponFiredEvent(onWeaponFiredHandler);
                 currentShip.Orders.Add(fwat);
-                fwat.ExecuteOrder(currentShip);
+                statusWindow.Items.Insert(0,fwat.ExecuteOrder(currentShip));
             }
         }
         #endregion
         #endregion
 
         #region Buttons
-        private void btnRefreshMap_Click(object sender, RoutedEventArgs e)
-        {
-            RefreshMap();
-        }
-
-        private void btnFindPath_Click(object sender, RoutedEventArgs e)
-        {
-            FindPath();
-        }
-        
-        private void btnFindOneStep_Click(object sender, RoutedEventArgs e)
-        {
-            FindOneStep();
-        }
-
-        private void btnResetShipLocations_Click(object sender, RoutedEventArgs e)
-        {
-            Ship Hunter = Ships.First(f => f.Name == "Hunter");
-            Ship Prey = Ships.First(f => f.Name == "Prey");
-            locations[Hunter.Position.X, Hunter.Position.Y].Ships.Remove(Hunter);
-            RemoveShipImage(Hunter);
-            locations[Hunter.Origin.X, Hunter.Origin.Y].Ships.Add(Hunter);
-            AddShipImage(Hunter.Origin.X, Hunter.Origin.Y, Hunter);
-            Hunter.Position = Hunter.Origin;
-            ResetPathLabels();
-            //lblPathTaken.Content = "Path Taken:";
-        }
-        
-        private void btnEndPlayer1Turn_Click(object sender, RoutedEventArgs e)
-        {
-            endPlayer1();
-        }
-
-        private void endPlayer1()
-        {
-            ShowShipStatus(currentShip, spPlayer1);
-
-            // swap player turn buttons
-            btnEndPlayer1Turn.IsEnabled = false;
-            btnEndPlayer2Turn.IsEnabled = true;
-            // remove highlight of current ship
-            RemoveHighlightImage();
-            // set ship to next player
-            currentShip = Ships.First(f => f.Name == "Prey");
-            // reset movement on next player's ship
-            currentShip.MP.Current = currentShip.MP.Max;
-            // highlight next player's ship
-            AddHighlightImage(currentShip.Position.X, currentShip.Position.Y);
-            // clear up movement target image
-            RemoveMoveTargetImage();
-            currentShip.ExecuteOrders();
-            ShowShipStatus(currentShip, spPlayer2);
-        }
-
-        private void btnEndPlayer2Turn_Click(object sender, RoutedEventArgs e)
-        {
-            endPlayer2();
-        }
-
-        private void endPlayer2()
-        {
-            ShowShipStatus(currentShip, spPlayer2);
-            // swap player turn buttons
-            btnEndPlayer1Turn.IsEnabled = true;
-            btnEndPlayer2Turn.IsEnabled = false;
-            // remove highlight of current ship
-            RemoveHighlightImage();
-            // set ship to next player
-            currentShip = Ships.First(f => f.Name == "Hunter");
-            // reset movement on next player's ship
-            currentShip.MP.Current = currentShip.MP.Max;
-            // highlight next player's ship
-            AddHighlightImage(currentShip.Position.X, currentShip.Position.Y);
-            // clear up movement target image
-            RemoveMoveTargetImage();
-            currentShip.ExecuteOrders();
-            ShowShipStatus(currentShip, spPlayer1);
-        }
-
         private void btnEndTurn_Click(object sender, RoutedEventArgs e)
         {
-            // swap player turn buttons
-            btnEndPlayer1Turn.IsEnabled = !btnEndPlayer1Turn.IsEnabled;
-            btnEndPlayer2Turn.IsEnabled = !btnEndPlayer2Turn.IsEnabled;
             // remove highlight of current ship
             RemoveHighlightImage();
             // set ship to next player
@@ -745,14 +653,20 @@ namespace WPFPathfinding
             AddHighlightImage(currentShip.Position.X, currentShip.Position.Y);
             // clear up movement target image
             RemoveMoveTargetImage();
-            currentShip.ExecuteOrders();
+            // execute orders
+            List<string> statusUpdates = currentShip.ExecuteOrders();
+            // add order results to status window
+            foreach (string status in statusUpdates)
+                statusWindow.Items.Insert(0, status);
+            // refresh menu options for ships
             foreach (Ship ship in Ships)
                 RefreshContextMenuImages(ship.Position);
-            ShowShipStatus(currentShip, spPlayer1);
-            spPlayer2.Children.Clear();
+            // show current ship status
+            ShowShipStatus(currentShip, spCurrentShip);
+            // clear target window
+            spTargetShip.Children.Clear();
 
         }
-
         #endregion
 
         
@@ -793,7 +707,6 @@ namespace WPFPathfinding
             dispatcherTimer.Interval = TimeSpan.FromMilliseconds(delay);
             dispatcherTimer.Start();
         }
-
         public static void DisplayBeamFiring(Action<Path> AddWeaponAction, Action<Path> RemoveWeaponAction, Path WeaponPath, int delay = 500)
         {
             var dispatcherTimer = new System.Windows.Threading.DispatcherTimer(System.Windows.Threading.DispatcherPriority.Render);
@@ -814,7 +727,6 @@ namespace WPFPathfinding
             dispatcherTimer.Interval = TimeSpan.FromMilliseconds(delay);
             dispatcherTimer.Start();
         }
-
         public static void RemoveBeamFiring(Action<Path> RemoveWeaponAction, Path WeaponPath, int delay = 500)
         {
             var dispatcherTimer = new System.Windows.Threading.DispatcherTimer(System.Windows.Threading.DispatcherPriority.Render);
@@ -828,6 +740,25 @@ namespace WPFPathfinding
                 dispatcherTimer.Stop();
                 // Perform the action.
                 RemoveWeaponAction(WeaponPath);
+            };
+
+            dispatcherTimer.Tick += handler;
+            dispatcherTimer.Interval = TimeSpan.FromMilliseconds(delay);
+            dispatcherTimer.Start();
+        }
+        public static void RemoveExplosion(Action<Image, Ship> RemoveExplosionAction, Image explosionImage, Ship shipToExplode, int delay = 1000)
+        {
+            var dispatcherTimer = new System.Windows.Threading.DispatcherTimer(System.Windows.Threading.DispatcherPriority.Render);
+
+            EventHandler handler = null;
+            handler = (sender, e) =>
+            {
+                // Stop the timer so it won't keep executing every X seconds
+                // and also avoid keeping the handler in memory.
+                dispatcherTimer.Tick -= handler;
+                dispatcherTimer.Stop();
+                // Perform the action.
+                RemoveExplosionAction(explosionImage,shipToExplode);
             };
 
             dispatcherTimer.Tick += handler;

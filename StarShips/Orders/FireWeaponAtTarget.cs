@@ -6,6 +6,7 @@ using StarShips.Orders.Interfaces;
 using StarShips.Parts;
 using System.Runtime.Serialization;
 using StarShips.Orders.Delegates;
+using StarShips.Locations;
 
 namespace StarShips.Orders
 {
@@ -18,9 +19,11 @@ namespace StarShips.Orders
         public override string ExecuteOrder(Ship ship)
         {
             string result = "Could Not Fire";
+            // weapon has subscribed listeners
             if (OnWeaponFired != null)
             {
                 WeaponPart weapon = (WeaponPart)this.OrderValues[0];
+                // weapon is not destroyed
                 if (weapon.IsDestroyed)
                 {
                     result = string.Format("{0} is destroyed!", weapon.Name);
@@ -28,12 +31,13 @@ namespace StarShips.Orders
                 }
                 else
                 {
-                    // check if needs to be reloaded
+                    // weapon is reloaded
                     if (!weapon.IsLoaded)
                         result = string.Format("{0} will be reloaded in {1} turns", weapon.Name, weapon.Reload());
                     else
                     {
                         Ship target = (Ship)this.OrderValues[1];
+                        // target is valid
                         if (target.HP.Current <= 0)
                         {
                             result = "Target Already Dead";
@@ -41,9 +45,17 @@ namespace StarShips.Orders
                         }
                         else
                         {
-                            weapon.Target = target;
-                            OnWeaponFired(this, new EventArgs(), ship.Position, target.Position, weapon.FiringType);
-                            result = weapon.Fire();
+                            // target is in range
+                            if (LocationCollection.GetDistance(ship.Position, target.Position) > weapon.Range)
+                            {
+                                result = "Target Out Of Range";
+                            }
+                            else
+                            {
+                                weapon.Target = target;
+                                OnWeaponFired(this, new EventArgs(), ship.Position, target.Position, weapon.FiringType);
+                                result = weapon.Fire();
+                            }
                         }
                     }
                 }

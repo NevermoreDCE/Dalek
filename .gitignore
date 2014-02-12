@@ -28,3 +28,5 @@ _ReSharper*/
 *.vssscc
 $tf*/
 RunTime/WpfApplication1.vshost.exe.manifest
+RunTime/PartMaker.vshost.exe.manifest
+RunTime/SpaceX.vshost.exe.manifest

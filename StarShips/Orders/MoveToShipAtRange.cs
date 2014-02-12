@@ -29,7 +29,7 @@ namespace StarShips.Orders
                 orderVals[0] = targetCurrentLoc;
                 OrderEventArgs e = new OrderEventArgs(orderVals);
                 OnShipMove(this, e, ship, false);
-                result = string.Format("Moved towards {0}", ((Ship)OrderValues[0]).Name);
+                result = string.Format("Moved towards {0} at range {1}", ((Ship)OrderValues[0]).Name,range);
             }
             return result;
         }

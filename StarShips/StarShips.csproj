@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="Actions\RepairTargetShip.cs" />
     <Compile Include="Actions\RepairThisPart.cs" />
+    <Compile Include="Delegates\ShipDelegates.cs" />
     <Compile Include="Locations\Location.cs" />
     <Compile Include="Locations\LocationCollection.cs" />
     <Compile Include="Locations\Node.cs" />

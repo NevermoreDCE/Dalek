@@ -8,6 +8,7 @@ using System.Runtime.Serialization;
 using System.Xml.Linq;
 using StarShips.Utility;
 using System.Drawing;
+using StarShips.Delegates;
 
 
 namespace StarShips
@@ -15,6 +16,10 @@ namespace StarShips
     [Serializable]
     public class Ship : ISerializable
     {
+        #region Events
+        public event ShipDelegates.ShipDestroyedEvent OnShipDestroyed;
+        #endregion
+
         #region Properties
         public StatWithMax HP { get { return HullType.HullPoints; } set { HullType.HullPoints = value; } }
         public StatWithMax MP = new StatWithMax();
@@ -95,6 +100,11 @@ namespace StarShips
                     }
 
                 }
+                if(HP.Current<=0)
+                    if (OnShipDestroyed != null)
+                    {
+                        OnShipDestroyed(this, new EventArgs(), this);
+                    }
             }
 
             return result;
