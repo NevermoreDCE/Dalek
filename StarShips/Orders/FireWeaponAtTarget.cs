@@ -7,6 +7,7 @@ using StarShips.Parts;
 using System.Runtime.Serialization;
 using StarShips.Orders.Delegates;
 using StarShips.Locations;
+using System.Diagnostics;
 
 namespace StarShips.Orders
 {
@@ -22,44 +23,58 @@ namespace StarShips.Orders
             // weapon has subscribed listeners
             if (OnWeaponFired != null)
             {
+                Ship target = (Ship)this.OrderValues[1];
                 WeaponPart weapon = (WeaponPart)this.OrderValues[0];
+                
                 // weapon is not destroyed
                 if (weapon.IsDestroyed)
                 {
                     result = string.Format("{0} is destroyed!", weapon.Name);
+                    Debug.WriteLine(string.Format("Resolving {0}, Destroyed", weapon.Name));
+                    ship.CountOfResolvingOrders--;
                     ship.CompletedOrders.Add(this);
                 }
                 else
                 {
                     // weapon is reloaded
                     if (!weapon.IsLoaded)
+                    {
                         result = string.Format("{0} will be reloaded in {1} turns", weapon.Name, weapon.Reload());
+                        Debug.WriteLine(string.Format("Resolving {0}, Reloading", weapon.Name));
+                        ship.CountOfResolvingOrders--;
+                    }
                     else
                     {
-                        Ship target = (Ship)this.OrderValues[1];
+
                         // target is valid
                         if (target.HP.Current <= 0)
                         {
                             result = "Target Already Dead";
                             ship.CompletedOrders.Add(this);
+                            Debug.WriteLine(string.Format("Resolving {0}, Target Dead", weapon.Name));
+                            ship.CountOfResolvingOrders--;
                         }
                         else
                         {
                             // target is in range
-                            if (LocationCollection.GetDistance(ship.Position, target.Position) > weapon.Range)
+                            if (LocationCollection.GetDistance(ship.Position, target.Position) >= weapon.Range + 1)
                             {
                                 result = "Target Out Of Range";
+                                Debug.WriteLine(string.Format("Resolving {0}, Target Out Of Range", weapon.Name));
+                                ship.CountOfResolvingOrders--;
                             }
                             else
                             {
                                 weapon.Target = target;
-                                OnWeaponFired(this, new EventArgs(), ship.Position, target.Position, weapon.FiringType);
                                 result = weapon.Fire();
+                                OnWeaponFired(this, new EventArgs(), ship.Position, target.Position, weapon.FiringType);
                             }
                         }
                     }
                 }
             }
+            
+            this.IsCompleted = true;
             return result;
         }
 
@@ -74,6 +89,13 @@ namespace StarShips.Orders
             WeaponPart weapon = (WeaponPart)this.OrderValues[0];
             Ship target = (Ship)this.OrderValues[1];
             return string.Format("Fire {0} at {1}", weapon.Name, target.Name);
+        }
+
+        public bool IsInRange(Ship ship)
+        {
+            WeaponPart weapon = (WeaponPart)this.OrderValues[0];
+            Ship target = (Ship)this.OrderValues[1];
+            return LocationCollection.GetDistance(ship.Position, target.Position) <= weapon.Range+1;
         }
 
         #region Constructors

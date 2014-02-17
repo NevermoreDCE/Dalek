@@ -7,5 +7,6 @@ namespace StarShips.Orders.Interfaces
 {
     public interface IWeaponOrder
     {
+        bool IsInRange(Ship ship);
     }
 }

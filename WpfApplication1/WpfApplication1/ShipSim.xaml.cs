@@ -155,6 +155,7 @@ namespace WPFPathfinding
         
         private void initShips()
         {
+            // load source document, hulls and parts
             XDocument xdoc = XDocument.Load("Ships.xml");
             List<ShipHull> ExistingHulls;
             List<ShipPart> ExistingParts;
@@ -350,20 +351,19 @@ namespace WPFPathfinding
         {
             foreach (var shipInfo in locations[x, y].Ships)
             {
-                AddShipImage(x, y, shipInfo);
+                AddShipImage(x, y, shipInfo.Image);
             }
         }
 
-        private void AddShipImage(int x, int y, Ship shipInfo)
+        private void AddShipImage(int x, int y,Image shipImage)
         {
-            Image img = shipInfo.Image;
-            Grid.SetRow(img, x);
-            Grid.SetColumn(img, y);
-            g.Children.Add(img);
+            Grid.SetRow(shipImage, x);
+            Grid.SetColumn(shipImage, y);
+            g.Children.Add(shipImage);
         }
-        private void RemoveShipImage(Ship shipInfo)
+        private void RemoveShipImage(Image shipImage)
         {
-            ((Grid)shipInfo.Image.Parent).Children.Remove(shipInfo.Image);
+            ((Grid)shipImage.Parent).Children.Remove(shipImage);
         }
         #endregion
 
@@ -528,45 +528,44 @@ namespace WPFPathfinding
 
         #region Event Handlers
         #region Orders
-        public void onShipMoveHandler(object sender, OrderEventArgs e, Ship shipToMove, bool endAtLocation)
+        public void onShipMoveHandler(object sender, EventArgs e, Image shipImage, System.Drawing.Point sourceLoc, System.Drawing.Point targetLoc, bool weaponsFiredAlready)
         {
-            System.Drawing.Point targetLoc = (System.Drawing.Point)e.OrderValues[0];
-            Action<Ship, System.Drawing.Point> moveact = new Action<Ship, System.Drawing.Point>(moveShipAction);
-            DelayedExecutionService.MoveShipIconWithDelay(moveact, shipToMove, targetLoc);
-             
-            if (shipToMove.Position == targetLoc && endAtLocation)
-                shipToMove.CompletedOrders.Add((ShipOrder)sender);
+            Action<Image, System.Drawing.Point> moveact = new Action<Image, System.Drawing.Point>(moveShipImageAction);
+            RefreshContextMenuImages(sourceLoc, targetLoc);
+            int delay = 200;
+            if (weaponsFiredAlready)
+                delay += 600;
+            DelayedExecutionService.MoveShipImageWithDelay(moveact, shipImage, targetLoc, delay);
+            
         }
-        private void moveShipAction(Ship shipToMove, System.Drawing.Point targetLoc)
+        private void moveShipImageAction(Image shipImage,System.Drawing.Point targetLoc)
         {
-            if (shipToMove.MP.Current > 0 && shipToMove.Position != targetLoc)
-            {
-                RemoveShipImage(shipToMove);
-                System.Drawing.Point origin = shipToMove.Position;
-                System.Drawing.Point next = locations.MoveShipToPoint(shipToMove, targetLoc);
-                RefreshContextMenuImages(origin, next);
-                AddShipImage(next.X, next.Y, shipToMove);
-            }
+            RemoveShipImage(shipImage);
+            AddShipImage(targetLoc.X, targetLoc.Y, shipImage);
+            System.Diagnostics.Debug.WriteLine("Resolving Move Action");
         }
         public void onWeaponFiredHandler(object sender, EventArgs e, System.Drawing.Point sourceLoc, System.Drawing.Point targetLoc, string firingType)
         {
+            // draw beam with offset and delay
             DrawShipFiringBeam(sourceLoc, targetLoc);
-            ShowShipStatus(Ships.First(f => f.Position == targetLoc), spTargetShip);
         }
-        private void DrawShipFiringBeam(System.Drawing.Point firingShip, System.Drawing.Point targetShip)
+        private void DrawShipFiringBeam(System.Drawing.Point sourceLoc, System.Drawing.Point targetLoc)
         {
             using (RNG rng = new RNG())
             {
-                Point origin = new Point(((firingShip.Y + 1) * 32) - (8 + rng.d(16)), ((firingShip.X + 1) * 32) + (rng.d(16)));
-                Point target = new Point(((targetShip.Y + 1) * 32) - (8 + rng.d(16)), ((targetShip.X + 1) * 32) + (rng.d(16)));
+                // random origin and target (to offset beams)
+                Point origin = new Point(((sourceLoc.Y + 1) * 32) - (8 + rng.d(16)), ((sourceLoc.X + 1) * 32) + (rng.d(16)));
+                Point target = new Point(((targetLoc.Y + 1) * 32) - (8 + rng.d(16)), ((targetLoc.X + 1) * 32) + (rng.d(16)));
                 Path beam = new Path();
                 beam.Stroke = Brushes.Red;
                 beam.StrokeThickness = 1;
                 Point from = TransformToVisual(c).Transform(origin);
                 Point to = TransformToVisual(c).Transform(target);
                 beam.Data = new LineGeometry(from, to);
+                // add and remove actions
                 Action<Path> addWeaponAction = new Action<Path>(addWeaponPath);
                 Action<Path> removeWeaponAction = new Action<Path>(removeWeaponPath);
+                // random firing delay, 300-600ms
                 int firingdelay = 300 + rng.d(300);
                 DelayedExecutionService.DisplayBeamFiring(addWeaponAction, removeWeaponAction, beam, firingdelay);
             }
@@ -578,6 +577,7 @@ namespace WPFPathfinding
         private void removeWeaponPath(Path pathToRemove)
         {
             ((Canvas)pathToRemove.Parent).Children.Remove(pathToRemove);
+            System.Diagnostics.Debug.WriteLine("Resolving Fired");
         }
         #endregion
 
@@ -595,7 +595,7 @@ namespace WPFPathfinding
             Image img = (Image)((MenuItem)e.Source).CommandParameter;
             int x = Grid.GetRow(img);
             int y = Grid.GetColumn(img);
-            MoveToLocation mtl = new MoveToLocation(new System.Drawing.Point(x, y));
+            MoveToLocation mtl = new MoveToLocation(new System.Drawing.Point(x, y), locations);
             mtl.OnShipMove += new OrderDelegates.ShipMoveEvent(onShipMoveHandler);
             currentShip.Orders.Add(mtl);
             AddMoveTargetImage(x, y);
@@ -643,6 +643,11 @@ namespace WPFPathfinding
         #region Buttons
         private void btnEndTurn_Click(object sender, RoutedEventArgs e)
         {
+            // process end-of-turn actions
+            List<string> eot = currentShip.EndOfTurn();
+            // add EoT results to status window
+            foreach (string status in eot)
+                statusWindow.Items.Insert(0, status);
             // remove highlight of current ship
             RemoveHighlightImage();
             // set ship to next player
@@ -654,7 +659,7 @@ namespace WPFPathfinding
             // clear up movement target image
             RemoveMoveTargetImage();
             // execute orders
-            List<string> statusUpdates = currentShip.ExecuteOrders();
+            List<string> statusUpdates = currentShip.oldStartOfTurn();
             // add order results to status window
             foreach (string status in statusUpdates)
                 statusWindow.Items.Insert(0, status);
@@ -679,28 +684,32 @@ namespace WPFPathfinding
                 DrawShipFiringBeam(firingShip.Position, targetShip.Position);
             }
         }
+
+        private void btnShowDistance_Click(object sender, RoutedEventArgs e)
+        {
+            Ship other = Ships.First(f => f != currentShip);
+            double distance = LocationCollection.GetDistance(currentShip.Position, other.Position);
+            System.Windows.MessageBox.Show(distance.ToString());
+        }
     }
 
     public static class DelayedExecutionService
     {
-        public static void MoveShipIconWithDelay(Action<Ship, System.Drawing.Point> action, Ship shipToMove, System.Drawing.Point targetLoc, int delay = 200)
+        public static void MoveShipImageWithDelay(Action<Image, System.Drawing.Point> action, Image shipImage, System.Drawing.Point targetLoc, int delay = 200)
         {
             var dispatcherTimer = new System.Windows.Threading.DispatcherTimer(System.Windows.Threading.DispatcherPriority.Render);
             
             EventHandler handler = null;
             handler = (sender, e) =>
             {
-                // Runs until ship out of Movement or ship at target Location
-                if (shipToMove.MP.Current <= 0 || shipToMove.Position == targetLoc)
-                {
-                    // Stop the timer so it won't keep executing every X seconds
-                    // and also avoid keeping the handler in memory.
-                    dispatcherTimer.Tick -= handler;
-                    dispatcherTimer.Stop();
-                }
-                else
+                
+                // Stop the timer so it won't keep executing every X seconds
+                // and also avoid keeping the handler in memory.
+                dispatcherTimer.Tick -= handler;
+                dispatcherTimer.Stop();
+                
                 // Perform the action.
-                action(shipToMove,targetLoc);
+                action(shipImage,targetLoc);
             };
 
             dispatcherTimer.Tick += handler;

@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Runtime.Serialization;
 using StarShips.Orders.Delegates;
 using StarShips.Orders.Interfaces;
+using StarShips.Locations;
 
 namespace StarShips.Orders
 {
@@ -18,16 +19,28 @@ namespace StarShips.Orders
             string result = "Could Not Move";
             if (OnShipMove != null)
             {
-                OrderEventArgs e = new OrderEventArgs(this.OrderValues);
-                OnShipMove(this,e, ship, true);
+                Point sourceLoc = ship.Position;
+                Point targetLoc = (Point)this.OrderValues[0];
+                LocationCollection locations = (LocationCollection)this.OrderValues[1];
+                while (ship.Position != targetLoc && ship.MP.Current > 0)
+                {
+                    Point from = ship.Position;
+                    Point to = locations.MoveShipToPoint(ship, targetLoc);
+                    OnShipMove(this, new EventArgs(), ship.Image, from, to, ship.WeaponsFiredAlready);
+                }
                 result = string.Format("Moved towards {0},{1}", ((Point)OrderValues[0]).X, ((Point)OrderValues[0]).Y);
             }
+            this.IsCompleted = true;
+            // check if action should be removed on completion
+            if (ship.Position == (Point)OrderValues[0])
+                ship.CompletedOrders.Add(this);
             return result;
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("TargetLocation", (Point)OrderValues[0]);
+            info.AddValue("LocationCollection", (LocationCollection)OrderValues[1]);
         }
 
         public override string ToString()
@@ -36,9 +49,11 @@ namespace StarShips.Orders
         }
 
         #region Constructors
-        public MoveToLocation(Point targetLocation)
+        public MoveToLocation(Point targetLocation, LocationCollection locations)
         {
+            this.OrderValues = new object[2];
             this.OrderValues[0] = targetLocation;
+            this.OrderValues[1] = locations;
         }
         public MoveToLocation(object[] OrderValues)
         {
@@ -46,7 +61,9 @@ namespace StarShips.Orders
         }
         public MoveToLocation(SerializationInfo info, StreamingContext ctxt)
         {
+            this.OrderValues = new object[2];
             this.OrderValues[0] = (Point)info.GetValue("TargetLocation", typeof(Point));
+            this.OrderValues[1] = (LocationCollection)info.GetValue("LocationCollection", typeof(LocationCollection));
         }
 
         #endregion

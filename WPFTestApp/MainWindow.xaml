@@ -1,9 +1,28 @@
-﻿<Window x:Class="WPFTestApp.MainWindow"
+﻿<Window x:Class="WPFTestApp.PageSwitcher"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="350" Width="525">
-    <Grid Background="{StaticResource OffsetGrid}">
+    <StackPanel Name="spOuterFrame">
+        <Label Content="Outer Frame Label"/>
+        <StackPanel Orientation="Horizontal">
+            <Button Name="btnMainMenu" Click="btnMainMenu_Click" Height="36" Width="36">
+                <Image Height="32" Width="32">
+                    <Image.Source>
+                        <BitmapImage UriSource="C:\Projects\Dalek\WPFTestApp\bin\Debug\MainMenu.png"/> 
+                    </Image.Source>
+                </Image>
+            </Button>
+            <Button Name="btnPage2"  Click="btnPage2_Click" Height="36" Width="36">
+                <Image Height="32" Width="32">
+                    <Image.Source>
+                        <BitmapImage UriSource="C:\Projects\Dalek\WPFTestApp\bin\Debug\Page2.png"/> 
+                    </Image.Source>
+                </Image>
+            </Button>
+            
+        </StackPanel>
         
-    </Grid>
-    
+        <ContentPresenter Name="cprMain" />
+
+    </StackPanel>
 </Window>

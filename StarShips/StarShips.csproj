@@ -57,13 +57,10 @@
     <Compile Include="Orders\Interfaces\IWeaponOrder.cs" />
     <Compile Include="Orders\MoveToLocation.cs" />
     <Compile Include="Orders\Delegates\OrderEventArgs.cs" />
-    <Compile Include="Orders\MoveToShip.cs" />
     <Compile Include="Orders\MoveToShipAtRange.cs" />
     <Compile Include="Parts\ActionPart.cs" />
     <Compile Include="Parts\DefensePart.cs" />
-    <Compile Include="Interfaces\IDefense.cs" />
     <Compile Include="Interfaces\IShipPartAction.cs" />
-    <Compile Include="Interfaces\IWeapon.cs" />
     <Compile Include="Interfaces\Structs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Randomizer\RNG.cs" />

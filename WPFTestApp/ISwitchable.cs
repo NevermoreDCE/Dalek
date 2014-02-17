@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace StarShips.Interfaces
+namespace WPFTestApp
 {
-    public interface IDefense
+    public interface ISwitchable
     {
-        DefenseResult TakeHit(int Damage);
+        void UtilizeState(object state);
     }
 }

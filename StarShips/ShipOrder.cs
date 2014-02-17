@@ -11,6 +11,8 @@ namespace StarShips
         #region Parameters
         object[] _orderValues = new object[1];
         public object[] OrderValues { get { return _orderValues; } set { _orderValues = value; } }
+        public bool IsCompleted = false;
+        public int Impulse = -1;
         #endregion
 
 

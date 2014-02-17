@@ -8,6 +8,7 @@
                 <StackPanel Orientation="Horizontal" Width="820" Height="25">
                         <Button Name="btnEndTurn" Content="End Turn" Click="btnEndTurn_Click" Width="80" Margin="5 0 5 0"/>
                         <Button Name="btnFireWeapon" Content="Show Beams" Click="btnFireWeapon_Click" Width="80" Margin="5 0 5 0"/>
+                    <Button Name="btnShowDistance" Content="Show Distance" Click="btnShowDistance_Click" Width="80" Margin="5 0 5 0"/>
                 </StackPanel>
                 <Grid Name="g" Width="820" Height="820" HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="0"/>
                 <ListBox Name="statusWindow" Height="130" Width="820" Background="Black" Foreground="WhiteSmoke"/>

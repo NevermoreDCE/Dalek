@@ -10,7 +10,7 @@ using StarShips.Utility;
 namespace StarShips.Parts
 {
     [Serializable]
-    public class DefensePart : ShipPart, IDefense, ISerializable
+    public class DefensePart : ShipPart, ISerializable
     {
         #region Private Variables
         int _dr;

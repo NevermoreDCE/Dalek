@@ -11,7 +11,7 @@ using StarShips.Utility;
 namespace StarShips.Parts
 {
     [Serializable]
-    public class WeaponPart : ShipPart, IWeapon, ISerializable
+    public class WeaponPart : ShipPart, ISerializable
     {
         
         #region Private Variables

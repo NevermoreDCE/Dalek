@@ -25,12 +25,16 @@ namespace StarShips.Orders
                 LocationCollection locations = (LocationCollection)this.OrderValues[2];
                 int range = (int)this.OrderValues[1];
                 Point targetCurrentLoc = locations.GetTargetPointOnRadius(sourceLoc, targetLoc, range, locations.GetLength(0), locations.GetLength(1));
-                object[] orderVals = new object[1];
-                orderVals[0] = targetCurrentLoc;
-                OrderEventArgs e = new OrderEventArgs(orderVals);
-                OnShipMove(this, e, ship, false);
+                while (ship.Position != targetCurrentLoc && ship.MP.Current > 0)
+                {
+                    Point from = ship.Position;
+                    Point to = locations.MoveShipToPoint(ship, targetCurrentLoc);
+                    OnShipMove(this, new EventArgs(), ship.Image,from, to, ship.WeaponsFiredAlready);
+                }
+
                 result = string.Format("Moved towards {0} at range {1}", ((Ship)OrderValues[0]).Name,range);
             }
+            this.IsCompleted = true;
             return result;
         }
 

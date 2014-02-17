@@ -9,6 +9,9 @@ using System.Xml.Linq;
 using StarShips.Utility;
 using System.Drawing;
 using StarShips.Delegates;
+using StarShips.Parts;
+using StarShips.Orders.Interfaces;
+using System.Diagnostics;
 
 
 namespace StarShips
@@ -32,6 +35,9 @@ namespace StarShips
         public Point Position = new Point(-1, -1);
         public Point Origin;
         public System.Windows.Controls.Image Image;
+        public int CountOfResolvingOrders = 0;
+        bool _weaponsFiredAlready = false;
+        public bool WeaponsFiredAlready { get { return _weaponsFiredAlready; } }
         #endregion
 
         #region Public Methods
@@ -39,24 +45,22 @@ namespace StarShips
         {
             List<string> result = new List<string>();
 
-            foreach (IWeapon weapon in Equipment.Where(f => f is IWeapon))
+            foreach (WeaponPart weapon in Equipment.Where(f => f is WeaponPart))
             {
-                ShipPart part = (ShipPart)weapon;
-
                 // check if destroyed
-                if (part.IsDestroyed)
-                    result.Add(string.Format("{0} is destroyed!", part.Name));
+                if (weapon.IsDestroyed)
+                    result.Add(string.Format("{0} is destroyed!", weapon.Name));
                 else
                 {
                     // check if needs to be reloaded
                     if (!weapon.IsLoaded)
-                        result.Add(string.Format("{0} will be reloaded in {1} turns", part.Name, weapon.Reload()));
+                        result.Add(string.Format("{0} will be reloaded in {1} turns", weapon.Name, weapon.Reload()));
                     else
                     {
                         // check if has a target
-                        if (part.Target == null)
-                            part.Target = Target;
-                        result.Add(string.Format("{0} fires, {1}", part.Name,weapon.Fire()));
+                        if (weapon.Target == null)
+                            weapon.Target = Target;
+                        result.Add(string.Format("{0} fires, {1}", weapon.Name,weapon.Fire()));
                     }
                 }
             }
@@ -72,7 +76,7 @@ namespace StarShips
         {
             List<string> result = new List<string>();
 
-            foreach (IDefense defense in Equipment.Where(f => f is IDefense && !f.IsDestroyed))
+            foreach (DefensePart defense in Equipment.Where(f => f is DefensePart && !f.IsDestroyed))
             {
                 DefenseResult res = defense.TakeHit(Damage);
                 Damage = res.Remainder;
@@ -110,20 +114,103 @@ namespace StarShips
             return result;
         }
 
-        public List<string> ExecuteOrders()
+        public List<string> ExecuteOrders(int Impulse)
         {
             List<string> result = new List<string>();
-            foreach (ShipOrder order in Orders)
-            {
+            
+            foreach (ShipOrder order in Orders.Where(f=>f.Impulse==Impulse))
                 result.Add(order.ExecuteOrder(this));
-            }
+
+            // clear up completed orders
             if (CompletedOrders.Count > 0)
             {
                 foreach (ShipOrder order in CompletedOrders)
                     Orders.Remove(order);
                 CompletedOrders.Clear();
             }
+
             return result.Where(f => f != string.Empty).ToList<string>();
+        }
+
+        public List<string> StartOfTurn()
+        {
+            foreach (ShipOrder order in Orders)
+                order.IsCompleted = false;
+            return new List<string>();
+        }
+
+        public List<string> oldStartOfTurn()
+        {
+            
+            // refresh orders for this turn
+            foreach(ShipOrder order in Orders)
+                order.IsCompleted = false;
+            
+            List<string> results = new List<string>();
+            
+            List<ShipOrder> afterMovement = new List<ShipOrder>();
+            // resolve weapon orders that are in range
+            Debug.WriteLine(string.Format("Firing First, count of orders {0}",CountOfResolvingOrders));
+            foreach(ShipOrder fireOrder in Orders.Where(f=>f is IWeaponOrder))
+            {
+                if (((IWeaponOrder)fireOrder).IsInRange(this))
+                {
+                    Debug.WriteLine(string.Format("{0} is in range, firing", ((WeaponPart)fireOrder.OrderValues[0]).Name));
+                    results.Add(fireOrder.ExecuteOrder(this));
+                    this.CountOfResolvingOrders++;
+                    _weaponsFiredAlready = true;
+                }
+                else
+                    afterMovement.Add(fireOrder);
+            }
+            Debug.WriteLine(string.Format("Done Firing First, count of orders {0}",CountOfResolvingOrders));
+            
+            // wait for orders to resolve
+            //while (CountOfResolvingOrders > 0)
+            //{
+            //}
+
+            Debug.WriteLine(string.Format("Moving, count of orders {0}",CountOfResolvingOrders));
+            // non-weapon orders
+            foreach (ShipOrder order in Orders.Where(f => !(f is IWeaponOrder)))
+            {
+                Debug.WriteLine("Engaging Move Order");
+                results.Add(order.ExecuteOrder(this));
+                this.CountOfResolvingOrders++;
+            }
+            Debug.WriteLine(string.Format("Done Moving, count of orders {0}",CountOfResolvingOrders));
+            
+            //wait for orders to resolve
+            //while (CountOfResolvingOrders > 0)
+            //{
+            //}
+
+            Debug.WriteLine(string.Format("Firing Second, count of orders {0}",CountOfResolvingOrders));
+            
+            // retry weapon orders that were out of range
+            foreach (ShipOrder fireOrder in afterMovement)
+            {
+                if (((IWeaponOrder)fireOrder).IsInRange(this))
+                {
+                    results.Add(fireOrder.ExecuteOrder(this));
+                    this.CountOfResolvingOrders++;
+                }
+            }
+            Debug.WriteLine(string.Format("Done Firing Second, count of orders {0}",CountOfResolvingOrders));
+            
+
+            //while (CountOfResolvingOrders > 0)
+            //{ }
+
+            // clear up completed orders
+            if (CompletedOrders.Count > 0)
+            {
+                foreach (ShipOrder order in CompletedOrders)
+                    Orders.Remove(order);
+                CompletedOrders.Clear();
+            }
+
+            return results.Where(f => f != string.Empty).ToList<string>();
         }
 
         public List<string> EndOfTurn()
