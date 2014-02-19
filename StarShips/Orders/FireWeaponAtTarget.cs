@@ -88,7 +88,7 @@ namespace StarShips.Orders
         {
             WeaponPart weapon = (WeaponPart)this.OrderValues[0];
             Ship target = (Ship)this.OrderValues[1];
-            return string.Format("Fire {0} at {1}", weapon.Name, target.Name);
+            return string.Format("Fire {0} at {1}", weapon.Name, target.ClassName);
         }
 
         public bool IsInRange(Ship ship)

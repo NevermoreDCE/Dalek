@@ -14,6 +14,7 @@ using StarShips.Orders.Interfaces;
 using System.Windows.Shapes;
 using System.Xml.Linq;
 using StarShips.Parts;
+using StarShips.Players;
 
 namespace WPFPathfinding
 {
@@ -25,6 +26,7 @@ namespace WPFPathfinding
         const int GridDimensionX = 25;
         const int GridDimensionY = 25;
         LocationCollection locations = new LocationCollection(GridDimensionX, GridDimensionY);
+        PlayerCollection Players = new PlayerCollection();
         Image[,] contextImages = new Image[GridDimensionX, GridDimensionY];
         List<Ship> Ships = new List<Ship>();
         Ship currentShip;
@@ -39,6 +41,13 @@ namespace WPFPathfinding
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            SpaceX.AddPlayerWindow addPlayerWindow = new SpaceX.AddPlayerWindow(Players);
+            bool? addPlayerBool = addPlayerWindow.ShowDialog();
+            if ((addPlayerBool.HasValue) ? addPlayerBool.Value : false)
+            {
+                SpaceX.AddShipsWindow addShipsWindow = new SpaceX.AddShipsWindow(Players);
+                addShipsWindow.ShowDialog();
+            }
             RefreshMap();
         }
 
@@ -78,8 +87,8 @@ namespace WPFPathfinding
         {
             using (RNG rng = new RNG())
             {
-                Ship hunter = Ships.First(f => f.Name == "Hunter");
-                Ship prey = Ships.First(f => f.Name == "Prey");
+                Ship hunter = Ships.First(f => f.ClassName == "Hunter");
+                Ship prey = Ships.First(f => f.ClassName == "Prey");
                 bool validHunter = false;
                 int randX = 0;
                 int randY = 0;
@@ -186,7 +195,7 @@ namespace WPFPathfinding
 
   
             // set ship to next player
-            currentShip = Ships.First(f => f.Name == "Hunter");
+            currentShip = Ships.First(f => f.ClassName == "Hunter");
             // reset movement on next player's ship
             currentShip.MP.Current = currentShip.MP.Max;
         }
@@ -289,7 +298,7 @@ namespace WPFPathfinding
                 if (ship.Position == new System.Drawing.Point(x, y) && ship != currentShip)
                 {
                     MenuItem MenuMoveToShip = new MenuItem();
-                    MenuMoveToShip.Header = string.Format("Move To {0}", ship.Name);
+                    MenuMoveToShip.Header = string.Format("Move To {0}", ship.ClassName);
                     MenuItem MoveToZero = new MenuItem();
                     MoveToZero.Header = "At 0";
                     MoveToZero.CommandParameter = new Tuple<Ship, int>(ship, 0);
@@ -314,7 +323,7 @@ namespace WPFPathfinding
         private void AddWeaponsToMenu(Ship ship, ContextMenu menu)
         {
             MenuItem MenuFireOnShip = new MenuItem();
-            MenuFireOnShip.Header = string.Format("Fire on {0}", ship.Name);
+            MenuFireOnShip.Header = string.Format("Fire on {0}", ship.ClassName);
             foreach (WeaponPart weapon in currentShip.Equipment.Where(f => f is WeaponPart && !f.IsDestroyed))
             {
                 MenuItem MenuWeapon = new MenuItem();
@@ -503,7 +512,7 @@ namespace WPFPathfinding
         {
             panel.Children.Clear();
             // Name
-            addStatusLabel(string.Format("{0} ({1})", ship.Name, ship.Position), Brushes.White, panel);
+            addStatusLabel(string.Format("{0} ({1})", ship.ClassName, ship.Position), Brushes.White, panel);
             // HP
             addStatusLabel(string.Format("Hit Points: {0}", ship.HP.ToString()), Brushes.White, panel);
             // MP
@@ -583,9 +592,9 @@ namespace WPFPathfinding
 
         public void onShipDestroyedHandler(object sender, EventArgs e, Ship shipDestroyed)
         {
-            statusWindow.Items.Insert(0, string.Format("{0} is Destroyed!", shipDestroyed.Name));
+            statusWindow.Items.Insert(0, string.Format("{0} is Destroyed!", shipDestroyed.ClassName));
             AddExplosionImage(shipDestroyed);
-            System.Windows.MessageBox.Show(string.Format("Victory! {0} is destroyed!", shipDestroyed.Name));
+            System.Windows.MessageBox.Show(string.Format("Victory! {0} is destroyed!", shipDestroyed.ClassName));
         }
 
         #region Menu Items
@@ -615,7 +624,7 @@ namespace WPFPathfinding
         {
             RemoveMoveTargetImage();
             currentShip.Orders.RemoveAll(f => f is IMoveOrder);
-            statusWindow.Items.Insert(0, string.Format("Cleared Move Orders from {0}", currentShip.Name));
+            statusWindow.Items.Insert(0, string.Format("Cleared Move Orders from {0}", currentShip.ClassName));
         }
         void ContextMenuImage_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {

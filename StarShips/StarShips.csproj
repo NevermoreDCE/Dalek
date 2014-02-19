@@ -62,15 +62,18 @@
     <Compile Include="Parts\DefensePart.cs" />
     <Compile Include="Interfaces\IShipPartAction.cs" />
     <Compile Include="Interfaces\Structs.cs" />
+    <Compile Include="Players\Player.cs" />
+    <Compile Include="Players\PlayerCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Randomizer\RNG.cs" />
     <Compile Include="Ship.cs" />
     <Compile Include="ShipAction.cs" />
+    <Compile Include="ShipCollection.cs" />
     <Compile Include="ShipHull.cs" />
     <Compile Include="ShipOrder.cs" />
     <Compile Include="ShipPart.cs" />
     <Compile Include="Parts\WeaponPart.cs" />
-    <Compile Include="ThemeSettings.cs" />
+    <Compile Include="Utility\ThemeSettings.cs" />
     <Compile Include="Utility\StatWithMax.cs" />
   </ItemGroup>
   <ItemGroup />

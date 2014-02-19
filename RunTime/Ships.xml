@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ships>
-  <ship name="Hunter">
+  <ship className="Hunter">
     <MaxHP>50</MaxHP>
     <MaxMP>3</MaxMP>
     <ShipHull>Frigate</ShipHull>
@@ -15,7 +15,7 @@
       <shipPart>Damage Control</shipPart>
     </shipParts>
   </ship>
-  <ship name="Prey">
+  <ship className="Prey">
     <MaxHP>50</MaxHP>
     <MaxMP>3</MaxMP>
     <ShipHull>Galaxy</ShipHull>

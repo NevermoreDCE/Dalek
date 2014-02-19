@@ -8,6 +8,7 @@ using StarShips.Orders;
 using System.Timers;
 using System.Threading;
 using System.Diagnostics;
+using System.Runtime.Serialization;
 
 namespace StarShips.Locations
 {
@@ -24,30 +25,30 @@ namespace StarShips.Locations
 
     }
 
-    public class LocationCollection
+    public class LocationCollection : ISerializable
     {
         #region Collection and Indexer
-        private Location[,] locations;
+        private Location[,] _locations;
         public Location this[int x, int y]
         {
             get
             {
-                return locations[x, y];
+                return _locations[x, y];
             }
             set
             {
-                locations[x, y] = value;
+                _locations[x, y] = value;
             }
         }
         public int GetLength(int dimension)
         {
-            return locations.GetLength(dimension);
+            return _locations.GetLength(dimension);
         }
         #endregion
 
         #region Private Variables
-        List<Node> openList = new List<Node>();
-        List<Node> closedList = new List<Node>();
+        List<Node> _openList = new List<Node>();
+        List<Node> _closedList = new List<Node>();
         #endregion
 
         #region Public Methods
@@ -119,7 +120,7 @@ namespace StarShips.Locations
             foreach (Point p in inRadius)
             {
                 double current = GetDistance(origin, p);
-                if (current < shortestDistance && !locations[p.X,p.Y].IsBlocked)
+                if (current < shortestDistance && !_locations[p.X,p.Y].IsBlocked)
                 {
                     shortestDistance = current;
                     result = p;
@@ -132,49 +133,49 @@ namespace StarShips.Locations
         private Point getNextPoint(Point sourceLoc, Point targetLoc)
         {
             // clear the lists
-            openList.Clear();
-            closedList.Clear();
+            _openList.Clear();
+            _closedList.Clear();
             // find direction of targetLoc
             GridFacing facing = findFacing(sourceLoc, targetLoc);
             // get starting adjacent locations
             foreach (Node node in getNeighbors(new Node(sourceLoc.X, sourceLoc.Y), (int)facing, targetLoc))
             {
-                openList.Add(node);
+                _openList.Add(node);
             }
 
             Node previous = new Node();
-            while (openList.Count > 0)
+            while (_openList.Count > 0)
             {
                 // current lowest G+H
-                int indexS = openList.Min(f => f.F);
+                int indexS = _openList.Min(f => f.F);
                 // get next node with lowest G+H that is not the previous node
-                Node node = openList.First(f => f.F == indexS && f != previous);
+                Node node = _openList.First(f => f.F == indexS && f != previous);
                 // check for goal
                 if (node.Loc == targetLoc)
                 {
                     return recurseNextNode(node).Loc;
                 }
                 // remove from openset
-                openList.Remove(node);
+                _openList.Remove(node);
                 // add to closedset
-                closedList.Add(node);
+                _closedList.Add(node);
                 // get neighbors of current location
                 List<Node> sortedNeighbors = getNeighbors(node, (int)facing, targetLoc);
                 foreach (Node neighbor in sortedNeighbors)
                 {
                     // not in closed set
-                    if (closedList.Contains(neighbor))
+                    if (_closedList.Contains(neighbor))
                         continue;
                     // steps from source
                     int tempG = node.G + 1;
                     // not already in openset or temp g less than existing g;
-                    if (!openList.Any(f => f.Loc == neighbor.Loc && f.G <= tempG) )//|| tempG < neighbor.G)
+                    if (!_openList.Any(f => f.Loc == neighbor.Loc && f.G <= tempG) )//|| tempG < neighbor.G)
                     {
                         neighbor.Parent = node;
                         neighbor.G = tempG;
                         neighbor.H = Convert.ToInt32(GetDistance(neighbor.Loc, targetLoc));
-                        if (!openList.Contains(neighbor) && !closedList.Contains(neighbor))
-                            openList.Add(neighbor);
+                        if (!_openList.Contains(neighbor) && !_closedList.Contains(neighbor))
+                            _openList.Add(neighbor);
                     }
                 }
                 previous = node;
@@ -231,14 +232,14 @@ namespace StarShips.Locations
                 if (val > 7)
                     val = val - 8;
                 Node newNode = findNeighborInDirection(node, (GridFacing)Enum.Parse(typeof(GridFacing), (val).ToString()));
-                if (newNode.Loc.X >= 0 && newNode.Loc.X < locations.GetLength(0) && newNode.Loc.Y >= 0 && newNode.Loc.Y < locations.GetLength(1))
+                if (newNode.Loc.X >= 0 && newNode.Loc.X < _locations.GetLength(0) && newNode.Loc.Y >= 0 && newNode.Loc.Y < _locations.GetLength(1))
                 {
-                    if (!locations[int.Parse(newNode.Loc.X.ToString()), int.Parse(newNode.Loc.Y.ToString())].IsBlocked)
+                    if (!_locations[int.Parse(newNode.Loc.X.ToString()), int.Parse(newNode.Loc.Y.ToString())].IsBlocked)
                     {
                         newNode.G = node.G + 1;
                         newNode.H = Convert.ToInt32(GetDistance(newNode.Loc, targetLoc));
                         newNode.Depth = node.Depth + 1;
-                        if (!closedList.Contains(newNode))
+                        if (!_closedList.Contains(newNode))
                             results.Add(newNode);
                     }
                 }
@@ -284,7 +285,18 @@ namespace StarShips.Locations
         #region Constructors
         public LocationCollection(int x, int y)
         {
-            locations = new Location[x, y];
+            _locations = new Location[x, y];
+        }
+        public LocationCollection(SerializationInfo info, StreamingContext context)
+        {
+            _locations = (Location[,])info.GetValue("Locations", typeof(Location[,]));
+        }
+        #endregion
+
+        #region Serialization
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Locations", this._locations);
         }
         #endregion
     }

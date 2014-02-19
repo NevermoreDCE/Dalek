@@ -26,7 +26,7 @@ namespace StarShips.Actions
                         repaired.Add(part.Name + (!string.IsNullOrEmpty(result) ? string.Format(" ({0} HPs)", result) : string.Empty));
                     }
             }
-            result = string.Format("Repaired {0} for {1} HPs", _target.Name, _target.HP.Add((int)ActionValues[0]).ToString());
+            result = string.Format("Repaired {0} for {1} HPs", _target.ClassName, _target.HP.Add((int)ActionValues[0]).ToString());
             if (repaired.Count > 0)
                 result = result + string.Format(", and Repaired {0}", string.Join(", ", repaired.ToArray()));
 

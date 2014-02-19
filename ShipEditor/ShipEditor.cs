@@ -55,7 +55,7 @@ namespace ShipEditor
 
         void tbxShipName_TextChanged(object sender, EventArgs e)
         {
-            ship.Name = tbxShipName.Text;
+            ship.ClassName = tbxShipName.Text;
         }
 
         void drpPartList_ItemValueNeeded(object sender, Microsoft.VisualBasic.PowerPacks.DataRepeaterItemValueEventArgs e)
@@ -90,7 +90,7 @@ namespace ShipEditor
 
         private void ShowShip()
         {
-            tbxShipName.Text = ship.Name;
+            tbxShipName.Text = ship.ClassName;
             if (ship.HullType != null)
             {
                 int i = -1;
@@ -184,7 +184,7 @@ namespace ShipEditor
             if (confirmResult == DialogResult.Yes)
             {
                 Ship ShipToDelete = (Ship)cbxShipList.SelectedItem;
-                XElement ElementToDelete = shipDoc.Descendants("ship").First(f => f.Attribute("name").Value == ShipToDelete.Name);
+                XElement ElementToDelete = shipDoc.Descendants("ship").First(f => f.Attribute("name").Value == ShipToDelete.ClassName);
                 ElementToDelete.Remove();
                 LoadShipList(shipDoc);
                 ShowShipList();
@@ -193,7 +193,7 @@ namespace ShipEditor
 
         private void btnSaveShip_Click(object sender, EventArgs e)
         {
-            ship.Name = tbxShipName.Text;
+            ship.ClassName = tbxShipName.Text;
             ship.HullType = ((ShipHull)cbxShipHullTypes.SelectedItem).Clone();
             ship.MP.Max = 3;
             ship.GetObjectXML(shipDoc);

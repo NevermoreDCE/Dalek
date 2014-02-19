@@ -106,7 +106,7 @@ namespace Dalek
         void cbxShipList1_SelectedIndexChanged(object sender, EventArgs e)
         {
             Ship1 = (Ship)cbxShipList1.SelectedItem;
-            gbxShip1.Text = Ship1.Name;
+            gbxShip1.Text = Ship1.ClassName;
             ShowShipDetails(Ship1, tlpShip1);
             if (Ship1 != null && Ship2 != null)
             {
@@ -120,7 +120,7 @@ namespace Dalek
         void cbxShipList2_SelectedIndexChanged(object sender, EventArgs e)
         {
             Ship2 = (Ship)cbxShipList2.SelectedItem;
-            gbxShip2.Text = Ship2.Name;
+            gbxShip2.Text = Ship2.ClassName;
             ShowShipDetails(Ship2, tlpShip2);
             if (Ship1 != null && Ship2 != null)
             {
@@ -142,24 +142,24 @@ namespace Dalek
             {
                 if (rand.d100() > 50)
                 {
-                    roundResults.Add(string.Format("## Firing {0} ##", Ship1.Name));
+                    roundResults.Add(string.Format("## Firing {0} ##", Ship1.ClassName));
                     roundResults.AddRange(Ship1.FireWeapons(Ship2));
-                    roundResults.Add(string.Format("## Firing {0} ##", Ship2.Name));
+                    roundResults.Add(string.Format("## Firing {0} ##", Ship2.ClassName));
                     roundResults.AddRange(Ship2.FireWeapons(Ship1));
-                    roundResults.Add(string.Format("%% Recovering {0} %%", Ship1.Name));
+                    roundResults.Add(string.Format("%% Recovering {0} %%", Ship1.ClassName));
                     roundResults.AddRange(Ship1.EndOfTurn());
-                    roundResults.Add(string.Format("%% Recovering {0} %%", Ship2.Name));
+                    roundResults.Add(string.Format("%% Recovering {0} %%", Ship2.ClassName));
                     roundResults.AddRange(Ship2.EndOfTurn());
                 }
                 else
                 {
-                    roundResults.Add(string.Format("## Firing {0} ##", Ship2.Name));
+                    roundResults.Add(string.Format("## Firing {0} ##", Ship2.ClassName));
                     roundResults.AddRange(Ship2.FireWeapons(Ship1));
-                    roundResults.Add(string.Format("## Firing {0} ##", Ship1.Name));
+                    roundResults.Add(string.Format("## Firing {0} ##", Ship1.ClassName));
                     roundResults.AddRange(Ship1.FireWeapons(Ship2));
-                    roundResults.Add(string.Format("%% Recovering {0} %%", Ship2.Name));
+                    roundResults.Add(string.Format("%% Recovering {0} %%", Ship2.ClassName));
                     roundResults.AddRange(Ship2.EndOfTurn());
-                    roundResults.Add(string.Format("%% Recovering {0} %%", Ship1.Name));
+                    roundResults.Add(string.Format("%% Recovering {0} %%", Ship1.ClassName));
                     roundResults.AddRange(Ship1.EndOfTurn());
                 }
             }
@@ -178,7 +178,7 @@ namespace Dalek
             }
             else if (Ship1.HP.Current <= 0)
             {
-                MessageBox.Show(string.Format("{0} (Ship 2) Wins in {1} rounds!",Ship2.Name, Round.ToString()));
+                MessageBox.Show(string.Format("{0} (Ship 2) Wins in {1} rounds!",Ship2.ClassName, Round.ToString()));
                 victory = true;
                 btnFight.Enabled = false;
                 btnToTheDeath.Enabled = false;
@@ -186,7 +186,7 @@ namespace Dalek
             }
             else if (Ship2.HP.Current <= 0)
             {
-                MessageBox.Show(string.Format("{0} (Ship 1) Wins in {1} rounds!",Ship1.Name, Round.ToString()));
+                MessageBox.Show(string.Format("{0} (Ship 1) Wins in {1} rounds!",Ship1.ClassName, Round.ToString()));
                 victory = true;
                 btnFight.Enabled = false;
                 btnToTheDeath.Enabled = false;

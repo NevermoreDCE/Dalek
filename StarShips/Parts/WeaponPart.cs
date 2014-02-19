@@ -83,14 +83,14 @@ namespace StarShips.Parts
                 if (hitNum >= critAbove) 
                     result = string.Format("{0} CRITS {1} for {2}: {3}",
                         this.Name,
-                        Target.Name,
+                        Target.ClassName,
                         this.WeaponDamage,
                         string.Join(", ", Target.HitFor(_weaponDamage * _critMultiplier))
                         );
                 else if (hitNum >= hitAbove) 
                     result = string.Format("{0} hits {1} for {2}: {3}",
                         this.Name,
-                        Target.Name,
+                        Target.ClassName,
                         this.WeaponDamage,
                         string.Join(", ", Target.HitFor(_weaponDamage))
                         );

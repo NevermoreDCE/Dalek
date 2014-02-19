@@ -71,12 +71,24 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ISwitchable.cs" />
-    <Compile Include="PageSwitcher.cs" />
+    <Page Include="AddPlayerWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AddShipsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ShipSim.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="AddPlayerWindow.xaml.cs">
+      <DependentUpon>AddPlayerWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AddShipsWindow.xaml.cs">
+      <DependentUpon>AddShipsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>

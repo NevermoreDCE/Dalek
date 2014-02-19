@@ -23,18 +23,26 @@ namespace StarShips
         public event ShipDelegates.ShipDestroyedEvent OnShipDestroyed;
         #endregion
 
-        #region Properties
+        #region Private Variables
+        StatWithMax _mp = new StatWithMax();
+        string _className;
+        string _name;
+        ShipHull _hullType = new ShipHull();
+        System.Windows.Controls.Image _image;
+        #endregion
+        #region Public Properties
         public StatWithMax HP { get { return HullType.HullPoints; } set { HullType.HullPoints = value; } }
-        public StatWithMax MP = new StatWithMax();
+        public StatWithMax MP { get { return _mp; } set { _mp = value; } }
         public List<ShipPart> Equipment = new List<ShipPart>();
         public List<ShipOrder> Orders = new List<ShipOrder>();
         public List<ShipOrder> CompletedOrders = new List<ShipOrder>();
-        public string Name;
+        public string ClassName { get { return _className; } set { _className = value; } }
+        public string Name { get { return _name; } set { _name = value; } }
         public int PointCost { get { int result = HP.Max * 5; foreach (ShipPart part in Equipment)result += part.PointCost; return result; } }
-        public ShipHull HullType = new ShipHull();
+        public ShipHull HullType { get { return _hullType; } set { _hullType = value; } }
         public Point Position = new Point(-1, -1);
         public Point Origin;
-        public System.Windows.Controls.Image Image;
+        public System.Windows.Controls.Image Image { get { return _image; } set { _image = value; } }
         public int CountOfResolvingOrders = 0;
         bool _weaponsFiredAlready = false;
         public bool WeaponsFiredAlready { get { return _weaponsFiredAlready; } }
@@ -228,12 +236,40 @@ namespace StarShips
         public override string ToString()
         {
             return string.Format("{0}{1} (HP:{2}/{3})",
-                this.Name,
+                this.ClassName,
                 (this.HullType.Name != string.Empty ? string.Format(" ({0})", this.HullType.Name) : string.Empty),
                 this.HP.Current,
                 this.HP.Max);
         }
+
+        public Ship Clone()
+        {
+            Ship result = new Ship();
+            result.ClassName = this.ClassName;
+            foreach (ShipPart part in this.Equipment)
+                result.Equipment.Add(part.Clone());
+            result.HullType = this.HullType.Clone();
+            result.MP.Max = this.MP.Max;
+            result.initImage();
+            return result;
+        }
         #endregion
+
+        private void initImage()
+        {
+            System.Windows.Controls.Image img = new System.Windows.Controls.Image();
+            System.Windows.Media.Imaging.BitmapImage src = new System.Windows.Media.Imaging.BitmapImage();
+            src.BeginInit();
+            src.UriSource = new Uri(this.HullType.ImageURL, UriKind.Relative);
+            src.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
+            src.EndInit();
+            img.Source = src;
+            img.Height = 32;
+            img.Width = 32;
+            img.Stretch = System.Windows.Media.Stretch.None;
+            img.SetValue(System.Windows.Controls.Panel.ZIndexProperty, 10);
+            this._image = img;
+        }
 
         #region Serialization
         public void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -243,7 +279,7 @@ namespace StarShips
             foreach (ShipPart part in Equipment)
                 part.Target = null;
             info.AddValue("Equipment", Equipment);
-            info.AddValue("Name", Name);
+            info.AddValue("Name", ClassName);
             info.AddValue("HullType", HullType);
         }
 
@@ -251,10 +287,10 @@ namespace StarShips
         {
             XElement ship;
 
-            if (sourceDoc.Descendants("ship").Where(f => f.Attribute("name").Value == this.Name).Count() > 0)
+            if (sourceDoc.Descendants("ship").Where(f => f.Attribute("name").Value == this.ClassName).Count() > 0)
             {
                 // Update Existing
-                ship = sourceDoc.Descendants("ship").First(f => f.Attribute("name").Value == this.Name);
+                ship = sourceDoc.Descendants("ship").First(f => f.Attribute("className").Value == this.ClassName);
                 ship.Element("MaxHP").Value = HP.Max.ToString();
                 ship.Element("MaxMP").Value = MP.Max.ToString();
                 addPartsXML(ship.Element("shipParts"));
@@ -270,7 +306,7 @@ namespace StarShips
                 addPartsXML(parts);
 
                 ship =
-                    new XElement("ship", new XAttribute("name", this.Name),
+                    new XElement("ship", new XAttribute("className", this.ClassName),
                         new XElement("MaxHP", HP.Max.ToString()),
                         new XElement("MaxMP", MP.Max.ToString()),
                         new XElement("ShipHull",this.HullType.Name),
@@ -301,20 +337,13 @@ namespace StarShips
             HP = (StatWithMax)info.GetValue("HP", typeof(StatWithMax));
             MP = (StatWithMax)info.GetValue("MP", typeof(StatWithMax));
             Equipment = (List<ShipPart>)info.GetValue("Equipment", typeof(List<ShipPart>));
-            Name = (string)info.GetValue("Name", typeof(string));
+            ClassName = (string)info.GetValue("Name", typeof(string));
             HullType = (ShipHull)info.GetValue("HullType", typeof(ShipHull));
-        }
-        public Ship(XElement description, List<ShipPart> partsList)
-        {
-            this.Name = description.Attribute("name").Value;
-            this.HP.Max = int.Parse(description.Element("MaxHP").Value);
-            this.MP.Max = int.Parse(description.Element("MaxMP").Value);
-            foreach (XElement SPE in description.Element("shipParts").Elements())
-                this.Equipment.Add(partsList.First(f => f.Name == SPE.Value).Clone());
+            initImage();
         }
         public Ship(XElement description, List<ShipPart> partsList, List<ShipHull> hullsList)
         {
-            this.Name = description.Attribute("name").Value;
+            this.ClassName = description.Attribute("className").Value;
             this.HP.Max = int.Parse(description.Element("MaxHP").Value);
             this.MP.Max = int.Parse(description.Element("MaxMP").Value);
             foreach (XElement SPE in description.Element("shipParts").Elements())
@@ -322,6 +351,7 @@ namespace StarShips
             if (description.Element("ShipHull") != null)
                 if (hullsList.Where(f => f.Name == description.Element("ShipHull").Value).Count() > 0)
                     this.HullType = hullsList.First(f => f.Name == description.Element("ShipHull").Value).Clone();
+            initImage();
         }
 
         #endregion

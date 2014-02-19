@@ -32,7 +32,7 @@ namespace StarShips.Orders
                     OnShipMove(this, new EventArgs(), ship.Image,from, to, ship.WeaponsFiredAlready);
                 }
 
-                result = string.Format("Moved towards {0} at range {1}", ((Ship)OrderValues[0]).Name,range);
+                result = string.Format("Moved towards {0} at range {1}", ((Ship)OrderValues[0]).ClassName,range);
             }
             this.IsCompleted = true;
             return result;
@@ -47,7 +47,7 @@ namespace StarShips.Orders
 
         public override string ToString()
         {
-            return string.Format("Move to {0} at range {1}", ((Ship)OrderValues[0]).Name, (int)OrderValues[1]);
+            return string.Format("Move to {0} at range {1}", ((Ship)OrderValues[0]).ClassName, (int)OrderValues[1]);
         }
 
         #region Constructors
