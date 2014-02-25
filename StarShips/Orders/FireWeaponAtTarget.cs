@@ -17,9 +17,9 @@ namespace StarShips.Orders
         public event OrderDelegates.WeaponFiredEvent OnWeaponFired;
         #endregion
 
-        public override string ExecuteOrder(Ship ship)
+        public override List<string> ExecuteOrder(Ship ship)
         {
-            string result = "Could Not Fire";
+            List<string> result = new List<string>();
             // weapon has subscribed listeners
             if (OnWeaponFired != null)
             {
@@ -29,7 +29,7 @@ namespace StarShips.Orders
                 // weapon is not destroyed
                 if (weapon.IsDestroyed)
                 {
-                    result = string.Format("{0} is destroyed!", weapon.Name);
+                    result.Add(string.Format("{0} is destroyed!", weapon.Name));
                     Debug.WriteLine(string.Format("Resolving {0}, Destroyed", weapon.Name));
                     ship.CompletedOrders.Add(this);
                     this.IsCompleted = true;
@@ -39,7 +39,7 @@ namespace StarShips.Orders
                     // weapon is reloaded
                     if (!weapon.IsLoaded)
                     {
-                        result = string.Format("{0} will be reloaded in {1} turns", weapon.Name, weapon.Reload());
+                        result.Add(string.Format("{0} will be reloaded in {1} turns", weapon.Name, weapon.Reload()));
                         Debug.WriteLine(string.Format("Resolving {0}, Reloading", weapon.Name));
                         this.IsCompleted = true;
                     }
@@ -49,7 +49,7 @@ namespace StarShips.Orders
                         // target is valid
                         if (target.HP.Current <= 0)
                         {
-                            result = "Target Already Dead";
+                            result.Add("Target Already Dead");
                             ship.CompletedOrders.Add(this);
                             Debug.WriteLine(string.Format("Resolving {0}, Target Dead", weapon.Name));
                             this.IsCompleted = true;
@@ -59,13 +59,13 @@ namespace StarShips.Orders
                             // target is in range
                             if (LocationCollection.GetDistance(ship.Position, target.Position) >= weapon.Range + 1)
                             {
-                                result = "Target Out Of Range";
+                                result.Add("Target Out Of Range");
                                 Debug.WriteLine(string.Format("Resolving {0}, Target Out Of Range", weapon.Name));
                             }
                             else
                             {
                                 weapon.Target = target;
-                                result = weapon.Fire();
+                                result = result.Concat(weapon.Fire()).ToList<string>();
                                 OnWeaponFired(this, new EventArgs(), ship.Position, target.Position, weapon.FiringType);
                                 this.IsCompleted = true;
                             }

@@ -62,7 +62,7 @@
     <Compile Include="Parts\ActionPart.cs" />
     <Compile Include="Parts\DefensePart.cs" />
     <Compile Include="Interfaces\IShipPartAction.cs" />
-    <Compile Include="Interfaces\Structs.cs" />
+    <Compile Include="Parts\DefenseResult.cs" />
     <Compile Include="Parts\EnginePart.cs" />
     <Compile Include="Players\Player.cs" />
     <Compile Include="Players\PlayerCollection.cs" />

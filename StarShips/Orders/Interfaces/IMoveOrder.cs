@@ -7,6 +7,6 @@ namespace StarShips.Orders.Interfaces
 {
     public interface IMoveOrder
     {
-        string ExecuteOrder(Ship ship, int impulse);
+        List<string> ExecuteOrder(Ship ship, int impulse);
     }
 }

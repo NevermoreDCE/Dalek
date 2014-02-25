@@ -13,7 +13,6 @@ using StarShips.Parts;
 using StarShips.Orders.Interfaces;
 using System.Diagnostics;
 using System.Windows.Media;
-using StarShips.Structs;
 
 
 namespace StarShips
@@ -132,7 +131,8 @@ namespace StarShips
             {
                 DefenseResult res = defense.TakeHit(Damage);
                 Damage = res.Remainder;
-                result.Add(res.Message);
+                foreach (string message in res.Messages)
+                    result.Add(string.Format(" ==> {0}",message));
                 if (Damage <= 0)
                     break;
             }
@@ -186,12 +186,12 @@ namespace StarShips
                 if (Impulse % this.ImpulseMultiplier == 0)
                 {
                     IMoveOrder moveOrder = (IMoveOrder)Orders.First(f => f is IMoveOrder);
-                    result.Add(moveOrder.ExecuteOrder(this, Impulse));
+                    result = result.Concat(moveOrder.ExecuteOrder(this, Impulse)).ToList<string>();
                 }
                 // check weapon orders
                 foreach (IWeaponOrder order in Orders.Where(f => f is IWeaponOrder && !f.IsCompleted))
                     if (order.IsInRange(this))
-                        result.Add(order.ExecuteOrder(this));
+                        result = result.Concat(order.ExecuteOrder(this)).ToList<string>();
                 // other orders
                 //implement later on
 

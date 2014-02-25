@@ -65,7 +65,7 @@ namespace StarShips.Parts
         /// Fires the weapon at its existing target with a fixed 90% hit 5% crit chance
         /// </summary>
         /// <returns>Status result</returns>
-        public string Fire()
+        public List<string> Fire()
         {
             return Fire(11, 96); // 10% miss, 5% crit
         }
@@ -75,30 +75,34 @@ namespace StarShips.Parts
         /// <param name="hitAbove">Minimum number needed (out of 100) to hit the target</param>
         /// <param name="critAbove">Minimum number needed (out of 100) to critically-hit the target</param>
         /// <returns>Status result</returns>
-        public string Fire(int hitAbove, int critAbove)
+        public List<string> Fire(int hitAbove, int critAbove)
         {
-            string result = string.Empty;
+            List<string> result = new List<string>();
             _currentReload = _reloadTime;
             using (RNG rng = new RNG())
             {
                 int hitNum = rng.d100();
 
                 if (hitNum >= critAbove) 
-                    result = string.Format("{0} CRITS {1} for {2}: {3}",
+                {
+                    result.Add(string.Format("{0} CRITS {1} for {2}",
                         this.Name,
                         Target.ClassName,
-                        this.WeaponDamage,
-                        string.Join(", ", Target.HitFor(_weaponDamage * _critMultiplier))
-                        );
-                else if (hitNum >= hitAbove) 
-                    result = string.Format("{0} hits {1} for {2}: {3}",
+                        this.WeaponDamage
+                        ));
+                    result = result.Concat(Target.HitFor(_weaponDamage * _critMultiplier)).ToList<string>();
+                }
+                else if (hitNum >= hitAbove)
+                {
+                    result.Add(string.Format("{0} hits {1} for {2}",
                         this.Name,
                         Target.ClassName,
-                        this.WeaponDamage,
-                        string.Join(", ", Target.HitFor(_weaponDamage))
-                        );
-                else 
-                    result = string.Format("{0} Missed!", this.Name);
+                        this.WeaponDamage
+                        ));
+                    result = result.Concat(Target.HitFor(_weaponDamage)).ToList<string>();
+                }
+                else
+                    result.Add(string.Format("{0} Missed!", this.Name));
             }
             
             return result;

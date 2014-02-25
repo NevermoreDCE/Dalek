@@ -14,23 +14,23 @@ namespace StarShips.Orders
     public class MoveToShipAtRange : ShipOrder, ISerializable, IMoveToShipOrder
     {
         public event OrderDelegates.ShipMoveEvent OnShipMove;
-        public override string ExecuteOrder(Ship ship)
+        public override List<string> ExecuteOrder(Ship ship)
         {
-            string result = "Could Not Move";
-            result = moveShip(ship);
+            List<string> result = new List<string>();
+            result.Add(moveShip(ship));
             this.IsCompleted = true;
             return result;
         }
-        public string ExecuteOrder(Ship ship, int impulse)
+        public List<string> ExecuteOrder(Ship ship, int impulse)
         {
-            string result = "Could Not Move";
+            List<string> result = new List<string>();
             if (impulse == 1)
-                result = moveShip(ship);
+                result.Add(moveShip(ship));
             else if (ship.MP.Max > 1)
             {
                 int impulseMultiplier = 30 / (ship.MP.Max - 1);
                 if (impulse % impulseMultiplier == 0)
-                    result = moveShip(ship);
+                    result.Add(moveShip(ship));
             }
             
             return result;

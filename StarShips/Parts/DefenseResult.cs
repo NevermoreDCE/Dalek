@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace StarShips.Structs
+namespace StarShips.Parts
 {
-    public struct DefenseResult
+    public class DefenseResult
     {
-        public string Message;
+        public List<string> Messages = new List<string>();
         public int Remainder;
     }
 }

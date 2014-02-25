@@ -16,7 +16,7 @@ namespace StarShips
         #endregion
 
 
-        public abstract string ExecuteOrder(Ship ship);
+        public abstract List<string> ExecuteOrder(Ship ship);
         public abstract void GetObjectData(SerializationInfo info, StreamingContext context);
         public abstract override string ToString();
     }

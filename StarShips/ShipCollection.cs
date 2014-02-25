@@ -48,6 +48,7 @@ namespace StarShips
         #endregion
 
         #region Internal Index Counter
+        
         int _internalIndex = 0;
         private int NextIndex()
         {
@@ -55,6 +56,14 @@ namespace StarShips
                 return 0;
             else
                 return _internalIndex + 1;
+        }
+        void AdjustIndex()
+        {
+            if (_ships[NextIndex()].IsDestroyed)
+            {
+                IncreaseIndex();
+                AdjustIndex();
+            }
         }
         private void IncreaseIndex()
         {
@@ -73,20 +82,11 @@ namespace StarShips
         public Ship GetNextShip(bool includeDestroyed)
         {
             Ship result = null;
-            if (!includeDestroyed)
+            if (!includeDestroyed) // filter past destroyed ships
             {
-                if (_ships.Any(f => f.IsDestroyed == false))
+                if (_ships.Any(f => f.IsDestroyed == false)) // check if any ships are still alive
                 {
-                    bool indexAdjusted = false;
-                    while (!indexAdjusted)
-                    {
-
-                        if (_ships[NextIndex()].IsDestroyed)
-                        {
-                            IncreaseIndex();
-                            indexAdjusted = true;
-                        }
-                    }
+                    AdjustIndex();
                 }
                 else
                     return _ships[0];

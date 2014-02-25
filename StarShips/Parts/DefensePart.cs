@@ -6,7 +6,6 @@ using StarShips.Interfaces;
 using System.Runtime.Serialization;
 using System.Xml.Linq;
 using StarShips.Utility;
-using StarShips.Structs;
 
 namespace StarShips.Parts
 {
@@ -40,18 +39,18 @@ namespace StarShips.Parts
         /// <returns>Status result and remaining damage</returns>
         public DefenseResult TakeHit(int Damage)
         {
-            DefenseResult result;
+            DefenseResult result = new DefenseResult();
             if (HP.Current <= 0)
             {
                 result.Remainder = Damage;
-                result.Message = string.Format("{0} is {1}!", this.Name, _downAdjective); ;
+                result.Messages.Add(string.Format("{0} is {1}!", this.Name, _downAdjective));
                 return result;
             }
 
             if (Damage <= _dr)
             {
                 result.Remainder = 0;
-                result.Message = string.Format("Bounces off {0} for No Damage!",this.Name);
+                result.Messages.Add(string.Format("Bounces off {0} for No Damage!",this.Name));
             }
             else
             {
@@ -59,13 +58,17 @@ namespace StarShips.Parts
                 if (afterDR >= HP.Current)
                 {
                     result.Remainder = afterDR - HP.Current;
-                    result.Message = string.Format("Hits {0} for {1}, {2} It!", this.Name, HP.Current, _penetrateVerb);
+                    result.Messages.Add(string.Format("Hits {0} for {1}{2}, {3} It!",
+                        this.Name,
+                        HP.Current,
+                        (_dr>0?string.Format("(DR: {0})",_dr):string.Empty),
+                        _penetrateVerb));
                     HP.Current = 0;
                 }
                 else
                 {
                     result.Remainder = 0;
-                    result.Message = string.Format("Hits {0} for {1}",this.Name, afterDR);
+                    result.Messages.Add(string.Format("Hits {0} for {1}{2}", this.Name, afterDR,(_dr > 0 ? string.Format("(DR: {0})", _dr) : string.Empty)));
                     HP.Current -= afterDR;
                 }
             }
