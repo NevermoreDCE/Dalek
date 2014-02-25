@@ -30,6 +30,8 @@
         {
             this.tcPartTypes = new System.Windows.Forms.TabControl();
             this.tbpWeapon = new System.Windows.Forms.TabPage();
+            this.nudWeaponRange = new System.Windows.Forms.NumericUpDown();
+            this.label23 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.cbxDamageTypes = new System.Windows.Forms.ComboBox();
             this.label13 = new System.Windows.Forms.Label();
@@ -98,13 +100,39 @@
             this.btnActPartSavePart = new System.Windows.Forms.Button();
             this.tbxActPartDescr = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
+            this.tbpEngines = new System.Windows.Forms.TabPage();
+            this.nudEngPartPointCost = new System.Windows.Forms.NumericUpDown();
+            this.label24 = new System.Windows.Forms.Label();
+            this.nudEngPartHP = new System.Windows.Forms.NumericUpDown();
+            this.label25 = new System.Windows.Forms.Label();
+            this.tbxEngPartName = new System.Windows.Forms.TextBox();
+            this.label26 = new System.Windows.Forms.Label();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.drpEngPartActionList = new Microsoft.VisualBasic.PowerPacks.DataRepeater();
+            this.lblEngPartActionTitle = new System.Windows.Forms.Label();
+            this.btnEngPartActionRemove = new System.Windows.Forms.Button();
+            this.btnEngPartActionAdd = new System.Windows.Forms.Button();
+            this.nudEngPartActionValue = new System.Windows.Forms.NumericUpDown();
+            this.label28 = new System.Windows.Forms.Label();
+            this.cbxEngPartActions = new System.Windows.Forms.ComboBox();
+            this.btnEngPartClear = new System.Windows.Forms.Button();
+            this.btnEngPartSavePart = new System.Windows.Forms.Button();
+            this.nudEngPartThrust = new System.Windows.Forms.NumericUpDown();
+            this.label29 = new System.Windows.Forms.Label();
             this.cbxExistingParts = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.btnLoadPart = new System.Windows.Forms.Button();
-            this.nudWeaponRange = new System.Windows.Forms.NumericUpDown();
-            this.label23 = new System.Windows.Forms.Label();
+            this.nudWeapPartMass = new System.Windows.Forms.NumericUpDown();
+            this.label27 = new System.Windows.Forms.Label();
+            this.nudDefPartMass = new System.Windows.Forms.NumericUpDown();
+            this.label30 = new System.Windows.Forms.Label();
+            this.nudActPartMass = new System.Windows.Forms.NumericUpDown();
+            this.label31 = new System.Windows.Forms.Label();
+            this.nudEngPartMass = new System.Windows.Forms.NumericUpDown();
+            this.label32 = new System.Windows.Forms.Label();
             this.tcPartTypes.SuspendLayout();
             this.tbpWeapon.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWeaponRange)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartPointCost)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartHP)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -129,7 +157,18 @@
             this.drpActPartActionList.ItemTemplate.SuspendLayout();
             this.drpActPartActionList.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudActPartActionValue)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudWeaponRange)).BeginInit();
+            this.tbpEngines.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudEngPartPointCost)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudEngPartHP)).BeginInit();
+            this.groupBox4.SuspendLayout();
+            this.drpEngPartActionList.ItemTemplate.SuspendLayout();
+            this.drpEngPartActionList.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudEngPartActionValue)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudEngPartThrust)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartMass)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDefPartMass)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudActPartMass)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudEngPartMass)).BeginInit();
             this.SuspendLayout();
             // 
             // tcPartTypes
@@ -137,6 +176,7 @@
             this.tcPartTypes.Controls.Add(this.tbpWeapon);
             this.tcPartTypes.Controls.Add(this.tbpDefense);
             this.tcPartTypes.Controls.Add(this.tbpAction);
+            this.tcPartTypes.Controls.Add(this.tbpEngines);
             this.tcPartTypes.Location = new System.Drawing.Point(0, 33);
             this.tcPartTypes.Name = "tcPartTypes";
             this.tcPartTypes.SelectedIndex = 0;
@@ -145,6 +185,8 @@
             // 
             // tbpWeapon
             // 
+            this.tbpWeapon.Controls.Add(this.nudWeapPartMass);
+            this.tbpWeapon.Controls.Add(this.label27);
             this.tbpWeapon.Controls.Add(this.nudWeaponRange);
             this.tbpWeapon.Controls.Add(this.label23);
             this.tbpWeapon.Controls.Add(this.label15);
@@ -174,10 +216,27 @@
             this.tbpWeapon.Text = "Weapon Part";
             this.tbpWeapon.UseVisualStyleBackColor = true;
             // 
+            // nudWeaponRange
+            // 
+            this.nudWeaponRange.Location = new System.Drawing.Point(459, 91);
+            this.nudWeaponRange.Name = "nudWeaponRange";
+            this.nudWeaponRange.Size = new System.Drawing.Size(120, 20);
+            this.nudWeaponRange.TabIndex = 27;
+            this.nudWeaponRange.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(286, 93);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(83, 13);
+            this.label23.TabIndex = 26;
+            this.label23.Text = "Weapon Range";
+            // 
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(286, 42);
+            this.label15.Location = new System.Drawing.Point(286, 67);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(74, 13);
             this.label15.TabIndex = 25;
@@ -186,7 +245,7 @@
             // cbxDamageTypes
             // 
             this.cbxDamageTypes.FormattingEnabled = true;
-            this.cbxDamageTypes.Location = new System.Drawing.Point(386, 39);
+            this.cbxDamageTypes.Location = new System.Drawing.Point(386, 64);
             this.cbxDamageTypes.Name = "cbxDamageTypes";
             this.cbxDamageTypes.Size = new System.Drawing.Size(193, 21);
             this.cbxDamageTypes.TabIndex = 24;
@@ -194,7 +253,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(286, 19);
+            this.label13.Location = new System.Drawing.Point(286, 44);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(59, 13);
             this.label13.TabIndex = 23;
@@ -203,7 +262,7 @@
             // cbxFiringTypes
             // 
             this.cbxFiringTypes.FormattingEnabled = true;
-            this.cbxFiringTypes.Location = new System.Drawing.Point(386, 14);
+            this.cbxFiringTypes.Location = new System.Drawing.Point(386, 39);
             this.cbxFiringTypes.Name = "cbxFiringTypes";
             this.cbxFiringTypes.Size = new System.Drawing.Size(193, 21);
             this.cbxFiringTypes.TabIndex = 22;
@@ -424,6 +483,8 @@
             // 
             // tbpDefense
             // 
+            this.tbpDefense.Controls.Add(this.nudDefPartMass);
+            this.tbpDefense.Controls.Add(this.label30);
             this.tbpDefense.Controls.Add(this.nudDefPartPointCost);
             this.tbpDefense.Controls.Add(this.label17);
             this.tbpDefense.Controls.Add(this.nudDefPartHP);
@@ -663,6 +724,8 @@
             // 
             // tbpAction
             // 
+            this.tbpAction.Controls.Add(this.nudActPartMass);
+            this.tbpAction.Controls.Add(this.label31);
             this.tbpAction.Controls.Add(this.nudActPartPointCost);
             this.tbpAction.Controls.Add(this.label4);
             this.tbpAction.Controls.Add(this.nudActPartHP);
@@ -860,6 +923,209 @@
             this.label11.TabIndex = 6;
             this.label11.Text = "Action Description";
             // 
+            // tbpEngines
+            // 
+            this.tbpEngines.Controls.Add(this.nudEngPartMass);
+            this.tbpEngines.Controls.Add(this.label32);
+            this.tbpEngines.Controls.Add(this.nudEngPartPointCost);
+            this.tbpEngines.Controls.Add(this.label24);
+            this.tbpEngines.Controls.Add(this.nudEngPartHP);
+            this.tbpEngines.Controls.Add(this.label25);
+            this.tbpEngines.Controls.Add(this.tbxEngPartName);
+            this.tbpEngines.Controls.Add(this.label26);
+            this.tbpEngines.Controls.Add(this.groupBox4);
+            this.tbpEngines.Controls.Add(this.btnEngPartClear);
+            this.tbpEngines.Controls.Add(this.btnEngPartSavePart);
+            this.tbpEngines.Controls.Add(this.nudEngPartThrust);
+            this.tbpEngines.Controls.Add(this.label29);
+            this.tbpEngines.Location = new System.Drawing.Point(4, 22);
+            this.tbpEngines.Name = "tbpEngines";
+            this.tbpEngines.Padding = new System.Windows.Forms.Padding(3);
+            this.tbpEngines.Size = new System.Drawing.Size(585, 340);
+            this.tbpEngines.TabIndex = 3;
+            this.tbpEngines.Text = "Engine Part";
+            this.tbpEngines.UseVisualStyleBackColor = true;
+            // 
+            // nudEngPartPointCost
+            // 
+            this.nudEngPartPointCost.Location = new System.Drawing.Point(194, 32);
+            this.nudEngPartPointCost.Name = "nudEngPartPointCost";
+            this.nudEngPartPointCost.Size = new System.Drawing.Size(82, 20);
+            this.nudEngPartPointCost.TabIndex = 32;
+            this.nudEngPartPointCost.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(133, 34);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(55, 13);
+            this.label24.TabIndex = 31;
+            this.label24.Text = "Point Cost";
+            // 
+            // nudEngPartHP
+            // 
+            this.nudEngPartHP.Location = new System.Drawing.Point(73, 32);
+            this.nudEngPartHP.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudEngPartHP.Name = "nudEngPartHP";
+            this.nudEngPartHP.Size = new System.Drawing.Size(54, 20);
+            this.nudEngPartHP.TabIndex = 30;
+            this.nudEngPartHP.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudEngPartHP.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(10, 34);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(49, 13);
+            this.label25.TabIndex = 29;
+            this.label25.Text = "Part HPs";
+            // 
+            // tbxEngPartName
+            // 
+            this.tbxEngPartName.Location = new System.Drawing.Point(73, 6);
+            this.tbxEngPartName.Name = "tbxEngPartName";
+            this.tbxEngPartName.Size = new System.Drawing.Size(203, 20);
+            this.tbxEngPartName.TabIndex = 28;
+            // 
+            // label26
+            // 
+            this.label26.AutoSize = true;
+            this.label26.Location = new System.Drawing.Point(10, 9);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(57, 13);
+            this.label26.TabIndex = 27;
+            this.label26.Text = "Part Name";
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.drpEngPartActionList);
+            this.groupBox4.Controls.Add(this.btnEngPartActionAdd);
+            this.groupBox4.Controls.Add(this.nudEngPartActionValue);
+            this.groupBox4.Controls.Add(this.label28);
+            this.groupBox4.Controls.Add(this.cbxEngPartActions);
+            this.groupBox4.Location = new System.Drawing.Point(5, 84);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(277, 211);
+            this.groupBox4.TabIndex = 26;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Actions";
+            // 
+            // drpEngPartActionList
+            // 
+            // 
+            // drpEngPartActionList.ItemTemplate
+            // 
+            this.drpEngPartActionList.ItemTemplate.Controls.Add(this.lblEngPartActionTitle);
+            this.drpEngPartActionList.ItemTemplate.Controls.Add(this.btnEngPartActionRemove);
+            this.drpEngPartActionList.ItemTemplate.Size = new System.Drawing.Size(248, 30);
+            this.drpEngPartActionList.Location = new System.Drawing.Point(12, 48);
+            this.drpEngPartActionList.Name = "drpEngPartActionList";
+            this.drpEngPartActionList.Size = new System.Drawing.Size(256, 157);
+            this.drpEngPartActionList.TabIndex = 7;
+            this.drpEngPartActionList.Text = "dataRepeater1";
+            this.drpEngPartActionList.VirtualMode = true;
+            // 
+            // lblEngPartActionTitle
+            // 
+            this.lblEngPartActionTitle.AutoSize = true;
+            this.lblEngPartActionTitle.Location = new System.Drawing.Point(30, 8);
+            this.lblEngPartActionTitle.Name = "lblEngPartActionTitle";
+            this.lblEngPartActionTitle.Size = new System.Drawing.Size(41, 13);
+            this.lblEngPartActionTitle.TabIndex = 1;
+            this.lblEngPartActionTitle.Text = "label13";
+            // 
+            // btnEngPartActionRemove
+            // 
+            this.btnEngPartActionRemove.Location = new System.Drawing.Point(3, 3);
+            this.btnEngPartActionRemove.Name = "btnEngPartActionRemove";
+            this.btnEngPartActionRemove.Size = new System.Drawing.Size(21, 23);
+            this.btnEngPartActionRemove.TabIndex = 0;
+            this.btnEngPartActionRemove.Text = "X";
+            this.btnEngPartActionRemove.UseVisualStyleBackColor = true;
+            this.btnEngPartActionRemove.Click += new System.EventHandler(this.btnEngPartActionRemove_Click);
+            // 
+            // btnEngPartActionAdd
+            // 
+            this.btnEngPartActionAdd.Location = new System.Drawing.Point(229, 19);
+            this.btnEngPartActionAdd.Name = "btnEngPartActionAdd";
+            this.btnEngPartActionAdd.Size = new System.Drawing.Size(39, 23);
+            this.btnEngPartActionAdd.TabIndex = 6;
+            this.btnEngPartActionAdd.Text = "Add";
+            this.btnEngPartActionAdd.UseVisualStyleBackColor = true;
+            this.btnEngPartActionAdd.Click += new System.EventHandler(this.btnEngPartActionAdd_Click);
+            // 
+            // nudEngPartActionValue
+            // 
+            this.nudEngPartActionValue.Location = new System.Drawing.Point(181, 21);
+            this.nudEngPartActionValue.Name = "nudEngPartActionValue";
+            this.nudEngPartActionValue.Size = new System.Drawing.Size(42, 20);
+            this.nudEngPartActionValue.TabIndex = 5;
+            this.nudEngPartActionValue.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Location = new System.Drawing.Point(9, 24);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(37, 13);
+            this.label28.TabIndex = 4;
+            this.label28.Text = "Action";
+            // 
+            // cbxEngPartActions
+            // 
+            this.cbxEngPartActions.FormattingEnabled = true;
+            this.cbxEngPartActions.Location = new System.Drawing.Point(52, 21);
+            this.cbxEngPartActions.Name = "cbxEngPartActions";
+            this.cbxEngPartActions.Size = new System.Drawing.Size(123, 21);
+            this.cbxEngPartActions.TabIndex = 3;
+            // 
+            // btnEngPartClear
+            // 
+            this.btnEngPartClear.Location = new System.Drawing.Point(153, 301);
+            this.btnEngPartClear.Name = "btnEngPartClear";
+            this.btnEngPartClear.Size = new System.Drawing.Size(120, 28);
+            this.btnEngPartClear.TabIndex = 25;
+            this.btnEngPartClear.Text = "Clear";
+            this.btnEngPartClear.UseVisualStyleBackColor = true;
+            this.btnEngPartClear.Click += new System.EventHandler(this.btnEngPartClear_Click);
+            // 
+            // btnEngPartSavePart
+            // 
+            this.btnEngPartSavePart.Location = new System.Drawing.Point(13, 301);
+            this.btnEngPartSavePart.Name = "btnEngPartSavePart";
+            this.btnEngPartSavePart.Size = new System.Drawing.Size(120, 28);
+            this.btnEngPartSavePart.TabIndex = 24;
+            this.btnEngPartSavePart.Text = "Save";
+            this.btnEngPartSavePart.UseVisualStyleBackColor = true;
+            this.btnEngPartSavePart.Click += new System.EventHandler(this.btnEngPartSavePart_Click);
+            // 
+            // nudEngPartThrust
+            // 
+            this.nudEngPartThrust.Location = new System.Drawing.Point(73, 58);
+            this.nudEngPartThrust.Name = "nudEngPartThrust";
+            this.nudEngPartThrust.Size = new System.Drawing.Size(203, 20);
+            this.nudEngPartThrust.TabIndex = 23;
+            this.nudEngPartThrust.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label29
+            // 
+            this.label29.AutoSize = true;
+            this.label29.Location = new System.Drawing.Point(10, 60);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(37, 13);
+            this.label29.TabIndex = 22;
+            this.label29.Text = "Thrust";
+            // 
             // cbxExistingParts
             // 
             this.cbxExistingParts.FormattingEnabled = true;
@@ -887,22 +1153,93 @@
             this.btnLoadPart.UseVisualStyleBackColor = true;
             this.btnLoadPart.Click += new System.EventHandler(this.btnLoadPart_Click);
             // 
-            // nudWeaponRange
+            // nudWeapPartMass
             // 
-            this.nudWeaponRange.Location = new System.Drawing.Point(459, 66);
-            this.nudWeaponRange.Name = "nudWeaponRange";
-            this.nudWeaponRange.Size = new System.Drawing.Size(120, 20);
-            this.nudWeaponRange.TabIndex = 27;
-            this.nudWeaponRange.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudWeapPartMass.Location = new System.Drawing.Point(459, 15);
+            this.nudWeapPartMass.Maximum = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.nudWeapPartMass.Name = "nudWeapPartMass";
+            this.nudWeapPartMass.Size = new System.Drawing.Size(120, 20);
+            this.nudWeapPartMass.TabIndex = 29;
+            this.nudWeapPartMass.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
-            // label23
+            // label27
             // 
-            this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(286, 68);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(83, 13);
-            this.label23.TabIndex = 26;
-            this.label23.Text = "Weapon Range";
+            this.label27.AutoSize = true;
+            this.label27.Location = new System.Drawing.Point(286, 17);
+            this.label27.Name = "label27";
+            this.label27.Size = new System.Drawing.Size(32, 13);
+            this.label27.TabIndex = 28;
+            this.label27.Text = "Mass";
+            // 
+            // nudDefPartMass
+            // 
+            this.nudDefPartMass.Location = new System.Drawing.Point(459, 10);
+            this.nudDefPartMass.Maximum = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.nudDefPartMass.Name = "nudDefPartMass";
+            this.nudDefPartMass.Size = new System.Drawing.Size(120, 20);
+            this.nudDefPartMass.TabIndex = 31;
+            this.nudDefPartMass.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Location = new System.Drawing.Point(286, 12);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(32, 13);
+            this.label30.TabIndex = 30;
+            this.label30.Text = "Mass";
+            // 
+            // nudActPartMass
+            // 
+            this.nudActPartMass.Location = new System.Drawing.Point(462, 10);
+            this.nudActPartMass.Maximum = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.nudActPartMass.Name = "nudActPartMass";
+            this.nudActPartMass.Size = new System.Drawing.Size(120, 20);
+            this.nudActPartMass.TabIndex = 31;
+            this.nudActPartMass.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label31
+            // 
+            this.label31.AutoSize = true;
+            this.label31.Location = new System.Drawing.Point(289, 12);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(32, 13);
+            this.label31.TabIndex = 30;
+            this.label31.Text = "Mass";
+            // 
+            // nudEngPartMass
+            // 
+            this.nudEngPartMass.Location = new System.Drawing.Point(459, 7);
+            this.nudEngPartMass.Maximum = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.nudEngPartMass.Name = "nudEngPartMass";
+            this.nudEngPartMass.Size = new System.Drawing.Size(120, 20);
+            this.nudEngPartMass.TabIndex = 34;
+            this.nudEngPartMass.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label32
+            // 
+            this.label32.AutoSize = true;
+            this.label32.Location = new System.Drawing.Point(286, 9);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(32, 13);
+            this.label32.TabIndex = 33;
+            this.label32.Text = "Mass";
             // 
             // PartMaker
             // 
@@ -918,6 +1255,7 @@
             this.tcPartTypes.ResumeLayout(false);
             this.tbpWeapon.ResumeLayout(false);
             this.tbpWeapon.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWeaponRange)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartPointCost)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartHP)).EndInit();
             this.groupBox1.ResumeLayout(false);
@@ -950,7 +1288,21 @@
             this.drpActPartActionList.ItemTemplate.PerformLayout();
             this.drpActPartActionList.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.nudActPartActionValue)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudWeaponRange)).EndInit();
+            this.tbpEngines.ResumeLayout(false);
+            this.tbpEngines.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudEngPartPointCost)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudEngPartHP)).EndInit();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
+            this.drpEngPartActionList.ItemTemplate.ResumeLayout(false);
+            this.drpEngPartActionList.ItemTemplate.PerformLayout();
+            this.drpEngPartActionList.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.nudEngPartActionValue)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudEngPartThrust)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWeapPartMass)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDefPartMass)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudActPartMass)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudEngPartMass)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1033,6 +1385,33 @@
         private System.Windows.Forms.ComboBox cbxFiringTypes;
         private System.Windows.Forms.NumericUpDown nudWeaponRange;
         private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.TabPage tbpEngines;
+        private System.Windows.Forms.NumericUpDown nudEngPartPointCost;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.NumericUpDown nudEngPartHP;
+        private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.TextBox tbxEngPartName;
+        private System.Windows.Forms.Label label26;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private Microsoft.VisualBasic.PowerPacks.DataRepeater drpEngPartActionList;
+        private System.Windows.Forms.Label lblEngPartActionTitle;
+        private System.Windows.Forms.Button btnEngPartActionRemove;
+        private System.Windows.Forms.Button btnEngPartActionAdd;
+        private System.Windows.Forms.NumericUpDown nudEngPartActionValue;
+        private System.Windows.Forms.Label label28;
+        private System.Windows.Forms.ComboBox cbxEngPartActions;
+        private System.Windows.Forms.Button btnEngPartClear;
+        private System.Windows.Forms.Button btnEngPartSavePart;
+        private System.Windows.Forms.NumericUpDown nudEngPartThrust;
+        private System.Windows.Forms.Label label29;
+        private System.Windows.Forms.NumericUpDown nudWeapPartMass;
+        private System.Windows.Forms.Label label27;
+        private System.Windows.Forms.NumericUpDown nudDefPartMass;
+        private System.Windows.Forms.Label label30;
+        private System.Windows.Forms.NumericUpDown nudActPartMass;
+        private System.Windows.Forms.Label label31;
+        private System.Windows.Forms.NumericUpDown nudEngPartMass;
+        private System.Windows.Forms.Label label32;
     }
 }
 

@@ -47,6 +47,12 @@ namespace StarShips.Players
             if (CollectionChanged != null)
                 CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, player));
         }
+        public void Clear()
+        {
+            _players.Clear();
+            if (CollectionChanged != null)
+                CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
         #endregion
 
         #region Serialization
@@ -88,6 +94,17 @@ namespace StarShips.Players
         }
         #endregion
 
+        #region Internal Variables
+        int _internalIndex = 0;
+        #endregion
+        public Player Next()
+        {
+            if (_internalIndex + 1 >= _players.Count)
+                _internalIndex = 0;
+            else
+                _internalIndex++;
+            return (Player)_players[_internalIndex];
+        }
     }
 
     public class PlayerColEnum : IEnumerator<Player>

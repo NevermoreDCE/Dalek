@@ -83,7 +83,7 @@ namespace ShipEditor
         {
             BindingList<Ship> bsShips = new BindingList<Ship>(ExistingShips);
             cbxShipList.DataSource = bsShips;
-            cbxShipList.DisplayMember = "Name";
+            cbxShipList.DisplayMember = "ClassName";
             if (bsShips.Count < 1)
                 cbxShipList.Text = string.Empty;
         }
@@ -103,6 +103,11 @@ namespace ShipEditor
             drpPartList.DataSource = bsShipParts;
             drpPartList.BeginResetItemTemplate();
             drpPartList.EndResetItemTemplate();
+            if (ship.HullType.Mass > 0)
+            {
+                lblShipMass.Text = string.Format("Mass : {0}", ship.TotalMass.ToString());
+                lblShipMP.Text = string.Format("MP: {0}",ship.GetMaxMP().ToString());
+            }
         }
 
         #region Add/Remove Part
@@ -112,6 +117,11 @@ namespace ShipEditor
             bsShipParts.RemoveAt(index);
             drpPartList.BeginResetItemTemplate();
             drpPartList.EndResetItemTemplate();
+            if (ship.HullType.Mass > 0)
+            {
+                lblShipMass.Text = string.Format("Mass : {0}", ship.TotalMass.ToString());
+                lblShipMP.Text = string.Format("MP: {0}", ship.GetMaxMP().ToString());
+            }
         }
 
         private void btnAddPart_Click(object sender, EventArgs e)
@@ -195,7 +205,7 @@ namespace ShipEditor
         {
             ship.ClassName = tbxShipName.Text;
             ship.HullType = ((ShipHull)cbxShipHullTypes.SelectedItem).Clone();
-            ship.MP.Max = 3;
+            ship.MP.Max = ship.GetMaxMP();
             ship.GetObjectXML(shipDoc);
             LoadShipList(shipDoc);
             ShowShipList();

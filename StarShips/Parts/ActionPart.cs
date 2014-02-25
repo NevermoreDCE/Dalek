@@ -26,11 +26,6 @@ namespace StarShips.Parts
             return string.Format("{0} ({1})", this.Name, _actionDescription);
         }
 
-        public override string Repair(int amount)
-        {
-            this.IsDestroyed = false;
-            return string.Empty;
-        }
         #endregion
 
         #region Serialization
@@ -38,6 +33,7 @@ namespace StarShips.Parts
         {
             info.AddValue("Name", Name);
             info.AddValue("HP", HP);
+            info.AddValue("Mass", Mass);
             info.AddValue("ActionDescription", _actionDescription);
             info.AddValue("Actions", _actions);
             info.AddValue("Parent", _parent);
@@ -52,6 +48,10 @@ namespace StarShips.Parts
                 // Update Existing
                 act = sourceDoc.Descendants("actionPart").First(f => f.Attribute("name").Value == this.Name);
                 act.Element("MaxHP").Value = this.HP.Max.ToString();
+                if (act.Element("Mass") != null)
+                    act.Element("Mass").Value = this._mass.ToString();
+                else
+                    act.Add(new XElement("Mass", this._mass.ToString()));
                 act.Element("ActionDescription").Value = this._actionDescription.ToString();
                 
                 addActions(act.Element("Actions"));
@@ -64,6 +64,7 @@ namespace StarShips.Parts
                 act =
                     new XElement("actionPart", new XAttribute("name", this.Name),
                         new XElement("MaxHP", this.HP.Max.ToString()),
+                        new XElement("Mass",this.Mass.ToString()),
                         new XElement("ActionDescription", this._actionDescription.ToString()),
                         actions);
                 sourceDoc.Descendants("actionParts").First().Add(act);
@@ -72,12 +73,13 @@ namespace StarShips.Parts
         #endregion
 
         #region Constructors
-        public ActionPart(Ship Parent, string Name, int MaxHP, string ActionDescription, List<ShipAction> Actions)
+        public ActionPart(Ship Parent, string Name, int MaxHP, double Mass, string ActionDescription, List<ShipAction> Actions)
         {
             this._parent = Parent;
             this.Name = Name;
             HP.Max = MaxHP;
             HP.Current = MaxHP;
+            _mass = Mass;
             _actionDescription = ActionDescription;
             _actions = Actions;
         }
@@ -87,6 +89,7 @@ namespace StarShips.Parts
             _parent = (Ship)info.GetValue("Parent", typeof(Ship));
             Name = (string)info.GetValue("Name", typeof(string));
             HP = (StatWithMax)info.GetValue("HP", typeof(StatWithMax));
+            _mass = (double)info.GetValue("Mass", typeof(double));
             _actionDescription = (string)info.GetValue("ActionDescription", typeof(string));
             _actions = (List<ShipAction>)info.GetValue("Actions", typeof(List<ShipAction>));
         }
@@ -96,6 +99,8 @@ namespace StarShips.Parts
             this._parent = parent;
             this.Name = description.Attribute("name").Value;
             this.HP.Max = int.Parse(description.Element("MaxHP").Value);
+            if (description.Element("Mass") != null)
+                this._mass = double.Parse(description.Element("Mass").Value);
             this._actionDescription = description.Element("ActionDescription").Value;
             loadActions(description.Element("Actions"));
         }

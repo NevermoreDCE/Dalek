@@ -11,15 +11,36 @@ using StarShips.Orders.Interfaces;
 namespace StarShips.Orders
 {
     [Serializable]
-    public class MoveToShipAtRange : ShipOrder, ISerializable, IMoveOrder
+    public class MoveToShipAtRange : ShipOrder, ISerializable, IMoveToShipOrder
     {
         public event OrderDelegates.ShipMoveEvent OnShipMove;
         public override string ExecuteOrder(Ship ship)
         {
             string result = "Could Not Move";
+            result = moveShip(ship);
+            this.IsCompleted = true;
+            return result;
+        }
+        public string ExecuteOrder(Ship ship, int impulse)
+        {
+            string result = "Could Not Move";
+            if (impulse == 1)
+                result = moveShip(ship);
+            else if (ship.MP.Max > 1)
+            {
+                int impulseMultiplier = 30 / (ship.MP.Max - 1);
+                if (impulse % impulseMultiplier == 0)
+                    result = moveShip(ship);
+            }
+            
+            return result;
+        }
+
+        private string moveShip(Ship ship)
+        {
+            string result = "Could Not Move";
             if (OnShipMove != null)
             {
-                //Point targetCurrentLoc = ((Ship)this.OrderValues[0]).Position;
                 Point sourceLoc = ship.Position;
                 Point targetLoc = ((Ship)this.OrderValues[0]).Position;
                 LocationCollection locations = (LocationCollection)this.OrderValues[2];
@@ -29,12 +50,11 @@ namespace StarShips.Orders
                 {
                     Point from = ship.Position;
                     Point to = locations.MoveShipToPoint(ship, targetCurrentLoc);
-                    OnShipMove(this, new EventArgs(), ship.Image,from, to, ship.WeaponsFiredAlready);
+                    OnShipMove(this, new EventArgs(), ship.Image, from, to, ship.WeaponsFiredAlready);
                 }
 
-                result = string.Format("Moved towards {0} at range {1}", ((Ship)OrderValues[0]).ClassName,range);
+                result = string.Format("Moved towards {0} at range {1}", ((Ship)OrderValues[0]).ClassName, range);
             }
-            this.IsCompleted = true;
             return result;
         }
 

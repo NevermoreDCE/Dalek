@@ -31,8 +31,8 @@ namespace StarShips.Orders
                 {
                     result = string.Format("{0} is destroyed!", weapon.Name);
                     Debug.WriteLine(string.Format("Resolving {0}, Destroyed", weapon.Name));
-                    ship.CountOfResolvingOrders--;
                     ship.CompletedOrders.Add(this);
+                    this.IsCompleted = true;
                 }
                 else
                 {
@@ -41,7 +41,7 @@ namespace StarShips.Orders
                     {
                         result = string.Format("{0} will be reloaded in {1} turns", weapon.Name, weapon.Reload());
                         Debug.WriteLine(string.Format("Resolving {0}, Reloading", weapon.Name));
-                        ship.CountOfResolvingOrders--;
+                        this.IsCompleted = true;
                     }
                     else
                     {
@@ -52,7 +52,7 @@ namespace StarShips.Orders
                             result = "Target Already Dead";
                             ship.CompletedOrders.Add(this);
                             Debug.WriteLine(string.Format("Resolving {0}, Target Dead", weapon.Name));
-                            ship.CountOfResolvingOrders--;
+                            this.IsCompleted = true;
                         }
                         else
                         {
@@ -61,20 +61,19 @@ namespace StarShips.Orders
                             {
                                 result = "Target Out Of Range";
                                 Debug.WriteLine(string.Format("Resolving {0}, Target Out Of Range", weapon.Name));
-                                ship.CountOfResolvingOrders--;
                             }
                             else
                             {
                                 weapon.Target = target;
                                 result = weapon.Fire();
                                 OnWeaponFired(this, new EventArgs(), ship.Position, target.Position, weapon.FiringType);
+                                this.IsCompleted = true;
                             }
                         }
                     }
                 }
             }
             
-            this.IsCompleted = true;
             return result;
         }
 

@@ -30,3 +30,15 @@ $tf*/
 RunTime/WpfApplication1.vshost.exe.manifest
 RunTime/PartMaker.vshost.exe.manifest
 RunTime/SpaceX.vshost.exe.manifest
+RunTime/HullMaker.vshost.exe.manifest
+BangAround/BangAround.csproj
+BangAround/Form1.cs
+BangAround/Form1.Designer.cs
+BangAround/Form1.resx
+BangAround/Program.cs
+BangAround/Properties/AssemblyInfo.cs
+BangAround/Properties/Resources.Designer.cs
+BangAround/Properties/Resources.resx
+BangAround/Properties/Settings.Designer.cs
+BangAround/Properties/Settings.settings
+RunTime/ShipEditor.vshost.exe.manifest

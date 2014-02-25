@@ -61,17 +61,20 @@ namespace StarShips.Parts
                 );
         }
 
-        public override string Repair(int amount)
-        {
-            this.IsDestroyed = false;
-            return string.Empty;
-        }
-
+        /// <summary>
+        /// Fires the weapon at its existing target with a fixed 90% hit 5% crit chance
+        /// </summary>
+        /// <returns>Status result</returns>
         public string Fire()
         {
             return Fire(11, 96); // 10% miss, 5% crit
         }
-
+        /// <summary>
+        /// Fires the weapon at its existing target with specific hit/crit chances
+        /// </summary>
+        /// <param name="hitAbove">Minimum number needed (out of 100) to hit the target</param>
+        /// <param name="critAbove">Minimum number needed (out of 100) to critically-hit the target</param>
+        /// <returns>Status result</returns>
         public string Fire(int hitAbove, int critAbove)
         {
             string result = string.Empty;
@@ -100,10 +103,17 @@ namespace StarShips.Parts
             
             return result;
         }
-
+        
+        /// <summary>
+        /// Reduces the reload counter for the weapon
+        /// </summary>
+        /// <returns>Number of turns remaining until the weapon is reloaded</returns>
         public int Reload()
         {
-            return _currentReload--;
+            if (_currentReload > 0)
+                return _currentReload--;
+            else
+                return 0;
         }
 
         #endregion
@@ -113,6 +123,7 @@ namespace StarShips.Parts
         {
             info.AddValue("Name", Name);
             info.AddValue("HP", HP);
+            info.AddValue("Mass", Mass);
             info.AddValue("Damage", _weaponDamage);
             info.AddValue("CritMultiplier", _critMultiplier);
             info.AddValue("DamageType", _damageType);
@@ -133,6 +144,10 @@ namespace StarShips.Parts
                 // Update Existing
                 weap = sourceDoc.Descendants("weaponPart").First(f => f.Attribute("name").Value == this.Name);
                 weap.Element("MaxHP").Value = this.HP.Max.ToString();
+                if (weap.Element("Mass") != null)
+                    weap.Element("Mass").Value = this._mass.ToString();
+                else
+                    weap.Add(new XElement("Mass", this._mass.ToString()));
                 weap.Element("WeaponDamage").Value = this._weaponDamage.ToString();
                 weap.Element("CritMultiplier").Value = this._critMultiplier.ToString();
                 if (weap.Element("DamageType") != null)
@@ -148,7 +163,8 @@ namespace StarShips.Parts
                 else
                     weap.Add(new XElement("WeaponRange", this._weaponRange.ToString()));
                 weap.Element("ReloadTime").Value = this._reloadTime.ToString();
-
+                
+                
                 addActions(weap.Element("Actions"));
             }
             else
@@ -159,6 +175,7 @@ namespace StarShips.Parts
                 weap =
                     new XElement("weaponPart", new XAttribute("name", this.Name),
                         new XElement("MaxHP", this.HP.Max.ToString()),
+                        new XElement("Mass",this.Mass.ToString()),
                         new XElement("WeaponDamage", this._weaponDamage.ToString()),
                         new XElement("CritMultiplier", this._critMultiplier.ToString()),
                         new XElement("DamageType",this._damageType),
@@ -173,12 +190,13 @@ namespace StarShips.Parts
         #endregion
 
         #region Constructors
-        private void initWeaponPart(Ship Parent, string Name, int MaxHP, int Damage,double Range, string DamageType, string FiringType, int CritMultiplier, int ReloadTime, List<ShipAction> Actions)
+        private void initWeaponPart(Ship Parent, string Name, int MaxHP, double Mass, int Damage,double Range, string DamageType, string FiringType, int CritMultiplier, int ReloadTime, List<ShipAction> Actions)
         {
             this._parent = Parent;
             this.Name = Name;
             HP.Max = MaxHP;
             HP.Current = MaxHP;
+            _mass = Mass;
             _weaponDamage = Damage;
             _critMultiplier = CritMultiplier;
             _damageType = DamageType;
@@ -188,19 +206,16 @@ namespace StarShips.Parts
             _weaponRange = Range;
         }
 
-        public WeaponPart(Ship Parent, string Name, int MaxHP, int Damage, string DamageType, string FiringType, int CritMultiplier, int ReloadTime, List<ShipAction> Actions)
+        public WeaponPart(Ship Parent, string Name, int MaxHP, double Mass, int Damage, double Range, string DamageType, string FiringType, int CritMultiplier, int ReloadTime, List<ShipAction> Actions)
         {
-            initWeaponPart(Parent, Name, MaxHP, Damage, 0d, DamageType, FiringType, CritMultiplier, ReloadTime, Actions);
-        }
-        public WeaponPart(Ship Parent, string Name, int MaxHP, int Damage, double Range, string DamageType, string FiringType, int CritMultiplier, int ReloadTime, List<ShipAction> Actions)
-        {
-            initWeaponPart(Parent, Name, MaxHP, Damage, Range, DamageType, FiringType, CritMultiplier, ReloadTime, Actions);
+            initWeaponPart(Parent, Name, MaxHP, Mass, Damage, Range, DamageType, FiringType, CritMultiplier, ReloadTime, Actions);
         }
         public WeaponPart(SerializationInfo info, StreamingContext ctxt)
         {
             this._parent = (Ship)info.GetValue("Parent", typeof(Ship));
             this.Name = (string)info.GetValue("Name", typeof(string));
             HP = (StatWithMax)info.GetValue("HP", typeof(StatWithMax));
+            _mass = (double)info.GetValue("Mass", typeof(double));
             _weaponDamage = (int)info.GetValue("Damage", typeof(int));
             _critMultiplier = (int)info.GetValue("CritMultiplier", typeof(int));
             _damageType = (string)info.GetValue("DamageType", typeof(string));
@@ -215,6 +230,8 @@ namespace StarShips.Parts
             this._parent = parent;
             this.Name = description.Attribute("name").Value;
             this.HP.Max = int.Parse(description.Element("MaxHP").Value);
+            if (description.Element("Mass") != null)
+                this._mass = double.Parse(description.Element("Mass").Value);
             this._weaponDamage = int.Parse(description.Element("WeaponDamage").Value);
             this._critMultiplier = int.Parse(description.Element("CritMultiplier").Value);
             if (description.Element("DamageType") != null)

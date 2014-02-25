@@ -17,23 +17,46 @@ namespace StarShips.Orders
         public override string ExecuteOrder(Ship ship)
         {
             string result = "Could Not Move";
-            if (OnShipMove != null)
-            {
-                Point sourceLoc = ship.Position;
-                Point targetLoc = (Point)this.OrderValues[0];
-                LocationCollection locations = (LocationCollection)this.OrderValues[1];
-                while (ship.Position != targetLoc && ship.MP.Current > 0)
-                {
-                    Point from = ship.Position;
-                    Point to = locations.MoveShipToPoint(ship, targetLoc);
-                    OnShipMove(this, new EventArgs(), ship.Image, from, to, ship.WeaponsFiredAlready);
-                }
-                result = string.Format("Moved towards {0},{1}", ((Point)OrderValues[0]).X, ((Point)OrderValues[0]).Y);
-            }
+            result = moveShip(ship);
             this.IsCompleted = true;
             // check if action should be removed on completion
             if (ship.Position == (Point)OrderValues[0])
                 ship.CompletedOrders.Add(this);
+            return result;
+        }
+        public string ExecuteOrder(Ship ship, int impulse)
+        {
+            string result = "Could Not Move";
+            if (impulse == 1)
+                result = moveShip(ship);
+            else if (ship.MP.Max > 1)
+            {
+                int impulseMultiplier = 30 / (ship.MP.Max - 1);
+                if (impulse % impulseMultiplier == 0)
+                    result = moveShip(ship);
+            }
+            if (ship.Position == (Point)OrderValues[0])
+                ship.CompletedOrders.Add(this);
+
+            return result;
+        }
+
+        private string moveShip(Ship ship)
+        {
+            string result = "Could Not Move";
+
+            Point sourceLoc = ship.Position;
+            Point targetLoc = (Point)this.OrderValues[0];
+            LocationCollection locations = (LocationCollection)this.OrderValues[1];
+            if (ship.Position != targetLoc && ship.MP.Current > 0)
+            {
+                Point from = ship.Position;
+                Point to = locations.MoveShipToPoint(ship, targetLoc);
+                if (OnShipMove != null)
+                    OnShipMove(this, new EventArgs(), ship.Image, from, to, ship.WeaponsFiredAlready);
+            }
+            result = string.Format("Moved towards {0},{1}", ((Point)OrderValues[0]).X, ((Point)OrderValues[0]).Y);
+
             return result;
         }
 

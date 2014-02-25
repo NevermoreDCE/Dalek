@@ -11,6 +11,7 @@ namespace StarShips.Players
         string _empireName;
         string _iconSet;
         System.Windows.Controls.Image _icon;
+        bool _isAI = false;
         #endregion
 
         #region Public Properties
@@ -18,6 +19,7 @@ namespace StarShips.Players
         public string EmpireName { get { return _empireName; } }
         public string IconSet { get { return _iconSet; } }
         public System.Windows.Controls.Image Icon { get { return _icon; } }
+        public bool IsAI { get { return _isAI; } set { _isAI = value; } }
         public ShipCollection Ships;
         public bool IsTurnComplete;
         #endregion

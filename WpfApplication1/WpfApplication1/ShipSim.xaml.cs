@@ -28,8 +28,8 @@ namespace WPFPathfinding
         LocationCollection locations = new LocationCollection(GridDimensionX, GridDimensionY);
         PlayerCollection Players = new PlayerCollection();
         Image[,] contextImages = new Image[GridDimensionX, GridDimensionY];
-        List<Ship> Ships = new List<Ship>();
         Ship currentShip;
+        Player currentPlayer;
         Image highlightCurrentShip;
         Image moveTarget;
         Image explosionImg;
@@ -54,10 +54,9 @@ namespace WPFPathfinding
         private void RefreshMap()
         {
             g.Children.Clear();
-            initShips();
             initGrid();
             initLocations();
-            initShipLocations();
+            initShipDetails();
             initImages();
 
 
@@ -83,41 +82,40 @@ namespace WPFPathfinding
         }
 
         #region Initalize Methods
-        private void initShipLocations()
+        private void initShipDetails()
         {
+            int RangeSize = ((GridDimensionX-1)/Players.Count);
             using (RNG rng = new RNG())
             {
-                Ship hunter = Ships.First(f => f.ClassName == "Hunter");
-                Ship prey = Ships.First(f => f.ClassName == "Prey");
-                bool validHunter = false;
-                int randX = 0;
-                int randY = 0;
-                while (!validHunter)
+                for (int i = 0; i < Players.Count; i++)
                 {
-                    randX = rng.d(GridDimensionX - 1);
-                    randY = rng.d(GridDimensionY - 1);
-                    if (!locations[randX, randY].IsBlocked)
-                        validHunter = true;
-                }
-                locations[randX, randY].Ships.Add(hunter);
-                hunter.Origin = new System.Drawing.Point(randX, randY);
-                hunter.Position = new System.Drawing.Point(randX, randY);
+                    Player player = Players[i];
+                    int XRangeMin = RangeSize * i;
+                    int XRangeMax = RangeSize * (i + 1)-1;
 
-                bool validLoc = false;
-                int newX = 0;
-                int newY = 0;
-                while (!validLoc)
-                {
-                    newX = rng.d(GridDimensionX - 1);
-                    newY = rng.d(GridDimensionY - 1);
-
-                    if ((Math.Abs(randX - newX) >= 5 || Math.Abs(randY - newY) >= 5) && !locations[newX, newY].IsBlocked)
-                        validLoc = true;
+                    foreach (Ship ship in player.Ships)
+                    {
+                        bool validLoc = false;
+                        int x = 0;
+                        int y = 0;
+                        while (!validLoc)
+                        {
+                            x = rng.d(GridDimensionX - 1);
+                            y = rng.d(GridDimensionY - 1);
+                            if (!locations[x, y].IsBlocked && XRangeMin <= x && x <= XRangeMax)
+                                validLoc = true;
+                        }
+                        locations[x, y].Ships.Add(ship);
+                        ship.Origin=new System.Drawing.Point(x,y);
+                        ship.Position = new System.Drawing.Point(x, y);
+                        ship.OnShipDestroyed+=new StarShips.Delegates.ShipDelegates.ShipDestroyedEvent(onShipDestroyedHandler);
+                    }
                 }
-                locations[newX, newY].Ships.Add(prey);
-                prey.Origin = new System.Drawing.Point(newX, newY);
-                prey.Position = new System.Drawing.Point(newX, newY);
             }
+            currentPlayer = Players[0];
+            txbCurrentPlayer.Text = currentPlayer.Name;
+            imgCurrentPlayerIcon.Source = currentPlayer.Icon.Source;
+            currentShip = currentPlayer.Ships[0];
 
             // highlight next player's ship
             AddHighlightImage(currentShip.Position.X, currentShip.Position.Y);
@@ -162,44 +160,6 @@ namespace WPFPathfinding
             }
         }
         
-        private void initShips()
-        {
-            // load source document, hulls and parts
-            XDocument xdoc = XDocument.Load("Ships.xml");
-            List<ShipHull> ExistingHulls;
-            List<ShipPart> ExistingParts;
-            XDocument doc = XDocument.Load("ShipHulls.xml");
-            ExistingHulls = ShipHull.GetShipHulls(doc);
-            doc = XDocument.Load("ShipParts.xml");
-            ExistingParts = ShipPart.GetShipPartList(doc, new Ship());
-
-            foreach (XElement shipElement in xdoc.Descendants("ship"))
-            {
-                Ship ship = new Ship(shipElement, ExistingParts, ExistingHulls);
-                ship.Origin = new System.Drawing.Point();
-                Image img = new Image();
-                BitmapImage src = new BitmapImage();
-                src.BeginInit();
-                src.UriSource = new Uri(ship.HullType.ImageURL, UriKind.Relative);
-                src.CacheOption = BitmapCacheOption.OnLoad;
-                src.EndInit();
-                img.Source = src;
-                img.Height = 32;
-                img.Width = 32;
-                img.Stretch = Stretch.None;
-                img.SetValue(Panel.ZIndexProperty, 10);
-                ship.Image = img;
-                ship.OnShipDestroyed+=new StarShips.Delegates.ShipDelegates.ShipDestroyedEvent(onShipDestroyedHandler);
-                Ships.Add(ship);
-            }
-
-  
-            // set ship to next player
-            currentShip = Ships.First(f => f.ClassName == "Hunter");
-            // reset movement on next player's ship
-            currentShip.MP.Current = currentShip.MP.Max;
-        }
-
         private void initImages()
         {
             moveTarget = new Image();
@@ -233,10 +193,17 @@ namespace WPFPathfinding
             contextMenuTransparency.CacheOption = BitmapCacheOption.OnLoad;
             contextMenuTransparency.EndInit();
         }
+
         #endregion
 
         #region Image Management Methods
         #region ContextMenu
+        private void RefreshContextMenuImages()
+        {
+            foreach (var p in Players)
+                foreach (var s in p.Ships)
+                    RefreshContextMenuImages(s.Position);
+        }
         private void RefreshContextMenuImages(System.Drawing.Point location)
         {
             RemoveContextMenuImage(location);
@@ -276,6 +243,8 @@ namespace WPFPathfinding
             MenuMoveTo.CommandParameter = img;
             MenuMoveTo.Click += new RoutedEventHandler(MenuMoveTo_Click);
             menu.Items.Add(MenuMoveTo);
+            Separator s = new Separator();
+            menu.Items.Add(s);
 
             AddShipsToMenu(x, y, menu);
 
@@ -283,7 +252,19 @@ namespace WPFPathfinding
             ClearMoveOrders.Header = "Clear Move Orders";
             ClearMoveOrders.Click += new RoutedEventHandler(ClearMoveOrders_Click);
             menu.Items.Add(ClearMoveOrders);
+
+
+            s = new Separator();
+            menu.Items.Add(s);
+
+            AddWeaponsToMenu(x, y, menu);
+
+            MenuItem ClearWeaponOrders = new MenuItem();
+            ClearWeaponOrders.Header = "Clear Weapon Orders";
+            ClearWeaponOrders.Click += new RoutedEventHandler(ClearWeaponOrders_Click);
+            menu.Items.Add(ClearWeaponOrders);
             
+
             img.ContextMenu = menu;
 
             contextImages[x, y] = img;
@@ -291,58 +272,67 @@ namespace WPFPathfinding
             Grid.SetColumn(img, y);
             g.Children.Add(img);
         }
+
+        
         private void AddShipsToMenu(int x, int y, ContextMenu menu)
         {
-            foreach (Ship ship in Ships)
-            {
-                if (ship.Position == new System.Drawing.Point(x, y) && ship != currentShip)
+            foreach (Player p in Players)
+                foreach (Ship ship in p.Ships)
                 {
-                    MenuItem MenuMoveToShip = new MenuItem();
-                    MenuMoveToShip.Header = string.Format("Move To {0}", ship.ClassName);
-                    MenuItem MoveToZero = new MenuItem();
-                    MoveToZero.Header = "At 0";
-                    MoveToZero.CommandParameter = new Tuple<Ship, int>(ship, 0);
-                    MoveToZero.Click += new RoutedEventHandler(MenuMoveToShip_Click);
-                    MenuMoveToShip.Items.Add(MoveToZero);
-                    MenuItem MoveToTwo = new MenuItem();
-                    MoveToTwo.Header = "At 2";
-                    MoveToTwo.CommandParameter = new Tuple<Ship, int>(ship, 2);
-                    MoveToTwo.Click += new RoutedEventHandler(MenuMoveToShip_Click);
-                    MenuMoveToShip.Items.Add(MoveToTwo);
-                    MenuItem MoveToFive = new MenuItem();
-                    MoveToFive.Header = "At 5";
-                    MoveToFive.CommandParameter = new Tuple<Ship, int>(ship, 5);
-                    MoveToFive.Click += new RoutedEventHandler(MenuMoveToShip_Click);
-                    MenuMoveToShip.Items.Add(MoveToFive);
+                    if (ship.Position == new System.Drawing.Point(x, y) && ship != currentShip)
+                    {
+                        MenuItem MenuMoveToShip = new MenuItem();
+                        MenuMoveToShip.Header = string.Format("Move To {0}", ship.Name);
+                        MenuItem MoveToZero = new MenuItem();
+                        MoveToZero.Header = "At 0";
+                        MoveToZero.CommandParameter = new Tuple<Ship, int>(ship, 0);
+                        MoveToZero.Click += new RoutedEventHandler(MenuMoveToShip_Click);
+                        MenuMoveToShip.Items.Add(MoveToZero);
+                        MenuItem MoveToTwo = new MenuItem();
+                        MoveToTwo.Header = "At 2";
+                        MoveToTwo.CommandParameter = new Tuple<Ship, int>(ship, 2);
+                        MoveToTwo.Click += new RoutedEventHandler(MenuMoveToShip_Click);
+                        MenuMoveToShip.Items.Add(MoveToTwo);
+                        MenuItem MoveToFive = new MenuItem();
+                        MoveToFive.Header = "At 5";
+                        MoveToFive.CommandParameter = new Tuple<Ship, int>(ship, 5);
+                        MoveToFive.Click += new RoutedEventHandler(MenuMoveToShip_Click);
+                        MenuMoveToShip.Items.Add(MoveToFive);
 
-                    menu.Items.Add(MenuMoveToShip);
-                    AddWeaponsToMenu(ship, menu);
+                        menu.Items.Add(MenuMoveToShip);
+                    }
                 }
-            }
         }
-        private void AddWeaponsToMenu(Ship ship, ContextMenu menu)
+        private void AddWeaponsToMenu(int x, int y, ContextMenu menu)
         {
-            MenuItem MenuFireOnShip = new MenuItem();
-            MenuFireOnShip.Header = string.Format("Fire on {0}", ship.ClassName);
-            foreach (WeaponPart weapon in currentShip.Equipment.Where(f => f is WeaponPart && !f.IsDestroyed))
-            {
-                MenuItem MenuWeapon = new MenuItem();
-                MenuWeapon.Header = string.Format("With {0}", weapon.Name);
-                List<WeaponPart> weaponList = new List<WeaponPart>();
-                weaponList.Add(weapon);
-                MenuWeapon.CommandParameter = new Tuple<Ship, List<WeaponPart>>(ship, weaponList);
-                MenuWeapon.Click += new RoutedEventHandler(MenuWeapon_Click);
-                MenuFireOnShip.Items.Add(MenuWeapon);
-            }
-            MenuItem fireAll = new MenuItem();
-            fireAll.Header = "With All Weapons";
-            List<WeaponPart> allWeaponList = new List<WeaponPart>();
-            foreach (WeaponPart weapon in currentShip.Equipment.Where(f => f is WeaponPart && !f.IsDestroyed))
-                allWeaponList.Add(weapon);
-            fireAll.CommandParameter = new Tuple<Ship, List<WeaponPart>>(ship, allWeaponList);
-            fireAll.Click += new RoutedEventHandler(MenuWeapon_Click);
-            MenuFireOnShip.Items.Add(fireAll);
-            menu.Items.Add(MenuFireOnShip);
+            foreach(Player p in Players)
+                foreach (Ship ship in p.Ships)
+                {
+                    if (ship.Position == new System.Drawing.Point(x, y) && ship != currentShip && !currentPlayer.Ships.Any(f=>f==ship))
+                    {
+                        MenuItem MenuFireOnShip = new MenuItem();
+                        MenuFireOnShip.Header = string.Format("Fire on {0}", ship.Name);
+                        foreach (WeaponPart weapon in currentShip.Equipment.Where(f => f is WeaponPart && !f.IsDestroyed))
+                        {
+                            MenuItem MenuWeapon = new MenuItem();
+                            MenuWeapon.Header = string.Format("With {0}", weapon.Name);
+                            List<WeaponPart> weaponList = new List<WeaponPart>();
+                            weaponList.Add(weapon);
+                            MenuWeapon.CommandParameter = new Tuple<Ship, List<WeaponPart>>(ship, weaponList);
+                            MenuWeapon.Click += new RoutedEventHandler(MenuWeapon_Click);
+                            MenuFireOnShip.Items.Add(MenuWeapon);
+                        }
+                        MenuItem fireAll = new MenuItem();
+                        fireAll.Header = "With All Weapons";
+                        List<WeaponPart> allWeaponList = new List<WeaponPart>();
+                        foreach (WeaponPart weapon in currentShip.Equipment.Where(f => f is WeaponPart && !f.IsDestroyed))
+                            allWeaponList.Add(weapon);
+                        fireAll.CommandParameter = new Tuple<Ship, List<WeaponPart>>(ship, allWeaponList);
+                        fireAll.Click += new RoutedEventHandler(MenuWeapon_Click);
+                        MenuFireOnShip.Items.Add(fireAll);
+                        menu.Items.Add(MenuFireOnShip);
+                    }
+                }
         }
         private void RemoveContextMenuImage(System.Drawing.Point point)
         {
@@ -508,19 +498,36 @@ namespace WPFPathfinding
             return lbl;
         }
 
+        void ShowShipStatus()
+        {
+            ShowShipStatus(currentShip, spCurrentShip);
+        }
         void ShowShipStatus(Ship ship, StackPanel panel)
         {
             panel.Children.Clear();
-            // Name
-            addStatusLabel(string.Format("{0} ({1})", ship.ClassName, ship.Position), Brushes.White, panel);
+            // Name & Icon
+            StackPanel titlebar = new StackPanel();
+            titlebar.Orientation = Orientation.Horizontal;
+            titlebar.VerticalAlignment = VerticalAlignment.Center;
+            Image img = new Image();
+            img.Source = ship.Image.Source;
+            img.Height = 32;
+            img.Width = 32;
+            img.Stretch = Stretch.None;
+            titlebar.Children.Add(img);
+            panel.Children.Add(titlebar);
+            addStatusLabel(string.Format("{0} ({1} {2})", ship.Name,ship.ClassName, ship.Position), Brushes.White, titlebar);
             // HP
             addStatusLabel(string.Format("Hit Points: {0}", ship.HP.ToString()), Brushes.White, panel);
             // MP
             addStatusLabel(string.Format("Move Points: {0}", ship.MP.ToString()), Brushes.White, panel);
             // Orders Header
-            addStatusLabel("Current Orders:", Brushes.White, panel);
-            foreach (var order in ship.Orders)
-                addStatusLabel(order.ToString(), Brushes.Wheat, panel);
+            if (currentPlayer.Ships.Any(f => f == ship)) //owned by current player
+            {
+                addStatusLabel("Current Orders:", Brushes.White, panel);
+                foreach (var order in ship.Orders)
+                    addStatusLabel(order.ToString(), Brushes.Wheat, panel);
+            }
             // Parts
             addStatusLabel("Equipment:", Brushes.White, panel);
             foreach (var part in ship.Equipment)
@@ -528,9 +535,10 @@ namespace WPFPathfinding
         }
         void addStatusLabel(string text, Brush color, StackPanel panel)
         {
-            Label lbl = new Label();
-            lbl.Content = text;
+            TextBlock lbl = new TextBlock();
+            lbl.Text = text;
             lbl.Foreground = color;
+            lbl.VerticalAlignment = VerticalAlignment.Center;
             panel.Children.Add(lbl);
         }
         #endregion
@@ -592,9 +600,9 @@ namespace WPFPathfinding
 
         public void onShipDestroyedHandler(object sender, EventArgs e, Ship shipDestroyed)
         {
-            statusWindow.Items.Insert(0, string.Format("{0} is Destroyed!", shipDestroyed.ClassName));
+            statusWindow.Items.Insert(0, string.Format("{0} is Destroyed!", shipDestroyed.Name));
             AddExplosionImage(shipDestroyed);
-            System.Windows.MessageBox.Show(string.Format("Victory! {0} is destroyed!", shipDestroyed.ClassName));
+            System.Windows.MessageBox.Show(string.Format("Victory! {0} is destroyed!", shipDestroyed.Name));
         }
 
         #region Menu Items
@@ -608,8 +616,7 @@ namespace WPFPathfinding
             mtl.OnShipMove += new OrderDelegates.ShipMoveEvent(onShipMoveHandler);
             currentShip.Orders.Add(mtl);
             AddMoveTargetImage(x, y);
-            mtl.ExecuteOrder(currentShip);
-            AddHighlightImage(currentShip.Position.X, currentShip.Position.Y);
+            ShowShipStatus();
         }
         void MenuMoveToShip_Click(object sender, RoutedEventArgs e)
         {
@@ -617,21 +624,31 @@ namespace WPFPathfinding
             MoveToShipAtRange mtsar = new MoveToShipAtRange(moveToRange.Item1, moveToRange.Item2, locations);
             mtsar.OnShipMove += new OrderDelegates.ShipMoveEvent(onShipMoveHandler);
             currentShip.Orders.Add(mtsar);
-            statusWindow.Items.Insert(0,mtsar.ExecuteOrder(currentShip));
-            AddHighlightImage(currentShip.Position.X, currentShip.Position.Y);
+            ShowShipStatus();
         }
         void ClearMoveOrders_Click(object sender, RoutedEventArgs e)
         {
             RemoveMoveTargetImage();
             currentShip.Orders.RemoveAll(f => f is IMoveOrder);
-            statusWindow.Items.Insert(0, string.Format("Cleared Move Orders from {0}", currentShip.ClassName));
+            statusWindow.Items.Insert(0, string.Format("Cleared Move Orders from {0}", currentShip.Name));
+            ShowShipStatus();
+        }
+        void ClearWeaponOrders_Click(object sender, RoutedEventArgs e)
+        {
+            currentShip.Orders.RemoveAll(f => f is IWeaponOrder);
+            statusWindow.Items.Insert(0, string.Format("Cleared Weapon Orders from {0}", currentShip.Name));
         }
         void ContextMenuImage_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             System.Drawing.Point targetLoc = new System.Drawing.Point(Grid.GetRow((Image)sender),Grid.GetColumn((Image)sender));
-            if (Ships.Any(f => f.Position == targetLoc))
+            List<Ship> localShips = new List<Ship>();
+            foreach(Player p in Players)
+                foreach(Ship s in p.Ships)
+                    if(s.Position==targetLoc)
+                        localShips.Add(s);
+            if (localShips.Count>0)
             {
-                Ship ship = Ships.First(f => f.Position == targetLoc);
+                Ship ship = localShips.First();
                 ShowShipStatus(ship, spTargetShip);
             }
         }
@@ -643,63 +660,78 @@ namespace WPFPathfinding
                 FireWeaponAtTarget fwat = new FireWeaponAtTarget(weapon, fireWeapons.Item1);
                 fwat.OnWeaponFired += new OrderDelegates.WeaponFiredEvent(onWeaponFiredHandler);
                 currentShip.Orders.Add(fwat);
-                statusWindow.Items.Insert(0,fwat.ExecuteOrder(currentShip));
             }
+            ShowShipStatus();
         }
         #endregion
-        #endregion
-
+        
         #region Buttons
         private void btnEndTurn_Click(object sender, RoutedEventArgs e)
         {
-            // process end-of-turn actions
-            List<string> eot = currentShip.EndOfTurn();
-            // add EoT results to status window
-            foreach (string status in eot)
-                statusWindow.Items.Insert(0, status);
-            // remove highlight of current ship
-            RemoveHighlightImage();
-            // set ship to next player
-            currentShip = Ships.First(f => f != currentShip);
-            // reset movement on next player's ship
-            currentShip.MP.Current = currentShip.MP.Max;
+            //// process end-of-turn actions
+            if (Players[Players.Count - 1] == currentPlayer)
+                ProcessTurnResults();
+
+            // set current to next player and first ship
+            currentPlayer = Players.Next();
+            currentPlayer.Ships.ResetIndex();
+            currentShip = currentPlayer.Ships.GetNextShip();
+            
+            // perform Start Of Turn for current player's ships
+            foreach (Ship s in currentPlayer.Ships)
+                s.StartOfTurn();
+            
             // highlight next player's ship
             AddHighlightImage(currentShip.Position.X, currentShip.Position.Y);
-            // clear up movement target image
+            
+            // clear movement target image
             RemoveMoveTargetImage();
-            // execute orders
-            List<string> statusUpdates = currentShip.oldStartOfTurn();
-            // add order results to status window
-            foreach (string status in statusUpdates)
-                statusWindow.Items.Insert(0, status);
+            
             // refresh menu options for ships
-            foreach (Ship ship in Ships)
-                RefreshContextMenuImages(ship.Position);
+            RefreshContextMenuImages();
+
             // show current ship status
             ShowShipStatus(currentShip, spCurrentShip);
+
             // clear target window
             spTargetShip.Children.Clear();
 
         }
+
+        void ProcessTurnResults()
+        {
+            List<string> results = new List<string>();
+            for (int impulse = 0; impulse < 30; impulse++)
+            {
+                foreach (Player p in Players)
+                    foreach (Ship s in p.Ships.Where(f=>!f.IsDestroyed))
+                    {
+                        results = new List<string>();
+                        results = s.ExecuteOrders(impulse);
+                        foreach (string r in results.Where(f=>f!=string.Empty))
+                            statusWindow.Items.Insert(0, r);
+                    }
+            }
+            foreach (Player p in Players)
+                foreach (Ship s in p.Ships.Where(f=>!f.IsDestroyed))
+                {
+                    results = new List<string>();
+                    results = s.EndOfTurn();
+                    foreach (string r in results.Where(f => f != string.Empty))
+                        statusWindow.Items.Insert(0, r);
+                }
+        }
+        
+        private void btnNextShip_Click(object sender, RoutedEventArgs e)
+        {
+            currentShip = currentPlayer.Ships.GetNextShip();
+            ShowShipStatus();
+            RefreshContextMenuImages();
+            AddHighlightImage(currentShip.Position.X, currentShip.Position.Y);
+        }
+        #endregion
         #endregion
 
-        
-        private void btnFireWeapon_Click(object sender, RoutedEventArgs e)
-        {
-            Ship firingShip = currentShip;
-            Ship targetShip = Ships.First(f => f != currentShip);
-            for (int i = 0; i < 10; i++)
-            {
-                DrawShipFiringBeam(firingShip.Position, targetShip.Position);
-            }
-        }
-
-        private void btnShowDistance_Click(object sender, RoutedEventArgs e)
-        {
-            Ship other = Ships.First(f => f != currentShip);
-            double distance = LocationCollection.GetDistance(currentShip.Position, other.Position);
-            System.Windows.MessageBox.Show(distance.ToString());
-        }
     }
 
     public static class DelayedExecutionService

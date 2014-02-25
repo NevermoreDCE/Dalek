@@ -54,6 +54,8 @@
             this.btnClear = new System.Windows.Forms.Button();
             this.btnDeleteShip = new System.Windows.Forms.Button();
             this.cbxShipHullTypes = new System.Windows.Forms.ComboBox();
+            this.lblShipMass = new System.Windows.Forms.Label();
+            this.lblShipMP = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.drpPartList.ItemTemplate.SuspendLayout();
             this.drpPartList.SuspendLayout();
@@ -285,11 +287,31 @@
             this.cbxShipHullTypes.Size = new System.Drawing.Size(232, 21);
             this.cbxShipHullTypes.TabIndex = 14;
             // 
+            // lblShipMass
+            // 
+            this.lblShipMass.AutoSize = true;
+            this.lblShipMass.Location = new System.Drawing.Point(340, 57);
+            this.lblShipMass.Name = "lblShipMass";
+            this.lblShipMass.Size = new System.Drawing.Size(44, 13);
+            this.lblShipMass.TabIndex = 15;
+            this.lblShipMass.Text = "Mass: 0";
+            // 
+            // lblShipMP
+            // 
+            this.lblShipMP.AutoSize = true;
+            this.lblShipMP.Location = new System.Drawing.Point(340, 82);
+            this.lblShipMP.Name = "lblShipMP";
+            this.lblShipMP.Size = new System.Drawing.Size(35, 13);
+            this.lblShipMP.TabIndex = 16;
+            this.lblShipMP.Text = "MP: 0";
+            // 
             // ShipEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(653, 546);
+            this.Controls.Add(this.lblShipMP);
+            this.Controls.Add(this.lblShipMass);
             this.Controls.Add(this.cbxShipHullTypes);
             this.Controls.Add(this.btnDeleteShip);
             this.Controls.Add(this.btnClear);
@@ -345,6 +367,8 @@
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Button btnDeleteShip;
         private System.Windows.Forms.ComboBox cbxShipHullTypes;
+        private System.Windows.Forms.Label lblShipMass;
+        private System.Windows.Forms.Label lblShipMP;
     }
 }
 

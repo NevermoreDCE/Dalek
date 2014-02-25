@@ -12,6 +12,8 @@ using StarShips.Delegates;
 using StarShips.Parts;
 using StarShips.Orders.Interfaces;
 using System.Diagnostics;
+using System.Windows.Media;
+using StarShips.Structs;
 
 
 namespace StarShips
@@ -29,10 +31,14 @@ namespace StarShips
         string _name;
         ShipHull _hullType = new ShipHull();
         System.Windows.Controls.Image _image;
+        bool _weaponsFiredAlready = false;
+        bool _isDestroyed = false;
         #endregion
+
         #region Public Properties
         public StatWithMax HP { get { return HullType.HullPoints; } set { HullType.HullPoints = value; } }
         public StatWithMax MP { get { return _mp; } set { _mp = value; } }
+        public int ImpulseMultiplier { get { return 30 / (_mp.Max - 1); } }
         public List<ShipPart> Equipment = new List<ShipPart>();
         public List<ShipOrder> Orders = new List<ShipOrder>();
         public List<ShipOrder> CompletedOrders = new List<ShipOrder>();
@@ -44,11 +50,38 @@ namespace StarShips
         public Point Origin;
         public System.Windows.Controls.Image Image { get { return _image; } set { _image = value; } }
         public int CountOfResolvingOrders = 0;
-        bool _weaponsFiredAlready = false;
         public bool WeaponsFiredAlready { get { return _weaponsFiredAlready; } }
+        public bool IsDestroyed { get { return _isDestroyed; } }
+        public double TotalMass
+        {
+            get
+            {
+                double mass = HullType.Mass;
+                foreach (var part in Equipment.Where(f=>!f.IsDestroyed))
+                    mass += part.Mass;
+                foreach (var part in Equipment.Where(f => f.IsDestroyed))
+                    mass += part.Mass * .25;
+                return mass;
+            }
+        }
+        
         #endregion
 
         #region Public Methods
+        public int GetMaxMP()
+        {
+            double thrustModifier = (100 - ((this.Equipment.Where(f=>f is EnginePart).Count() - 1) / this.HullType.EnginesPerDecrease * 20)) * .01;
+            double totalThrust = 0;
+            foreach (EnginePart part in this.Equipment.Where(f => f is EnginePart && !f.IsDestroyed))
+                totalThrust += part.Thrust;
+            double thrust = totalThrust * thrustModifier;
+            double time = 15;
+            double impulse = thrust * time;
+            double MP = impulse / TotalMass;
+            return Convert.ToInt32(Math.Round(MP));
+        }
+
+        [Obsolete("Use ShipOrders to fire weapons")]
         public List<string> FireWeapons(Ship Target)
         {
             List<string> result = new List<string>();
@@ -76,10 +109,21 @@ namespace StarShips
             return result;
         }
 
+        /// <summary>
+        /// Handles incoming damage to the Ship through any equipped DefenseParts
+        /// </summary>
+        /// <param name="Damage">Amount of damage to take</param>
+        /// <returns>List of status results from DefenseParts</returns>
         public List<string> HitFor(int Damage)
         {
             return HitFor(Damage, string.Empty);
         }
+        /// <summary>
+        /// Handles incoming damage to teh Ship through any equipped DefenseParts, including resistance based on damage type
+        /// </summary>
+        /// <param name="Damage">Amount of damage to take</param>
+        /// <param name="DamageType">Type of damage to take (Data Driven)</param>
+        /// <returns>List of status results from DefenseParts</returns>
         public List<string> HitFor(int Damage, string DamageType)
         {
             List<string> result = new List<string>();
@@ -112,122 +156,102 @@ namespace StarShips
                     }
 
                 }
-                if(HP.Current<=0)
+                if (HP.Current <= 0)
+                {
                     if (OnShipDestroyed != null)
                     {
                         OnShipDestroyed(this, new EventArgs(), this);
                     }
+                    _isDestroyed = true;
+                }
             }
 
             return result;
         }
 
+        /// <summary>
+        /// Executes Orders for a given Impulse value. 
+        /// Move orders are only executed if they are evenly divisible by ImpulseMultiplier;
+        /// Weapon orders that have not been previously completed are always checked for range and fired if in range;
+        /// Completed orders are cleared.
+        /// </summary>
+        /// <param name="Impulse">The Impulse number currently being executed</param>
+        /// <returns>List of status results from Orders</returns>
         public List<string> ExecuteOrders(int Impulse)
         {
             List<string> result = new List<string>();
-            
-            foreach (ShipOrder order in Orders.Where(f=>f.Impulse==Impulse))
-                result.Add(order.ExecuteOrder(this));
-
-            // clear up completed orders
-            if (CompletedOrders.Count > 0)
+            if (this.Orders.Count > 0)
             {
-                foreach (ShipOrder order in CompletedOrders)
-                    Orders.Remove(order);
-                CompletedOrders.Clear();
-            }
+                // move order
+                if (Impulse % this.ImpulseMultiplier == 0)
+                {
+                    IMoveOrder moveOrder = (IMoveOrder)Orders.First(f => f is IMoveOrder);
+                    result.Add(moveOrder.ExecuteOrder(this, Impulse));
+                }
+                // check weapon orders
+                foreach (IWeaponOrder order in Orders.Where(f => f is IWeaponOrder && !f.IsCompleted))
+                    if (order.IsInRange(this))
+                        result.Add(order.ExecuteOrder(this));
+                // other orders
+                //implement later on
 
+                // clear up completed orders
+                if (CompletedOrders.Count > 0)
+                {
+                    foreach (ShipOrder order in CompletedOrders)
+                        Orders.Remove(order);
+                    CompletedOrders.Clear();
+                }
+
+            }
             return result.Where(f => f != string.Empty).ToList<string>();
         }
 
-        public List<string> StartOfTurn()
+        /// <summary>
+        /// Resets IsCompleted status on orders and resets MP value to maximum
+        /// </summary>
+        public void StartOfTurn()
         {
             foreach (ShipOrder order in Orders)
                 order.IsCompleted = false;
-            return new List<string>();
+            this.MP.Max = this.GetMaxMP();
+            this.MP.Current = this.MP.Max;
         }
 
-        public List<string> oldStartOfTurn()
-        {
-            
-            // refresh orders for this turn
-            foreach(ShipOrder order in Orders)
-                order.IsCompleted = false;
-            
-            List<string> results = new List<string>();
-            
-            List<ShipOrder> afterMovement = new List<ShipOrder>();
-            // resolve weapon orders that are in range
-            Debug.WriteLine(string.Format("Firing First, count of orders {0}",CountOfResolvingOrders));
-            foreach(ShipOrder fireOrder in Orders.Where(f=>f is IWeaponOrder))
-            {
-                if (((IWeaponOrder)fireOrder).IsInRange(this))
-                {
-                    Debug.WriteLine(string.Format("{0} is in range, firing", ((WeaponPart)fireOrder.OrderValues[0]).Name));
-                    results.Add(fireOrder.ExecuteOrder(this));
-                    this.CountOfResolvingOrders++;
-                    _weaponsFiredAlready = true;
-                }
-                else
-                    afterMovement.Add(fireOrder);
-            }
-            Debug.WriteLine(string.Format("Done Firing First, count of orders {0}",CountOfResolvingOrders));
-            
-            // wait for orders to resolve
-            //while (CountOfResolvingOrders > 0)
-            //{
-            //}
-
-            Debug.WriteLine(string.Format("Moving, count of orders {0}",CountOfResolvingOrders));
-            // non-weapon orders
-            foreach (ShipOrder order in Orders.Where(f => !(f is IWeaponOrder)))
-            {
-                Debug.WriteLine("Engaging Move Order");
-                results.Add(order.ExecuteOrder(this));
-                this.CountOfResolvingOrders++;
-            }
-            Debug.WriteLine(string.Format("Done Moving, count of orders {0}",CountOfResolvingOrders));
-            
-            //wait for orders to resolve
-            //while (CountOfResolvingOrders > 0)
-            //{
-            //}
-
-            Debug.WriteLine(string.Format("Firing Second, count of orders {0}",CountOfResolvingOrders));
-            
-            // retry weapon orders that were out of range
-            foreach (ShipOrder fireOrder in afterMovement)
-            {
-                if (((IWeaponOrder)fireOrder).IsInRange(this))
-                {
-                    results.Add(fireOrder.ExecuteOrder(this));
-                    this.CountOfResolvingOrders++;
-                }
-            }
-            Debug.WriteLine(string.Format("Done Firing Second, count of orders {0}",CountOfResolvingOrders));
-            
-
-            //while (CountOfResolvingOrders > 0)
-            //{ }
-
-            // clear up completed orders
-            if (CompletedOrders.Count > 0)
-            {
-                foreach (ShipOrder order in CompletedOrders)
-                    Orders.Remove(order);
-                CompletedOrders.Clear();
-            }
-
-            return results.Where(f => f != string.Empty).ToList<string>();
-        }
-
+        /// <summary>
+        /// Processes Actions on non-destroyed Parts, and cleans up invalid Weapon/Move Orders
+        /// </summary>
+        /// <returns>List of statuses returned by Actions</returns>
         public List<string> EndOfTurn()
         {
             List<string> result = new List<string>();
+            //Process Actions
             foreach (ShipPart part in Equipment.Where(f => !f.IsDestroyed))
             {
                 result.Add(part.DoAction(this));
             }
+
+            //Cleanup Weapon Orders
+            foreach (ShipOrder weaponOrder in Orders.Where(f => f is IWeaponOrder))
+            {
+                if (((Ship)weaponOrder.OrderValues[1]).IsDestroyed)
+                    CompletedOrders.Add(weaponOrder);
+            }
+            //Cleanup MoveToShip Orders
+            foreach (ShipOrder moveOrder in Orders.Where(f => f is IMoveToShipOrder))
+            {
+                if (((Ship)moveOrder.OrderValues[0]).IsDestroyed)
+                    CompletedOrders.Add(moveOrder);
+            }
+
+            // clear up completed orders
+            if (CompletedOrders.Count > 0)
+            {
+                foreach (ShipOrder order in CompletedOrders)
+                    Orders.Remove(order);
+                CompletedOrders.Clear();
+            }
+
             return result.Where(f=>f!=string.Empty).ToList<string>();
 
 
@@ -235,13 +259,24 @@ namespace StarShips
 
         public override string ToString()
         {
-            return string.Format("{0}{1} (HP:{2}/{3})",
-                this.ClassName,
-                (this.HullType.Name != string.Empty ? string.Format(" ({0})", this.HullType.Name) : string.Empty),
-                this.HP.Current,
-                this.HP.Max);
+            if (this.Name != string.Empty)
+                return string.Format("{0}{1} (HP:{2}/{3})",
+                    this.Name,
+                    this.ClassName,
+                    this.HP.Current,
+                    this.HP.Max);
+            else
+                return string.Format("{0}{1} (HP:{2}/{3})",
+                    this.ClassName,
+                    (this.HullType.Name != string.Empty ? string.Format(" ({0})", this.HullType.Name) : string.Empty),
+                    this.HP.Current,
+                    this.HP.Max);
         }
 
+        /// <summary>
+        /// Used to clone a Ship, for grabbing a copy of a pre-built ship from a list of available definitions (Factory).
+        /// </summary>
+        /// <returns>The new Ship object</returns>
         public Ship Clone()
         {
             Ship result = new Ship();
@@ -250,20 +285,15 @@ namespace StarShips
                 result.Equipment.Add(part.Clone());
             result.HullType = this.HullType.Clone();
             result.MP.Max = this.MP.Max;
-            result.initImage();
+            result.initImage(this.Image.Source);
             return result;
         }
         #endregion
 
-        private void initImage()
+        private void initImage(ImageSource source)
         {
             System.Windows.Controls.Image img = new System.Windows.Controls.Image();
-            System.Windows.Media.Imaging.BitmapImage src = new System.Windows.Media.Imaging.BitmapImage();
-            src.BeginInit();
-            src.UriSource = new Uri(this.HullType.ImageURL, UriKind.Relative);
-            src.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
-            src.EndInit();
-            img.Source = src;
+            img.Source = source;
             img.Height = 32;
             img.Width = 32;
             img.Stretch = System.Windows.Media.Stretch.None;
@@ -287,7 +317,7 @@ namespace StarShips
         {
             XElement ship;
 
-            if (sourceDoc.Descendants("ship").Where(f => f.Attribute("name").Value == this.ClassName).Count() > 0)
+            if (sourceDoc.Descendants("ship").Where(f => f.Attribute("className").Value == this.ClassName).Count() > 0)
             {
                 // Update Existing
                 ship = sourceDoc.Descendants("ship").First(f => f.Attribute("className").Value == this.ClassName);
@@ -324,7 +354,6 @@ namespace StarShips
             foreach (var element in parts)
                 shipParts.Add(element);
         }
-
         #endregion
 
         #region Constructors
@@ -339,7 +368,12 @@ namespace StarShips
             Equipment = (List<ShipPart>)info.GetValue("Equipment", typeof(List<ShipPart>));
             ClassName = (string)info.GetValue("Name", typeof(string));
             HullType = (ShipHull)info.GetValue("HullType", typeof(ShipHull));
-            initImage();
+            System.Windows.Media.Imaging.BitmapImage src = new System.Windows.Media.Imaging.BitmapImage();
+            src.BeginInit();
+            src.UriSource = new Uri(this.HullType.ImageURL, UriKind.Relative);
+            src.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
+            src.EndInit();
+            initImage((ImageSource)src);
         }
         public Ship(XElement description, List<ShipPart> partsList, List<ShipHull> hullsList)
         {
@@ -351,9 +385,13 @@ namespace StarShips
             if (description.Element("ShipHull") != null)
                 if (hullsList.Where(f => f.Name == description.Element("ShipHull").Value).Count() > 0)
                     this.HullType = hullsList.First(f => f.Name == description.Element("ShipHull").Value).Clone();
-            initImage();
+            System.Windows.Media.Imaging.BitmapImage src = new System.Windows.Media.Imaging.BitmapImage();
+            src.BeginInit();
+            src.UriSource = new Uri(this.HullType.ImageURL, UriKind.Relative);
+            src.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
+            src.EndInit();
+            initImage((ImageSource)src);
         }
-
         #endregion
 
     }

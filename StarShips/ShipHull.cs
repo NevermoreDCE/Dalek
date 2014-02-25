@@ -72,6 +72,8 @@ namespace StarShips
         string _imageURL = string.Empty;
         StatWithMax _hullPoints = new StatWithMax();
         List<PartCount> _allowedParts = new List<PartCount>();
+        double _mass = 0.0d;
+        
         #endregion
 
         #region Public Properties
@@ -79,7 +81,15 @@ namespace StarShips
         public StatWithMax HullPoints { get { return _hullPoints; } set { _hullPoints = value; } }
         public List<PartCount> AllowedParts { get { return _allowedParts; } }
         public string ImageURL { get { return _imageURL; } }
-        
+        public double Mass { get { return _mass; } }
+        public int EnginesPerDecrease
+        {
+            get
+            {
+                double div = _mass / 500d;
+                return Convert.ToInt32(div);
+            }
+        }
         #endregion
 
         #region Public Methods
@@ -93,7 +103,7 @@ namespace StarShips
             {
                 newParts.Add(new PartCount(oldPart.PartType,oldPart.ActionMechanism,oldPart.CountOfParts));
             }
-            result = new ShipHull(source.Name, source._hullPoints.Max, newParts, source.ImageURL);
+            result = new ShipHull(source.Name, source._hullPoints.Max, source.Mass, newParts, source.ImageURL);
             return result;
         }
 
@@ -113,6 +123,7 @@ namespace StarShips
         {
             info.AddValue("Name", this._name);
             info.AddValue("HullPoints", this._hullPoints);
+            info.AddValue("Mass", this._mass);
             info.AddValue("AllowedParts", this._allowedParts);
             info.AddValue("ImageURL", this._imageURL);
         }
@@ -124,6 +135,10 @@ namespace StarShips
                 // Update Existing
                 hull = doc.Descendants("shipHull").First(f => f.Attribute("name").Value == this.Name);
                 hull.Element("MaxHP").Value = this._hullPoints.Max.ToString();
+                if (hull.Element("Mass") != null)
+                    hull.Element("Mass").Value = this._mass.ToString();
+                else
+                    hull.Add(new XElement("Mass", this._mass.ToString()));
                 AddAllowedParts(hull.Element("AllowedParts"));
                 if (hull.Element("ImageURL") == null)
                     hull.Add(new XElement("ImageURL"), this._imageURL);
@@ -137,6 +152,7 @@ namespace StarShips
                 AddAllowedParts(parts);
                 hull = new XElement("shipHull", new XAttribute("name", this.Name),
                         new XElement("MaxHP", this._hullPoints.Max),
+                        new XElement("Mass",this._mass.ToString()),
                         parts,
                         new XElement("ImageURL",this._imageURL));
                 doc.Element("shipHulls").Add(hull);
@@ -157,14 +173,15 @@ namespace StarShips
         {
             /* Empty Constructor */
         }
-        public ShipHull(string Name, int MaxHP, List<PartCount> AllowedParts)
+        public ShipHull(string Name, int MaxHP, double Mass, List<PartCount> AllowedParts)
         {
-            new ShipHull(Name, MaxHP, AllowedParts, string.Empty);
+            new ShipHull(Name, MaxHP, Mass, AllowedParts, string.Empty);
         }
-        public ShipHull(string Name, int MaxHP, List<PartCount> AllowedParts, string ImageURL)
+        public ShipHull(string Name, int MaxHP, double Mass, List<PartCount> AllowedParts, string ImageURL)
         {
             this._name = Name;
             this._hullPoints.Max = MaxHP;
+            this._mass = Mass;
             this._allowedParts = AllowedParts;
             this._imageURL = ImageURL;
         }
@@ -172,6 +189,7 @@ namespace StarShips
         {
             this._name = (string)info.GetValue("Name", typeof(string));
             this._hullPoints = (StatWithMax)info.GetValue("HullPoints", typeof(StatWithMax));
+            this._mass = (double)info.GetValue("Mass", typeof(double));
             this._allowedParts = (List<PartCount>)info.GetValue("AllowedParts", typeof(List<PartCount>));
             this._imageURL = (string)info.GetValue("ImageURL", typeof(string));
         }
@@ -179,6 +197,8 @@ namespace StarShips
         {
             this._name = description.Attribute("name").Value;
             this._hullPoints.Max = int.Parse(description.Element("MaxHP").Value);
+            if (description.Element("Mass") != null)
+                this._mass = double.Parse(description.Element("Mass").Value);
             foreach (var part in description.Element("AllowedParts").Elements())
             {
                 this._allowedParts.Add(new PartCount(part));

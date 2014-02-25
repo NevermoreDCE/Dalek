@@ -35,9 +35,11 @@ namespace PartMaker
             drpWeapPartActionList.ItemValueNeeded += new Microsoft.VisualBasic.PowerPacks.DataRepeaterItemValueEventHandler(drpWeapPartActionList_ItemValueNeeded);
             drpDefPartActionList.ItemValueNeeded += new Microsoft.VisualBasic.PowerPacks.DataRepeaterItemValueEventHandler(drpDefPartActionList_ItemValueNeeded);
             drpActPartActionList.ItemValueNeeded += new Microsoft.VisualBasic.PowerPacks.DataRepeaterItemValueEventHandler(drpActPartActionList_ItemValueNeeded);
+            drpEngPartActionList.ItemValueNeeded += new Microsoft.VisualBasic.PowerPacks.DataRepeaterItemValueEventHandler(drpEngPartActionList_ItemValueNeeded);
             lblWeapPartActionTitle.DataBindings.Add("Text", PartActions, "Name");
             lblDefPartActionTitle.DataBindings.Add("Text", PartActions, "Name");
             lblActPartActionTitle.DataBindings.Add("Text", PartActions, "Name");
+            lblEngPartActionTitle.DataBindings.Add("Text", PartActions, "Name");
             bs.DataSource = PartActions;
 
             // Existing Parts DDL
@@ -92,6 +94,19 @@ namespace PartMaker
                 }
             }
         }
+
+        void drpEngPartActionList_ItemValueNeeded(object sender, Microsoft.VisualBasic.PowerPacks.DataRepeaterItemValueEventArgs e)
+        {
+            if (e.ItemIndex < bs.Count && e.ItemIndex >= 0)
+            {
+                switch (e.Control.Name)
+                {
+                    case "lblEngPartActionTitle":
+                        e.Value = bs[e.ItemIndex].ToString();
+                        break;
+                }
+            }
+        }
         #endregion
 
         private void LoadParts()
@@ -117,6 +132,9 @@ namespace PartMaker
             cbxActPartActions.DataSource = partList;
             cbxActPartActions.DisplayMember = "Name";
             cbxActPartActions.SelectedIndex = 0;
+            cbxEngPartActions.DataSource = partList;
+            cbxEngPartActions.DisplayMember = "Name";
+            cbxEngPartActions.SelectedIndex = 0;
         }
 
         private void AddAction(ComboBox PartActions, NumericUpDown ActionValue)
@@ -172,6 +190,12 @@ namespace PartMaker
             AddAction(cbxWeapPartActions, nudWeapPartActionValue);
             ShowPartActions(drpWeapPartActionList);
         }
+
+        private void btnEngPartActionAdd_Click(object sender, EventArgs e)
+        {
+            AddAction(cbxEngPartActions, nudEngPartActionValue);
+            ShowPartActions(drpEngPartActionList);
+        }
         #endregion
 
         #region Remove Action
@@ -191,6 +215,12 @@ namespace PartMaker
         {
             RemoveAction(drpActPartActionList);
             ShowPartActions(drpActPartActionList);
+        }
+
+        private void btnEngPartActionRemove_Click(object sender, EventArgs e)
+        {
+            RemoveAction(drpEngPartActionList);
+            ShowPartActions(drpEngPartActionList);
         }
         #endregion
 
@@ -234,6 +264,17 @@ namespace PartMaker
             nudWeapPartCritMultiplier.Value = 0;
             nudWeapPartReload.Value = 0;
         }
+
+        private void btnEngPartClear_Click(object sender, EventArgs e)
+        {
+            tbxEngPartName.Text = string.Empty;
+            nudEngPartHP.Value = 1;
+            nudEngPartPointCost.Value = 0;
+            bs.Clear();
+            ShowPartActions(drpEngPartActionList);
+
+            nudEngPartThrust.Value = 0;
+        }
         #endregion
 
         #region Save Part
@@ -241,13 +282,14 @@ namespace PartMaker
         {
             string Name = tbxWeapPartName.Text;
             int HP = int.Parse(nudWeapPartHP.Value.ToString());
+            double Mass = Convert.ToDouble(nudWeapPartMass.Value);
             int Dmg = int.Parse(nudWeapPartWeaponDamage.Value.ToString());
             int Crit = int.Parse(nudWeapPartCritMultiplier.Value.ToString());
             int Reload = int.Parse(nudWeapPartReload.Value.ToString());
             string DamageType = cbxDamageTypes.SelectedItem.ToString();
             string FiringType = cbxFiringTypes.SelectedItem.ToString();
             double WeaponRange = double.Parse(nudWeaponRange.Value.ToString());
-            Part = new WeaponPart(new Ship(), Name, HP, Dmg,WeaponRange, DamageType, FiringType, Crit, Reload, PartActions);
+            Part = new WeaponPart(new Ship(), Name, HP, Mass, Dmg,WeaponRange, DamageType, FiringType, Crit, Reload, PartActions);
             
             Part.GetObjectXML(doc);
             doc.Save(filename);
@@ -259,10 +301,11 @@ namespace PartMaker
         {
             string Name = tbxDefPartName.Text;
             int HP = int.Parse(nudDefPartHP.Value.ToString());
+            double Mass = Convert.ToDouble(nudDefPartMass.Value);
             int DR = int.Parse(nudDefPartDR.Value.ToString());
             string Down = tbxDefPartDownAdjective.Text;
             string Pen = tbxDefPartPenetrateVerb.Text;
-            Part = new DefensePart(new Ship(),Name, HP, DR, Down, Pen, PartActions);
+            Part = new DefensePart(new Ship(),Name, HP, Mass, DR, Down, Pen, PartActions);
 
             Part.GetObjectXML(doc);
             doc.Save(filename);
@@ -274,8 +317,23 @@ namespace PartMaker
         {
             string Name = tbxActPartName.Text;
             int HP = int.Parse(nudActPartHP.Value.ToString());
+            double Mass = Convert.ToDouble(nudActPartMass.Value);
             string Descr = tbxActPartDescr.Text;
-            Part = new ActionPart(new Ship(), Name, HP, Descr, PartActions);
+            Part = new ActionPart(new Ship(), Name, HP, Mass, Descr, PartActions);
+
+            Part.GetObjectXML(doc);
+            doc.Save(filename);
+            Part = null;
+            LoadParts();
+        }
+
+        private void btnEngPartSavePart_Click(object sender, EventArgs e)
+        {
+            string Name = tbxEngPartName.Text;
+            int HP = int.Parse(nudEngPartHP.Value.ToString());
+            double Mass = Convert.ToDouble(nudEngPartMass.Value);
+            double Thrust = double.Parse(nudEngPartThrust.Value.ToString());
+            Part = new EnginePart(new Ship(), Name, HP, Mass, Thrust, PartActions);
 
             Part.GetObjectXML(doc);
             doc.Save(filename);
@@ -294,6 +352,8 @@ namespace PartMaker
                 LoadDefensePart();
             else if (Part is ActionPart)
                 LoadActionPart();
+            else if (Part is EnginePart)
+                LoadEnginePart();
 
             Part = null;
         }
@@ -303,6 +363,7 @@ namespace PartMaker
             WeaponPart weap = (WeaponPart)Part;
             tbxWeapPartName.Text = weap.Name;
             nudWeapPartHP.Value = weap.HP.Max;
+            nudWeapPartMass.Value = Convert.ToDecimal(weap.Mass);
             nudWeaponRange.Value = decimal.Parse(weap.Range.ToString());
             if (themeSettings.FiringTypes.Where(f => f == weap.FiringType).Count() > 0)
                 cbxFiringTypes.SelectedItem = weap.FiringType;
@@ -326,6 +387,7 @@ namespace PartMaker
             DefensePart def = (DefensePart)Part;
             tbxDefPartName.Text = def.Name;
             nudDefPartHP.Value = def.HP.Max;
+            nudDefPartMass.Value = Convert.ToDecimal(def.Mass);
             PartActions = def.Actions;
             ShowPartActions(drpDefPartActionList);
 
@@ -340,6 +402,7 @@ namespace PartMaker
             ActionPart act = (ActionPart)Part;
             tbxActPartName.Text = act.Name;
             nudActPartHP.Value = act.HP.Max;
+            nudActPartMass.Value = Convert.ToDecimal(act.Mass);
             PartActions = act.Actions;
             ShowPartActions(drpActPartActionList);
 
@@ -347,6 +410,22 @@ namespace PartMaker
             tcPartTypes.SelectedTab = tbpAction;
         }
 
+        private void LoadEnginePart()
+        {
+            EnginePart eng = (EnginePart)Part;
+            tbxEngPartName.Text = eng.Name;
+            nudEngPartHP.Value = eng.HP.Max;
+            nudEngPartMass.Value = Convert.ToDecimal(eng.Mass);
+            PartActions = eng.Actions;
+            ShowPartActions(drpEngPartActionList);
+
+            nudEngPartThrust.Value = decimal.Parse(eng.Thrust.ToString());
+            tcPartTypes.SelectedTab = tbpEngines;
+        }
+
         #endregion
+
+
+        
     }
 }

@@ -13,6 +13,12 @@
       <shipPart>Shield Generator</shipPart>
       <shipPart>Armor Plate</shipPart>
       <shipPart>Damage Control</shipPart>
+      <shipPart>Standard Engine</shipPart>
+      <shipPart>Standard Engine</shipPart>
+      <shipPart>Standard Engine</shipPart>
+      <shipPart>Standard Engine</shipPart>
+      <shipPart>Standard Engine</shipPart>
+      <shipPart>Standard Engine</shipPart>
     </shipParts>
   </ship>
   <ship className="Prey">
@@ -28,6 +34,14 @@
       <shipPart>Shield Generator</shipPart>
       <shipPart>Armor Plate</shipPart>
       <shipPart>Damage Control</shipPart>
+      <shipPart>Standard Engine</shipPart>
+      <shipPart>Standard Engine</shipPart>
+      <shipPart>Standard Engine</shipPart>
+      <shipPart>Standard Engine</shipPart>
+      <shipPart>Standard Engine</shipPart>
+      <shipPart>Standard Engine</shipPart>
+      <shipPart>Standard Engine</shipPart>
+      <shipPart>Standard Engine</shipPart>
     </shipParts>
   </ship>
 </ships>

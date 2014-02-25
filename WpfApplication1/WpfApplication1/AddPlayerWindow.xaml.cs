@@ -93,20 +93,26 @@ namespace SpaceX
         }
 
         #region Constructors
-        public AddPlayerWindow()
+        void initAddPlayerWindow(PlayerCollection playerList)
         {
+            this.Players = playerList;
+            Players.Clear();
+            Player one = new Player("Frank", "Furters", "Necrons");
+            Players.Add(one);
+            Player two = new Player("Joe", "Shmoes", "Orks");
+            Players.Add(two);
             InitializeComponent();
             initIconSets();
             lbxPlayerList.ItemsSource = Players;
             lbxPlayerList.UpdateLayout();
         }
+        public AddPlayerWindow()
+        {
+            initAddPlayerWindow(new PlayerCollection());
+        }
         public AddPlayerWindow(PlayerCollection PlayerList)
         {
-            this.Players = PlayerList;
-            InitializeComponent();
-            initIconSets();
-            lbxPlayerList.ItemsSource = Players;
-            lbxPlayerList.UpdateLayout();
+            initAddPlayerWindow(PlayerList);
         }
         #endregion
     }

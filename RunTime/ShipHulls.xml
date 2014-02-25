@@ -3,53 +3,55 @@
   <shipHull name="Frigate">
     <MaxHP>50</MaxHP>
     <AllowedParts>
-      <allowedPart type="StarShips.PartBase.ActionPart">
+      <allowedPart type="StarShips.Parts.ActionPart">
         <ActionMechanism></ActionMechanism>
         <CountOfParts>2</CountOfParts>
       </allowedPart>
-      <allowedPart type="StarShips.PartBase.DefensePart">
+      <allowedPart type="StarShips.Parts.DefensePart">
         <ActionMechanism></ActionMechanism>
         <CountOfParts>3</CountOfParts>
       </allowedPart>
-      <allowedPart type="StarShips.PartBase.WeaponPart">
+      <allowedPart type="StarShips.Parts.WeaponPart">
         <ActionMechanism>Beam</ActionMechanism>
         <CountOfParts>3</CountOfParts>
       </allowedPart>
-      <allowedPart type="StarShips.PartBase.WeaponPart">
+      <allowedPart type="StarShips.Parts.WeaponPart">
         <ActionMechanism>Cannon</ActionMechanism>
         <CountOfParts>2</CountOfParts>
       </allowedPart>
-      <allowedPart type="StarShips.PartBase.WeaponPart">
+      <allowedPart type="StarShips.Parts.WeaponPart">
         <ActionMechanism>Torpedo</ActionMechanism>
         <CountOfParts>1</CountOfParts>
       </allowedPart>
     </AllowedParts>
     <ImageURL>Ship1.png</ImageURL>
+    <Mass>1900</Mass>
   </shipHull>
   <shipHull name="Galaxy">
     <MaxHP>50</MaxHP>
     <AllowedParts>
-      <allowedPart type="StarShips.PartBase.DefensePart">
+      <allowedPart type="StarShips.Parts.DefensePart">
         <ActionMechanism></ActionMechanism>
         <CountOfParts>3</CountOfParts>
       </allowedPart>
-      <allowedPart type="StarShips.PartBase.ActionPart">
+      <allowedPart type="StarShips.Parts.ActionPart">
         <ActionMechanism></ActionMechanism>
         <CountOfParts>2</CountOfParts>
       </allowedPart>
-      <allowedPart type="StarShips.PartBase.WeaponPart">
+      <allowedPart type="StarShips.Parts.WeaponPart">
         <ActionMechanism>Beam</ActionMechanism>
         <CountOfParts>2</CountOfParts>
       </allowedPart>
-      <allowedPart type="StarShips.PartBase.WeaponPart">
+      <allowedPart type="StarShips.Parts.WeaponPart">
         <ActionMechanism>Cannon</ActionMechanism>
         <CountOfParts>1</CountOfParts>
       </allowedPart>
-      <allowedPart type="StarShips.PartBase.WeaponPart">
+      <allowedPart type="StarShips.Parts.WeaponPart">
         <ActionMechanism>Torpedo</ActionMechanism>
         <CountOfParts>1</CountOfParts>
       </allowedPart>
     </AllowedParts>
     <ImageURL>Ship2.png</ImageURL>
+    <Mass>2900</Mass>
   </shipHull>
 </shipHulls>

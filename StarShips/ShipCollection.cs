@@ -12,7 +12,7 @@ namespace StarShips
     public class ShipCollection:ISerializable, INotifyCollectionChanged, IEnumerable<Ship>
     {
         #region Collection and Indexer
-        private ArrayList _ships = new ArrayList();
+        private List<Ship> _ships = new List<Ship>();
         public Ship this[int index]
         {
             get
@@ -47,28 +47,60 @@ namespace StarShips
         }
         #endregion
 
-        #region Private Variables
+        #region Internal Index Counter
         int _internalIndex = 0;
+        private int NextIndex()
+        {
+            if (_internalIndex + 1 >= _ships.Count)
+                return 0;
+            else
+                return _internalIndex + 1;
+        }
+        private void IncreaseIndex()
+        {
+            if (_internalIndex + 1 >= _ships.Count)
+                _internalIndex = 0;
+            else
+                _internalIndex++;
+        }
         #endregion
 
         #region Public Methods
         public Ship GetNextShip()
         {
+            return GetNextShip(false);
+        }
+        public Ship GetNextShip(bool includeDestroyed)
+        {
             Ship result = null;
-            //determine if next InternalIndex is not inside Array
-            if (_internalIndex + 1 > _ships.Count)
-                _internalIndex = 0;    //roll InternalIndex back to 0
-            else
-                _internalIndex++;
+            if (!includeDestroyed)
+            {
+                if (_ships.Any(f => f.IsDestroyed == false))
+                {
+                    bool indexAdjusted = false;
+                    while (!indexAdjusted)
+                    {
+
+                        if (_ships[NextIndex()].IsDestroyed)
+                        {
+                            IncreaseIndex();
+                            indexAdjusted = true;
+                        }
+                    }
+                }
+                else
+                    return _ships[0];
+            }
+            IncreaseIndex();
             
             //find next ship without orders
             int countSearched = 0;
             int tempIndex = _internalIndex;
             while (result == null && countSearched < _ships.Count)
             {
-                if (((Ship)_ships[tempIndex]).Orders.Count == 0)
+                if (((Ship)_ships[tempIndex]).Orders.Count == 0 && (includeDestroyed || !((Ship)_ships[tempIndex]).IsDestroyed))
                     result = (Ship)_ships[tempIndex];
-                else if (tempIndex + 1 > _ships.Count)
+                else if (tempIndex + 1 >= _ships.Count)
                     tempIndex = 0;
                 else
                     tempIndex++;
@@ -77,10 +109,14 @@ namespace StarShips
             }
 
             //if no ship without orders, just get next ship
-            if (result == null && _ships.Count > 0)
+            if (result == null && _ships.Count > 0 && (includeDestroyed || !((Ship)_ships[_internalIndex]).IsDestroyed))
                 result = (Ship)_ships[_internalIndex];
             
             return result;
+        }
+        public void ResetIndex()
+        {
+            _internalIndex = -1;
         }
         #endregion
 
@@ -91,8 +127,8 @@ namespace StarShips
         }
         public ShipCollection(SerializationInfo info, StreamingContext context)
         {
-            this._ships = (ArrayList)info.GetValue("Ships", typeof(ArrayList));
-            this._internalIndex = (int)info.GetValue("InternalIndex", typeof(ArrayList));
+            this._ships = (List<Ship>)info.GetValue("Ships", typeof(List<Ship>));
+            this._internalIndex = (int)info.GetValue("InternalIndex", typeof(int));
         }
         #endregion
 
@@ -128,11 +164,11 @@ namespace StarShips
 
     public class ShipColEnum : IEnumerator<Ship>
     {
-        public ArrayList _ships;
+        public List<Ship> _ships;
 
         int position = -1;
 
-        public ShipColEnum(ArrayList ships)
+        public ShipColEnum(List<Ship> ships)
         {
             _ships = ships;
         }

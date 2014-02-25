@@ -5,22 +5,24 @@
     <StackPanel Background="Black" VerticalAlignment="Top">
         <StackPanel Orientation="Horizontal">
             <StackPanel Width="820" Name="gridStack">
-                <StackPanel Orientation="Horizontal" Width="820" Height="25">
+                <StackPanel Orientation="Horizontal" Width="820" Height="35">
+                    <StackPanel Orientation="Horizontal" Width="410" Height="35">
                         <Button Name="btnEndTurn" Content="End Turn" Click="btnEndTurn_Click" Width="80" Margin="5 0 5 0"/>
-                        <Button Name="btnFireWeapon" Content="Show Beams" Click="btnFireWeapon_Click" Width="80" Margin="5 0 5 0"/>
-                    <Button Name="btnShowDistance" Content="Show Distance" Click="btnShowDistance_Click" Width="80" Margin="5 0 5 0"/>
+                        <Button Name="btnNextShip" Content="Next Ship" Click="btnNextShip_Click" Width="80" Margin="5 0 5 0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Width="410" Height="35" HorizontalAlignment="Right">
+                        <TextBlock Text="Current Player: " Foreground="White" HorizontalAlignment="Right"/>
+                        <TextBlock Name="txbCurrentPlayer" Foreground="White" HorizontalAlignment="Right"/>
+                        <Image Name="imgCurrentPlayerIcon" Height="32" Width="32" HorizontalAlignment="Right"/>
+                    </StackPanel>
                 </StackPanel>
                 <Grid Name="g" Width="820" Height="820" HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="0"/>
-                <ListBox Name="statusWindow" Height="130" Width="820" Background="Black" Foreground="WhiteSmoke"/>
+                <ListBox Name="statusWindow" Height="120" Width="820" Background="Black" Foreground="WhiteSmoke"/>
                 <Canvas Name="c" Width="820" Height="820" HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="80" />
             </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <StackPanel>
-                    <StackPanel Name="spCurrentShip"></StackPanel>
-                </StackPanel>
-                <StackPanel>
-                    <StackPanel Name="spTargetShip"></StackPanel>
-                </StackPanel>
+            <StackPanel>
+                <StackPanel Name="spCurrentShip" Height="480"></StackPanel>
+                <StackPanel Name="spTargetShip" Height="480"></StackPanel>
             </StackPanel>
             
         </StackPanel>

@@ -10,6 +10,7 @@
       <DamageType>Laser</DamageType>
       <FiringType>Beam</FiringType>
       <WeaponRange>2</WeaponRange>
+      <Mass>50</Mass>
     </weaponPart>
     <weaponPart name="Plasma Cannon">
       <MaxHP>1</MaxHP>
@@ -20,6 +21,7 @@
       <DamageType>Plasma</DamageType>
       <FiringType>Cannon</FiringType>
       <WeaponRange>3</WeaponRange>
+      <Mass>50</Mass>
     </weaponPart>
     <weaponPart name="Torpedo">
       <MaxHP>1</MaxHP>
@@ -30,6 +32,7 @@
       <DamageType>Explosive</DamageType>
       <FiringType>Torpedo</FiringType>
       <WeaponRange>5</WeaponRange>
+      <Mass>50</Mass>
     </weaponPart>
   </weaponParts>
   <defenseParts>
@@ -43,6 +46,7 @@
           <Value index="0">2</Value>
         </action>
       </Actions>
+      <Mass>50</Mass>
     </defensePart>
     <defensePart name="Armor Plate">
       <MaxHP>15</MaxHP>
@@ -50,6 +54,7 @@
       <DownAdjective>Destroyed</DownAdjective>
       <PenetrateVerb>Shattering</PenetrateVerb>
       <Actions />
+      <Mass>50</Mass>
     </defensePart>
   </defenseParts>
   <actionParts>
@@ -61,6 +66,15 @@
           <Value index="0">5</Value>
         </action>
       </Actions>
+      <Mass>50</Mass>
     </actionPart>
   </actionParts>
+  <engineParts>
+    <enginePart name="Standard Engine">
+      <MaxHP>1</MaxHP>
+      <Thrust>100</Thrust>
+      <Actions />
+      <Mass>50</Mass>
+    </enginePart>
+  </engineParts>
 </shipParts>

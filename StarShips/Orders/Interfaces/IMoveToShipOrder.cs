@@ -5,8 +5,7 @@ using System.Text;
 
 namespace StarShips.Orders.Interfaces
 {
-    public interface IMoveOrder
+    interface IMoveToShipOrder : IMoveOrder
     {
-        string ExecuteOrder(Ship ship, int impulse);
     }
 }

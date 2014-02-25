@@ -138,8 +138,8 @@ namespace HullMaker
         {
             string Name = tbxHullName.Text;
             int MaxHP = int.Parse(nudHullPointsMax.Value.ToString());
-
-            hull = new ShipHull(Name, MaxHP, PartCounts,tbxImage.Text);
+            double Mass = Convert.ToDouble(nudHullMass.Value);
+            hull = new ShipHull(Name, MaxHP, Mass, PartCounts,tbxImage.Text);
             
             hull.GetObjectXML(hullsDoc);
             hullsDoc.Save("ShipHulls.xml");
@@ -154,6 +154,7 @@ namespace HullMaker
             tbxHullName.Text = hull.Name;
             nudHullPointsMax.Value = hull.HullPoints.Max;
             tbxImage.Text = hull.ImageURL;
+            nudHullMass.Value = Convert.ToDecimal(hull.Mass);
             PartCounts = hull.AllowedParts;
             ShowParts();
         }

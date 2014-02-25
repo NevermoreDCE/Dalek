@@ -6,6 +6,7 @@ using StarShips.Interfaces;
 using System.Runtime.Serialization;
 using System.Xml.Linq;
 using StarShips.Utility;
+using StarShips.Structs;
 
 namespace StarShips.Parts
 {
@@ -32,13 +33,11 @@ namespace StarShips.Parts
         {
             return string.Format("{0} (DR:{1}) (HP:{2}/{3})", this.Name, _dr.ToString(), HP.Current.ToString(), HP.Max.ToString());
         }
-
-        public override string Repair(int amount)
-        {
-            this.IsDestroyed = false;
-            return HP.Add(amount).ToString();
-        }
-
+        /// <summary>
+        /// Handles incoming damage
+        /// </summary>
+        /// <param name="Damage">Amount of incoming damage</param>
+        /// <returns>Status result and remaining damage</returns>
         public DefenseResult TakeHit(int Damage)
         {
             DefenseResult result;
@@ -80,6 +79,7 @@ namespace StarShips.Parts
         {
             info.AddValue("Parent", _parent);
             info.AddValue("Name", Name);
+            info.AddValue("Mass", Mass);
             info.AddValue("HP", HP);
             info.AddValue("DR", _dr);
             info.AddValue("DownAdjective", _downAdjective);
@@ -96,6 +96,10 @@ namespace StarShips.Parts
                 // Update Existing
                 def = sourceDoc.Descendants("defensePart").First(f => f.Attribute("name").Value == this.Name);
                 def.Element("MaxHP").Value = this.HP.Max.ToString();
+                if (def.Element("Mass") != null)
+                    def.Element("Mass").Value = this._mass.ToString();
+                else
+                    def.Add(new XElement("Mass", this._mass.ToString()));
                 def.Element("DR").Value = this._dr.ToString();
                 def.Element("DownAdjective").Value = this._downAdjective.ToString();
                 def.Element("PenetrateVerb").Value = this._penetrateVerb.ToString();
@@ -110,6 +114,7 @@ namespace StarShips.Parts
                 def =
                     new XElement("defensePart", new XAttribute("name", this.Name),
                         new XElement("MaxHP", this.HP.Max.ToString()),
+                        new XElement("Mass",this._mass.ToString()),
                         new XElement("DR", this._dr.ToString()),
                         new XElement("DownAdjective", this._downAdjective.ToString()),
                         new XElement("PenetrateVerb", this._penetrateVerb.ToString()),
@@ -121,12 +126,13 @@ namespace StarShips.Parts
         #endregion
 
         #region Constructors
-        public DefensePart(Ship parent, string Name, int MaxHP, int DR, string DownAdjective, string PenetrateVerb, List<ShipAction> Actions)
+        public DefensePart(Ship parent, string Name, int MaxHP, double Mass, int DR, string DownAdjective, string PenetrateVerb, List<ShipAction> Actions)
         {
             this._parent = parent;
             this.Name = Name;
             HP.Max = MaxHP;
             HP.Current = MaxHP;
+            _mass = Mass;
             _dr = DR;
             _downAdjective = DownAdjective;
             _penetrateVerb = PenetrateVerb;
@@ -139,6 +145,7 @@ namespace StarShips.Parts
             Name = (string)info.GetValue("Name", typeof(string));
             _dr = (int)info.GetValue("DR", typeof(int));
             HP = (StatWithMax)info.GetValue("HP", typeof(StatWithMax));
+            _mass = (double)info.GetValue("Mass", typeof(double));
             _downAdjective = (string)info.GetValue("DownAdjective", typeof(string));
             _penetrateVerb = (string)info.GetValue("PenetrateVerb", typeof(string));
             _actions = (List<ShipAction>)info.GetValue("Actions", typeof(List<ShipAction>));
@@ -149,6 +156,8 @@ namespace StarShips.Parts
             this._parent = parent;
             this.Name = description.Attribute("name").Value;
             this.HP.Max = int.Parse(description.Element("MaxHP").Value);
+            if (description.Element("Mass") != null)
+                this._mass = double.Parse(description.Element("Mass").Value);
             this._dr = int.Parse(description.Element("DR").Value);
             this._downAdjective = description.Element("DownAdjective").Value;
             this._penetrateVerb = description.Element("PenetrateVerb").Value;

@@ -13,6 +13,7 @@ using System.Windows.Shapes;
 using StarShips.Players;
 using System.Xml.Linq;
 using StarShips;
+using System.Collections.ObjectModel;
 
 
 namespace SpaceX
@@ -23,7 +24,7 @@ namespace SpaceX
     public partial class AddShipsWindow : Window
     {
         PlayerCollection SourcePlayers = new PlayerCollection();
-        List<Ship> ExistingShips = new List<Ship>();
+        ObservableCollection<Ship> ExistingShips = new ObservableCollection<Ship>();
 
         private void cbxPlayers_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -32,6 +33,8 @@ namespace SpaceX
                 Player p = (Player)cbxPlayers.SelectedItem;
                 imgPlayerIcon.Source = p.Icon.Source;
                 lbxPlayerShips.ItemsSource = p.Ships;
+                lbxPlayerShips.UpdateLayout();
+                initShips(p);
             }
         }
 
@@ -55,6 +58,11 @@ namespace SpaceX
         {
             Ship s = (Ship)cbxShipList.SelectedItem;
             Player p = (Player)cbxPlayers.SelectedItem;
+            addShipToPlayer(s, p);
+        }
+
+        private static void addShipToPlayer(Ship s, Player p)
+        {
             int countOfClass = p.Ships.Where(f => f.ClassName == s.ClassName).Count();
             Ship shipToAdd = s.Clone();
             shipToAdd.Name = string.Format("{0} - {1}", s.ClassName, (countOfClass + 1).ToString("000"));
@@ -95,8 +103,9 @@ namespace SpaceX
             panel.Children.Add(lbl);
         }
         
-        private void initShips()
+        private void initShips(Player p)
         {
+            ExistingShips.Clear();
             // load source document, hulls and parts
             XDocument xdoc = XDocument.Load("Ships.xml");
             List<ShipHull> ExistingHulls;
@@ -113,7 +122,7 @@ namespace SpaceX
                 Image img = new Image();
                 BitmapImage src = new BitmapImage();
                 src.BeginInit();
-                src.UriSource = new Uri(ship.HullType.ImageURL, UriKind.Relative);
+                src.UriSource = new Uri(string.Format("Images\\Empires\\{0}\\{1}",p.IconSet,ship.HullType.ImageURL), UriKind.Relative);
                 src.CacheOption = BitmapCacheOption.OnLoad;
                 src.EndInit();
                 img.Source = src;
@@ -128,22 +137,35 @@ namespace SpaceX
         }
 
         #region Constructors
-        public AddShipsWindow()
+        void initAddShipsWindow(PlayerCollection playerList)
         {
             InitializeComponent();
-            initShips();
+            this.SourcePlayers = playerList;
+            initShips(SourcePlayers.First());
+            //test stuff
+            foreach (Player p in SourcePlayers)
+            {
+                initShips(p);
+                addShipToPlayer(ExistingShips.First(f => f.ClassName == "Hunter"),p);
+                addShipToPlayer(ExistingShips.First(f => f.ClassName == "Prey"), p);
+                addShipToPlayer(ExistingShips.First(f => f.ClassName == "Prey"), p);
+            }
+
+
             cbxShipList.ItemsSource = ExistingShips;
             cbxPlayers.ItemsSource = SourcePlayers;
+            if (cbxPlayers.Items.Count > 0)
+                cbxPlayers.SelectedIndex = 0;
+        }
+        public AddShipsWindow()
+        {
+            initAddShipsWindow(new PlayerCollection());
         }
 
         
         public AddShipsWindow(PlayerCollection Players)
         {
-            InitializeComponent();
-            this.SourcePlayers = Players;
-            initShips();
-            cbxShipList.ItemsSource = ExistingShips;
-            cbxPlayers.ItemsSource = SourcePlayers;
+            initAddShipsWindow(Players);
         }
         #endregion
     }
