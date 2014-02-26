@@ -13,6 +13,7 @@ using StarShips.Parts;
 using StarShips.Orders.Interfaces;
 using System.Diagnostics;
 using System.Windows.Media;
+using StarShips.Players;
 
 
 namespace StarShips
@@ -32,6 +33,7 @@ namespace StarShips
         System.Windows.Controls.Image _image;
         bool _weaponsFiredAlready = false;
         bool _isDestroyed = false;
+        Player _owner;
         #endregion
 
         #region Public Properties
@@ -63,7 +65,7 @@ namespace StarShips
                 return mass;
             }
         }
-        
+        public Player Owner { get { return _owner; } set { _owner = value; } }
         #endregion
 
         #region Public Methods
@@ -306,6 +308,7 @@ namespace StarShips
         {
             info.AddValue("HP", HP);
             info.AddValue("MP", MP);
+            info.AddValue("Owner", _owner);
             foreach (ShipPart part in Equipment)
                 part.Target = null;
             info.AddValue("Equipment", Equipment);
@@ -365,6 +368,7 @@ namespace StarShips
         {
             HP = (StatWithMax)info.GetValue("HP", typeof(StatWithMax));
             MP = (StatWithMax)info.GetValue("MP", typeof(StatWithMax));
+            _owner = (Player)info.GetValue("Owner", typeof(Player));
             Equipment = (List<ShipPart>)info.GetValue("Equipment", typeof(List<ShipPart>));
             ClassName = (string)info.GetValue("Name", typeof(string));
             HullType = (ShipHull)info.GetValue("HullType", typeof(ShipHull));

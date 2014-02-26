@@ -21,8 +21,46 @@
                 <Canvas Name="c" Width="820" Height="820" HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="80" />
             </StackPanel>
             <StackPanel>
-                <StackPanel Name="spCurrentShip" Height="480"></StackPanel>
-                <StackPanel Name="spTargetShip" Height="480"></StackPanel>
+                <ScrollViewer CanContentScroll="true" VerticalScrollBarVisibility="Auto" Width="440">
+                    <StackPanel Name="spCurrentShip" Height="440"></StackPanel>
+                </ScrollViewer>
+                <ScrollViewer CanContentScroll="true" VerticalScrollBarVisibility="Auto" Width="440">
+                    <StackPanel Name="spTargetShip" Height="280"></StackPanel>
+                </ScrollViewer>
+                <ListBox Name="lbxTargetShips" Width="440" Height="255" Background="Black" Foreground="White" SelectionChanged="lbxTargetShips_SelectionChanged">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="{Binding Path=Owner.Icon.Source}" Height="32" Width="32"/>
+                                <Image Source="{Binding Path=Image.Source}" Height="32" Width="32"/>
+                                <StackPanel Width="150">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Name: "/>
+                                        <TextBlock Text="{Binding Path=Name}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Class: " Margin="15 0 0 0"/>
+                                        <TextBlock Text="{Binding Path=ClassName}"/>
+                                        <TextBlock Text=" ("/>
+                                        <TextBlock Text="{Binding Path=HullType.Name}"/>
+                                        <TextBlock Text=")"/>
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel Width="68">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="HP: "/>
+                                        <TextBlock Text="{Binding Path=HP}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="MP: "/>
+                                        <TextBlock Text="{Binding Path=MP}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                
             </StackPanel>
             
         </StackPanel>

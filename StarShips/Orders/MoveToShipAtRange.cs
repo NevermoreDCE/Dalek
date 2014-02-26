@@ -46,7 +46,7 @@ namespace StarShips.Orders
                 LocationCollection locations = (LocationCollection)this.OrderValues[2];
                 int range = (int)this.OrderValues[1];
                 Point targetCurrentLoc = locations.GetTargetPointOnRadius(sourceLoc, targetLoc, range, locations.GetLength(0), locations.GetLength(1));
-                while (ship.Position != targetCurrentLoc && ship.MP.Current > 0)
+                if (ship.Position != targetCurrentLoc && ship.MP.Current > 0)
                 {
                     Point from = ship.Position;
                     Point to = locations.MoveShipToPoint(ship, targetCurrentLoc);

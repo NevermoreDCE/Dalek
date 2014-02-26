@@ -66,6 +66,7 @@ namespace SpaceX
             int countOfClass = p.Ships.Where(f => f.ClassName == s.ClassName).Count();
             Ship shipToAdd = s.Clone();
             shipToAdd.Name = string.Format("{0} - {1}", s.ClassName, (countOfClass + 1).ToString("000"));
+            shipToAdd.Owner = p;
             p.Ships.Add(shipToAdd);
         }
 

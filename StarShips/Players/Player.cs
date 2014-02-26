@@ -22,6 +22,7 @@ namespace StarShips.Players
         public bool IsAI { get { return _isAI; } set { _isAI = value; } }
         public ShipCollection Ships;
         public bool IsTurnComplete;
+        public bool IsDefeated = false;
         #endregion
 
         #region Public Methods
