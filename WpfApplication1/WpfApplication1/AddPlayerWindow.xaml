@@ -14,6 +14,20 @@
                 <TextBox Name="tbxEmpireName" HorizontalAlignment="Left" Width="200" Background="Gainsboro"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
+                <Label Content="Is Computer:" HorizontalAlignment="Right" Width="90" Margin="0 0 10 0" Foreground="White"/>
+                <Border Height="30" VerticalAlignment="Center">
+                    <CheckBox Name="chbIsAI" VerticalAlignment="Center" Checked="chbIsAI_Checked" />
+                </Border>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Aggressiveness:" HorizontalAlignment="Right" Width="90" Margin="0 0 10 0" Foreground="White"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBox x:Name="txtNum" x:FieldModifier="private" Margin="5,5,0,5" Width="50" Text="0" TextChanged="txtNum_TextChanged" IsEnabled="False" />
+                    <Button x:Name="cmdUp" x:FieldModifier="private" Margin="5,5,0,5" Content="˄" Width="20" Click="cmdUp_Click" IsEnabled="False" />
+                    <Button x:Name="cmdDown" x:FieldModifier="private" Margin="0,5,0,5"  Content="˅" Width="20" Click="cmdDown_Click" IsEnabled="False" />
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
                 <Label Content="Icon Set:" HorizontalAlignment="Right" Width="70" Margin="0 0 30 0" Foreground="White"/>
                 <ComboBox Name="cbxIconSet" Width="200" Background="Gainsboro" SelectionChanged="cbxIconSet_SelectionChanged"/>
             </StackPanel>

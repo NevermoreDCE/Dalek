@@ -53,7 +53,7 @@ namespace WPFPathfinding
         {
             InitializeComponent();
         }
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        void Window_Loaded(object sender, RoutedEventArgs e)
         {
             GameState.CombatLocations = new LocationCollection(GridDimensionX, GridDimensionY);
             GameState.Players = new PlayerCollection();
@@ -72,7 +72,7 @@ namespace WPFPathfinding
             BuildMap();
         }
 
-        private void BuildMap()
+        void BuildMap()
         {
             g.Children.Clear();
             currentPlayer = GameState.Players[0];
@@ -112,7 +112,7 @@ namespace WPFPathfinding
         }
 
         #region Initalize Methods
-        private void initShipDetails()
+        void initShipDetails()
         {
             int RangeSize = ((GridDimensionX - 1) / GameState.Players.Count);
             using (RNG rng = new RNG())
@@ -181,20 +181,33 @@ namespace WPFPathfinding
             lbxTargetShips.UpdateLayout();
         }
 
-        private void initHandlers()
+        void initHandlers()
         {
-            foreach(Player p in GameState.Players)
-                foreach (Ship s in p.Ships)
-                {
-                    s.OnShipDestroyed+=new StarShips.Delegates.ShipDelegates.ShipDestroyedEvent(onShipDestroyedHandler);
-                    foreach(IWeaponOrder wo in s.Orders.Where(f=>f is IWeaponOrder))
-                        wo.OnWeaponFired += new OrderDelegates.WeaponFiredEvent(onWeaponFiredHandler);
-                    foreach(IMoveOrder mo in s.Orders.Where(f=>f is IMoveOrder))
-                        mo.OnShipMove += new OrderDelegates.ShipMoveEvent(onShipMoveHandler);
-                }
+            foreach (Player p in GameState.Players)
+                initHandlers(p);
+                
         }
 
-        private void initLocations()
+        void initHandlers(Player p)
+        {
+            foreach (Ship s in p.Ships)
+            {
+                s.OnShipDestroyed -= new StarShips.Delegates.ShipDelegates.ShipDestroyedEvent(onShipDestroyedHandler);
+                s.OnShipDestroyed += new StarShips.Delegates.ShipDelegates.ShipDestroyedEvent(onShipDestroyedHandler);
+                foreach (IWeaponOrder wo in s.Orders.Where(f => f is IWeaponOrder))
+                {
+                    wo.OnWeaponFired -= new OrderDelegates.WeaponFiredEvent(onWeaponFiredHandler);
+                    wo.OnWeaponFired += new OrderDelegates.WeaponFiredEvent(onWeaponFiredHandler);
+                }
+                foreach (IMoveOrder mo in s.Orders.Where(f => f is IMoveOrder))
+                {
+                    mo.OnShipMove -= new OrderDelegates.ShipMoveEvent(onShipMoveHandler);
+                    mo.OnShipMove += new OrderDelegates.ShipMoveEvent(onShipMoveHandler);
+                }
+            }
+        }
+
+        void initLocations()
         {
             Location newLoc;
             for (int x = 0; x < GridDimensionX; x++)
@@ -216,7 +229,7 @@ namespace WPFPathfinding
             }
         }
 
-        private void initGrid()
+        void initGrid()
         {
             for (int i = 0; i < GridDimensionX; i++)
             {
@@ -232,7 +245,7 @@ namespace WPFPathfinding
             }
         }
         
-        private void initImages()
+        void initImages()
         {
             moveTarget = new Image();
             BitmapImage src = new BitmapImage();
@@ -281,12 +294,12 @@ namespace WPFPathfinding
             buttondown = new ImageBrush(buttondownSrc);
         }
 
-        private void initButtons()
+        void initButtons()
         {
             btnEndTurn.Background = buttonup;
             btnNextShip.Background = buttonup;
             btnSaveGame.Background = buttonup;
-            btnLoadGame.Background = buttondown;
+            btnLoadGame.Background = buttonup;
         }
         #endregion
 
@@ -390,17 +403,6 @@ namespace WPFPathfinding
                             move.Click += new RoutedEventHandler(MenuMoveToShip_Click);
                             MenuMoveToShip.Items.Add(move);
                         }
-
-                        //MenuItem MoveToTwo = new MenuItem();
-                        //MoveToTwo.Header = "At 2";
-                        //MoveToTwo.CommandParameter = new Tuple<Ship, int>(ship, 2);
-                        //MoveToTwo.Click += new RoutedEventHandler(MenuMoveToShip_Click);
-                        //MenuMoveToShip.Items.Add(MoveToTwo);
-                        //MenuItem MoveToFive = new MenuItem();
-                        //MoveToFive.Header = "At 5";
-                        //MoveToFive.CommandParameter = new Tuple<Ship, int>(ship, 5);
-                        //MoveToFive.Click += new RoutedEventHandler(MenuMoveToShip_Click);
-                        //MenuMoveToShip.Items.Add(MoveToFive);
 
                         menu.Items.Add(MenuMoveToShip);
                     }
@@ -569,6 +571,8 @@ namespace WPFPathfinding
 
         private void AddExplosionImage(Ship shipToExplode)
         {
+            if(explosionImg.Parent!=null)
+                ((Grid)explosionImg.Parent).Children.Remove(explosionImg);
             Grid.SetRow(explosionImg, shipToExplode.Position.X);
             Grid.SetColumn(explosionImg, shipToExplode.Position.Y);
             g.Children.Add(explosionImg);
@@ -895,6 +899,14 @@ namespace WPFPathfinding
 
             // clear target window
             spTargetShip.Children.Clear();
+
+            if (currentPlayer.IsAI)
+            {
+                currentPlayer.ExecuteAI(GameState);
+                initHandlers(currentPlayer);
+                EndTurn();
+            }
+            
         }
         void ProcessTurnResults()
         {
@@ -907,7 +919,7 @@ namespace WPFPathfinding
                         results = new List<string>();
                         results = s.ExecuteOrders(impulse);
                         foreach (string r in results.Where(f => f != string.Empty))
-                            statusWindow.Items.Insert(0, r);
+                            statusWindow.Items.Insert(0, string.Format("{0}: {1}: {2}",p,s,r));
                     }
             }
             foreach (Player p in GameState.Players.Where(f => !f.IsDefeated))
@@ -916,7 +928,7 @@ namespace WPFPathfinding
                     results = new List<string>();
                     results = s.EndOfTurn();
                     foreach (string r in results.Where(f => f != string.Empty))
-                        statusWindow.Items.Insert(0, r);
+                        statusWindow.Items.Insert(0, string.Format("{0}: {1}: {2}", p, s, r));
                 }
             NextAnimation();
 

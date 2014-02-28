@@ -22,7 +22,17 @@ namespace SpaceX
     public partial class AddPlayerWindow : Window
     {
         PlayerCollection Players = new PlayerCollection();
-        
+        private int _numValue = 10;
+        public int AggressivenessValue
+        {
+            get { return _numValue; }
+            set
+            {
+                _numValue = value;
+                txtNum.Text = value.ToString();
+            }
+        }
+
         private void initIconSets()
         {
             DirectoryInfo dir = new DirectoryInfo("Images/Empires");
@@ -40,7 +50,9 @@ namespace SpaceX
             string PlayerName = tbxPlayerName.Text;
             string EmpireName = tbxEmpireName.Text;
             string IconSet = cbxIconSet.SelectedValue.ToString();
-            Player p = new Player(PlayerName, EmpireName, IconSet);
+            bool IsAI = (chbIsAI.IsChecked==true?true:false);
+            int Aggressiveness = AggressivenessValue;
+            Player p = new Player(string.Format("{0}{1}",PlayerName,(IsAI?string.Format(" (AI:{0})",AggressivenessValue):string.Empty)), EmpireName, IconSet, IsAI, AggressivenessValue);
             Players.Add(p);
             lbxPlayerList.UpdateLayout();
             tbxPlayerName.Text = string.Empty;
@@ -97,9 +109,9 @@ namespace SpaceX
         {
             this.Players = playerList;
             Players.Clear();
-            Player one = new Player("Frank", "Furters", "Necrons");
+            Player one = new Player("Frank", "Furters", "Necrons",false,0);
             Players.Add(one);
-            Player two = new Player("Joe", "Shmoes", "Orks");
+            Player two = new Player("Joe (AI:4)", "Shmoes", "Orks",true,4);
             Players.Add(two);
             InitializeComponent();
             initIconSets();
@@ -115,5 +127,38 @@ namespace SpaceX
             initAddPlayerWindow(PlayerList);
         }
         #endregion
+
+        
+        private void cmdUp_Click(object sender, RoutedEventArgs e)
+        {
+            AggressivenessValue++;
+        }
+
+        private void cmdDown_Click(object sender, RoutedEventArgs e)
+        {
+            AggressivenessValue--;
+        }
+
+        private void txtNum_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!int.TryParse(txtNum.Text, out _numValue))
+                txtNum.Text = _numValue.ToString();
+        }
+
+        private void chbIsAI_Checked(object sender, RoutedEventArgs e)
+        {
+            if (chbIsAI.IsChecked == true)
+            {
+                txtNum.IsEnabled = true;
+                cmdUp.IsEnabled = true;
+                cmdDown.IsEnabled = true;
+            }
+            else
+            {
+                txtNum.IsEnabled = false;
+                cmdUp.IsEnabled = false;
+                cmdDown.IsEnabled = false;
+            }
+        }
     }
 }
