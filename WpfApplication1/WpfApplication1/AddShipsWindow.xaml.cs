@@ -14,6 +14,7 @@ using StarShips.Players;
 using System.Xml.Linq;
 using StarShips;
 using System.Collections.ObjectModel;
+using System.IO;
 
 
 namespace SpaceX
@@ -23,9 +24,10 @@ namespace SpaceX
     /// </summary>
     public partial class AddShipsWindow : Window
     {
-        PlayerCollection SourcePlayers = new PlayerCollection();
+        Game gameState;
         ObservableCollection<Ship> ExistingShips = new ObservableCollection<Ship>();
 
+        #region Events
         private void cbxPlayers_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (cbxPlayers.SelectedIndex > -1)
@@ -36,6 +38,13 @@ namespace SpaceX
                 lbxPlayerShips.UpdateLayout();
                 initShips(p);
             }
+        }
+
+        private void cbxShipList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Ship s = (Ship)cbxShipList.SelectedItem;
+            spShipDetails.Children.Clear();
+            ShowShipStatus(s, spShipDetails);
         }
 
         private void btnRemoveShip_Click(object sender, RoutedEventArgs e)
@@ -60,8 +69,10 @@ namespace SpaceX
             Player p = (Player)cbxPlayers.SelectedItem;
             addShipToPlayer(s, p);
         }
+        #endregion
 
-        private static void addShipToPlayer(Ship s, Player p)
+        #region Private Methods
+        private void addShipToPlayer(Ship s, Player p)
         {
             int countOfClass = p.Ships.Where(f => f.ClassName == s.ClassName).Count();
             Ship shipToAdd = s.Clone();
@@ -69,14 +80,6 @@ namespace SpaceX
             shipToAdd.Owner = p;
             p.Ships.Add(shipToAdd);
         }
-
-        private void cbxShipList_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Ship s = (Ship)cbxShipList.SelectedItem;
-            spShipDetails.Children.Clear();
-            ShowShipStatus(s, spShipDetails);
-        }
-
 
         void ShowShipStatus(Ship ship, StackPanel panel)
         {
@@ -96,6 +99,7 @@ namespace SpaceX
             foreach (var part in ship.Equipment)
                 addStatusLabel(part.ToString(), (part.IsDestroyed ? Brushes.DarkRed : Brushes.LightSlateGray), panel);
         }
+        
         void addStatusLabel(string text, Brush color, StackPanel panel)
         {
             TextBlock lbl = new TextBlock();
@@ -104,47 +108,40 @@ namespace SpaceX
             panel.Children.Add(lbl);
         }
         
-        private void initShips(Player p)
+        void initShips(Player p)
         {
-            ExistingShips.Clear();
+            this.ExistingShips.Clear();
             // load source document, hulls and parts
             XDocument xdoc = XDocument.Load("Ships.xml");
-            List<ShipHull> ExistingHulls;
-            List<ShipPart> ExistingParts;
-            XDocument doc = XDocument.Load("ShipHulls.xml");
-            ExistingHulls = ShipHull.GetShipHulls(doc);
-            doc = XDocument.Load("ShipParts.xml");
-            ExistingParts = ShipPart.GetShipPartList(doc, new Ship());
-
             foreach (XElement shipElement in xdoc.Descendants("ship"))
             {
-                Ship ship = new Ship(shipElement, ExistingParts, ExistingHulls);
+                Ship ship = new Ship(shipElement, gameState.ExistingParts, gameState.ExistingHulls);
                 ship.Origin = new System.Drawing.Point();
                 Image img = new Image();
-                BitmapImage src = new BitmapImage();
-                src.BeginInit();
-                src.UriSource = new Uri(string.Format("Images\\Empires\\{0}\\{1}",p.IconSet,ship.HullType.ImageURL), UriKind.Relative);
-                src.CacheOption = BitmapCacheOption.OnLoad;
-                src.EndInit();
-                img.Source = src;
+                if (File.Exists(string.Format("Images\\Empires\\{0}\\{1}", p.IconSet, ship.HullType.ImageURL)))
+                {
+                    BitmapImage src = new BitmapImage();
+                    src.BeginInit();
+                    src.UriSource = new Uri(string.Format("Images\\Empires\\{0}\\{1}", p.IconSet, ship.HullType.ImageURL), UriKind.Relative);;
+                    src.CacheOption = BitmapCacheOption.OnLoad;
+                    src.EndInit();
+                    img.Source = src;
+                }
                 img.Height = 32;
                 img.Width = 32;
                 img.Stretch = Stretch.None;
                 img.SetValue(Panel.ZIndexProperty, 10);
                 ship.Image = img;
-                //ship.OnShipDestroyed += new StarShips.Delegates.ShipDelegates.ShipDestroyedEvent(onShipDestroyedHandler);
                 ExistingShips.Add(ship);
             }
         }
-
-        #region Constructors
-        void initAddShipsWindow(PlayerCollection playerList)
+        
+        void initAddShipsWindow()
         {
             InitializeComponent();
-            this.SourcePlayers = playerList;
-            initShips(SourcePlayers.First());
+            initShips(gameState.Players.First());
             //test stuff
-            foreach (Player p in SourcePlayers)
+            foreach (Player p in gameState.Players)
             {
                 initShips(p);
                 addShipToPlayer(ExistingShips.First(f => f.ClassName == "Hunter"),p);
@@ -154,19 +151,37 @@ namespace SpaceX
 
 
             cbxShipList.ItemsSource = ExistingShips;
-            cbxPlayers.ItemsSource = SourcePlayers;
+            cbxPlayers.ItemsSource = gameState.Players;
             if (cbxPlayers.Items.Count > 0)
                 cbxPlayers.SelectedIndex = 0;
         }
-        public AddShipsWindow()
+        #endregion
+        #region Constructors
+        public AddShipsWindow(Game GameState)
         {
-            initAddShipsWindow(new PlayerCollection());
-        }
+            this.gameState = GameState;
+            
+            
+            //Load Hulls
+            gameState.ExistingHulls.Clear();
+            XDocument hullDoc = XDocument.Load("ShipHulls.xml");
+            gameState.ExistingHulls = ShipHull.GetShipHulls(hullDoc);
 
-        
-        public AddShipsWindow(PlayerCollection Players)
-        {
-            initAddShipsWindow(Players);
+            //Load Parts
+            gameState.ExistingParts.Clear();
+            XDocument partDoc = XDocument.Load("ShipParts.xml");
+            gameState.ExistingParts = ShipPart.GetShipPartList(partDoc, new Ship());
+
+            //Load Ships
+            gameState.ExistingShips.Clear();
+            XDocument xdoc = XDocument.Load("Ships.xml");
+            foreach (XElement shipElement in xdoc.Descendants("ship"))
+            {
+                Ship ship = new Ship(shipElement, gameState.ExistingParts, gameState.ExistingHulls);
+                gameState.ExistingShips.Add(ship);
+            }
+
+            initAddShipsWindow();
         }
         #endregion
     }

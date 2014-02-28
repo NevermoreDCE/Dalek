@@ -65,7 +65,7 @@ namespace WPFPathfinding
             bool? addPlayerBool = addPlayerWindow.ShowDialog();
             if (addPlayerBool==true)
             {
-                SpaceX.AddShipsWindow addShipsWindow = new SpaceX.AddShipsWindow(GameState.Players);
+                SpaceX.AddShipsWindow addShipsWindow = new SpaceX.AddShipsWindow(GameState);
                 addShipsWindow.ShowDialog();
             }
             initShipDetails();
@@ -376,16 +376,31 @@ namespace WPFPathfinding
                         MoveToZero.CommandParameter = new Tuple<Ship, int>(ship, 0);
                         MoveToZero.Click += new RoutedEventHandler(MenuMoveToShip_Click);
                         MenuMoveToShip.Items.Add(MoveToZero);
-                        MenuItem MoveToTwo = new MenuItem();
-                        MoveToTwo.Header = "At 2";
-                        MoveToTwo.CommandParameter = new Tuple<Ship, int>(ship, 2);
-                        MoveToTwo.Click += new RoutedEventHandler(MenuMoveToShip_Click);
-                        MenuMoveToShip.Items.Add(MoveToTwo);
-                        MenuItem MoveToFive = new MenuItem();
-                        MoveToFive.Header = "At 5";
-                        MoveToFive.CommandParameter = new Tuple<Ship, int>(ship, 5);
-                        MoveToFive.Click += new RoutedEventHandler(MenuMoveToShip_Click);
-                        MenuMoveToShip.Items.Add(MoveToFive);
+
+                        List<double> ranges = new List<double>();
+                        foreach (WeaponPart part in GameState.ExistingParts.Where(f => f is WeaponPart))
+                            if (!ranges.Contains(part.Range) && part.Range > 0)
+                                ranges.Add(part.Range);
+                        ranges.Sort();
+                        foreach (double range in ranges)
+                        {
+                            MenuItem move = new MenuItem();
+                            move.Header = string.Format("At {0}", Convert.ToInt32(range));
+                            move.CommandParameter = new Tuple<Ship, int>(ship, Convert.ToInt32(range));
+                            move.Click += new RoutedEventHandler(MenuMoveToShip_Click);
+                            MenuMoveToShip.Items.Add(move);
+                        }
+
+                        //MenuItem MoveToTwo = new MenuItem();
+                        //MoveToTwo.Header = "At 2";
+                        //MoveToTwo.CommandParameter = new Tuple<Ship, int>(ship, 2);
+                        //MoveToTwo.Click += new RoutedEventHandler(MenuMoveToShip_Click);
+                        //MenuMoveToShip.Items.Add(MoveToTwo);
+                        //MenuItem MoveToFive = new MenuItem();
+                        //MoveToFive.Header = "At 5";
+                        //MoveToFive.CommandParameter = new Tuple<Ship, int>(ship, 5);
+                        //MoveToFive.Click += new RoutedEventHandler(MenuMoveToShip_Click);
+                        //MenuMoveToShip.Items.Add(MoveToFive);
 
                         menu.Items.Add(MenuMoveToShip);
                     }
