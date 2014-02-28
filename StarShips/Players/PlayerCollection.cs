@@ -8,6 +8,7 @@ using System.Collections;
 
 namespace StarShips.Players
 {
+    [Serializable]
     public class PlayerCollection : ISerializable, INotifyCollectionChanged, IEnumerable<Player>
     {
         #region Collection and Indexer

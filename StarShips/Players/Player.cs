@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 namespace StarShips.Players
 {
@@ -10,6 +11,8 @@ namespace StarShips.Players
         string _name;
         string _empireName;
         string _iconSet;
+
+        [XmlIgnore]
         System.Windows.Controls.Image _icon;
         bool _isAI = false;
         #endregion
@@ -18,6 +21,7 @@ namespace StarShips.Players
         public string Name { get { return _name; } }
         public string EmpireName { get { return _empireName; } }
         public string IconSet { get { return _iconSet; } }
+        [XmlIgnore]
         public System.Windows.Controls.Image Icon { get { return _icon; } }
         public bool IsAI { get { return _isAI; } set { _isAI = value; } }
         public ShipCollection Ships;
@@ -32,15 +36,9 @@ namespace StarShips.Players
         }
         #endregion
 
-        #region Constructors
-        public Player(string Name, string EmpireName, string IconSet)
+        #region Private Methods
+        void initIcon()
         {
-            this._name = Name;
-            this._empireName = EmpireName;
-            this._iconSet = IconSet;
-            this.Ships = new ShipCollection();
-            this.IsTurnComplete = false;
-
             System.Windows.Controls.Image img = new System.Windows.Controls.Image();
             System.Windows.Media.Imaging.BitmapImage src = new System.Windows.Media.Imaging.BitmapImage();
             src.BeginInit();
@@ -54,14 +52,27 @@ namespace StarShips.Players
             img.SetValue(System.Windows.Controls.Panel.ZIndexProperty, 10);
             this._icon = img;
         }
+        #endregion
+
+        #region Constructors
+        public Player(string Name, string EmpireName, string IconSet)
+        {
+            this._name = Name;
+            this._empireName = EmpireName;
+            this._iconSet = IconSet;
+            this.Ships = new ShipCollection();
+            this.IsTurnComplete = false;
+
+            initIcon();
+        }
         public Player(SerializationInfo info, StreamingContext context)
         {
             this._name = (string)info.GetValue("Name", typeof(string));
             this._empireName = (string)info.GetValue("EmpireName", typeof(string));
             this._iconSet = (string)info.GetValue("IconSet", typeof(string));
-            this._icon = (System.Windows.Controls.Image)info.GetValue("Icon", typeof(System.Windows.Controls.Image));
             this.Ships = (ShipCollection)info.GetValue("Ships", typeof(ShipCollection));
             this.IsTurnComplete = (bool)info.GetValue("IsTurnComplete", typeof(bool));
+            initIcon();
         }
         #endregion
 
@@ -71,7 +82,6 @@ namespace StarShips.Players
             info.AddValue("Name", this._name);
             info.AddValue("EmpireName", this._empireName);
             info.AddValue("IconSet", this._iconSet);
-            info.AddValue("Icon", this._icon);
             info.AddValue("Ships", this.Ships);
             info.AddValue("IsTurnComplete", this.IsTurnComplete);
         }

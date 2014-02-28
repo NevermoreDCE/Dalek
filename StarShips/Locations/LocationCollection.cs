@@ -24,7 +24,7 @@ namespace StarShips.Locations
         North = 7
 
     }
-
+    [Serializable]
     public class LocationCollection : ISerializable
     {
         #region Collection and Indexer

@@ -209,7 +209,6 @@ namespace StarShips.Parts
             _actions = Actions;
             _weaponRange = Range;
         }
-
         public WeaponPart(Ship Parent, string Name, int MaxHP, double Mass, int Damage, double Range, string DamageType, string FiringType, int CritMultiplier, int ReloadTime, List<ShipAction> Actions)
         {
             initWeaponPart(Parent, Name, MaxHP, Mass, Damage, Range, DamageType, FiringType, CritMultiplier, ReloadTime, Actions);

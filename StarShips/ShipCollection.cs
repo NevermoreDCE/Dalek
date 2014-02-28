@@ -172,7 +172,10 @@ namespace StarShips
         {
             _ships = ships;
         }
+        public ShipColEnum()
+        {
 
+        }
         object IEnumerator.Current
         {
             get { return Current; }

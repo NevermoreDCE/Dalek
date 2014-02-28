@@ -10,9 +10,6 @@ namespace StarShips.Orders.Delegates
         object[] _orderValues = new object[1];
         public object[] OrderValues { get { return _orderValues; } set { _orderValues = value; } }
 
-        public OrderEventArgs()
-        {
-        }
         public OrderEventArgs(object[] orderValues)
         {
             this._orderValues = orderValues;

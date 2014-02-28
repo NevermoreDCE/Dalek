@@ -7,8 +7,18 @@
             <StackPanel Width="820" Name="gridStack">
                 <StackPanel Orientation="Horizontal" Width="820" Height="35">
                     <StackPanel Orientation="Horizontal" Width="410" Height="35">
-                        <Button Name="btnEndTurn" Content="End Turn" Click="btnEndTurn_Click" Width="80" Margin="5 0 5 0"/>
-                        <Button Name="btnNextShip" Content="Next Ship" Click="btnNextShip_Click" Width="80" Margin="5 0 5 0"/>
+                        <Border Name="btnEndTurn" Height="35" Width="80" Margin="5 0 5 0" MouseLeftButtonDown="btnEndTurn_MouseLeftButtonDown" MouseLeftButtonUp="imgButton_MouseLeftButtonUp" >
+                            <TextBlock Text="End Turn" Foreground="White" TextAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" />
+                        </Border>
+                        <Border Name="btnNextShip" Height="35" Width="80" Margin="5 0 5 0" MouseLeftButtonDown="btnNextShip_MouseLeftButtonDown" MouseLeftButtonUp="imgButton_MouseLeftButtonUp">
+                            <TextBlock Text="Next Ship" Foreground="White" TextAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
+                        </Border>
+                        <Border Name="btnSaveGame" Height="35" Width="80" Margin="5 0 5 0" MouseLeftButtonDown="btnSaveGame_MouseLeftButtonDown" MouseLeftButtonUp="imgButton_MouseLeftButtonUp">
+                            <TextBlock Text="Save Game" Foreground="White" TextAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
+                        </Border>
+                        <Border Name="btnLoadGame" Height="35" Width="80" Margin="5 0 5 0" MouseLeftButtonDown="btnLoadGame_MouseLeftButtonDown" MouseLeftButtonUp="imgButton_MouseLeftButtonUp">
+                            <TextBlock Text="Load Game" Foreground="White" TextAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
+                        </Border>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Width="410" Height="35" HorizontalAlignment="Right">
                         <TextBlock Text="Current Player: " Foreground="White" HorizontalAlignment="Right"/>
@@ -64,5 +74,6 @@
             </StackPanel>
             
         </StackPanel>
+        <Menu Height="23" Name="menu1" Width="200" />
     </StackPanel>
 </Window>

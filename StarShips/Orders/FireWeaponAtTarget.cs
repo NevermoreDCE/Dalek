@@ -11,7 +11,8 @@ using System.Diagnostics;
 
 namespace StarShips.Orders
 {
-    public class FireWeaponAtTarget: ShipOrder,IWeaponOrder
+    [Serializable]
+    public class FireWeaponAtTarget: ShipOrder,IWeaponOrder, ISerializable
     {
         #region Events
         public event OrderDelegates.WeaponFiredEvent OnWeaponFired;

@@ -6,7 +6,8 @@ using System.Runtime.Serialization;
 
 namespace StarShips
 {
-    public abstract class ShipAction
+    [Serializable]
+    public abstract class ShipAction : ISerializable
     {
         #region Parameters
         object[] _actionValues = new object[1];

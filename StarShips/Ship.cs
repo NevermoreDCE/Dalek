@@ -14,6 +14,7 @@ using StarShips.Orders.Interfaces;
 using System.Diagnostics;
 using System.Windows.Media;
 using StarShips.Players;
+using System.Xml.Serialization;
 
 
 namespace StarShips
@@ -30,7 +31,10 @@ namespace StarShips
         string _className;
         string _name;
         ShipHull _hullType = new ShipHull();
+        
+        [XmlIgnore]
         System.Windows.Controls.Image _image;
+
         bool _weaponsFiredAlready = false;
         bool _isDestroyed = false;
         Player _owner;
@@ -49,7 +53,22 @@ namespace StarShips
         public ShipHull HullType { get { return _hullType; } set { _hullType = value; } }
         public Point Position = new Point(-1, -1);
         public Point Origin;
-        public System.Windows.Controls.Image Image { get { return _image; } set { _image = value; } }
+        [XmlIgnore]
+        public System.Windows.Controls.Image Image { 
+            get 
+            {
+                if (_image == null)
+                {
+                    System.Windows.Media.Imaging.BitmapImage src = new System.Windows.Media.Imaging.BitmapImage();
+                    src.BeginInit();
+                    src.UriSource = new Uri(string.Format("Images\\Empires\\{0}\\{1}", _owner.IconSet, this.HullType.ImageURL), UriKind.Relative);
+                    src.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
+                    src.EndInit();
+                    initImage((ImageSource)src);
+                }
+                return _image; 
+            } set { _image = value; } }
+
         public int CountOfResolvingOrders = 0;
         public bool WeaponsFiredAlready { get { return _weaponsFiredAlready; } }
         public bool IsDestroyed { get { return _isDestroyed; } }
@@ -314,6 +333,11 @@ namespace StarShips
             info.AddValue("Equipment", Equipment);
             info.AddValue("Name", ClassName);
             info.AddValue("HullType", HullType);
+            info.AddValue("Orders", Orders);
+            info.AddValue("IsDestroyed", IsDestroyed);
+            info.AddValue("Position", Position);
+            
+
         }
 
         public void GetObjectXML(XDocument sourceDoc)
@@ -370,14 +394,13 @@ namespace StarShips
             MP = (StatWithMax)info.GetValue("MP", typeof(StatWithMax));
             _owner = (Player)info.GetValue("Owner", typeof(Player));
             Equipment = (List<ShipPart>)info.GetValue("Equipment", typeof(List<ShipPart>));
+            Orders = (List<ShipOrder>)info.GetValue("Orders", typeof(List<ShipOrder>));
             ClassName = (string)info.GetValue("Name", typeof(string));
             HullType = (ShipHull)info.GetValue("HullType", typeof(ShipHull));
-            System.Windows.Media.Imaging.BitmapImage src = new System.Windows.Media.Imaging.BitmapImage();
-            src.BeginInit();
-            src.UriSource = new Uri(this.HullType.ImageURL, UriKind.Relative);
-            src.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
-            src.EndInit();
-            initImage((ImageSource)src);
+            _isDestroyed = (bool)info.GetValue("IsDestroyed", typeof(bool));
+            Position = (Point)info.GetValue("Position", typeof(Point));
+            
+            
         }
         public Ship(XElement description, List<ShipPart> partsList, List<ShipHull> hullsList)
         {

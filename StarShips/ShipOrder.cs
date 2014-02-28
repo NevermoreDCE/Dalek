@@ -6,7 +6,8 @@ using System.Runtime.Serialization;
 
 namespace StarShips
 {
-    public abstract class ShipOrder
+    [Serializable]
+    public abstract class ShipOrder: ISerializable
     {
         #region Parameters
         object[] _orderValues = new object[1];
