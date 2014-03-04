@@ -4,7 +4,6 @@ using System.Xml.Serialization;
 using System.Collections.Generic;
 using System.Linq;
 using StarShips.Locations;
-using MoreLinq;
 using StarShips.Parts;
 using StarShips.Orders;
 
@@ -46,7 +45,7 @@ namespace StarShips.Players
             System.Windows.Controls.Image img = new System.Windows.Controls.Image();
             System.Windows.Media.Imaging.BitmapImage src = new System.Windows.Media.Imaging.BitmapImage();
             src.BeginInit();
-            src.UriSource = new Uri(string.Format("Images\\Empires\\{0}\\{0}.png",_iconSet), UriKind.Relative);
+            src.UriSource = new Uri(string.Format("Empires\\{0}\\Images\\{0}.png", _iconSet), UriKind.Relative);
             src.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
             src.EndInit();
             img.Source = src;
@@ -56,25 +55,17 @@ namespace StarShips.Players
             img.SetValue(System.Windows.Controls.Panel.ZIndexProperty, 10);
             this._icon = img;
         }
-        int countOfEnemyShips(Game gameState)
-        {
-            int counter = 0;
-            foreach (Player p in gameState.Players.Where(f => f != this))
-                foreach (Ship s in p.Ships.Where(f => !f.IsDestroyed))
-                    counter++;
-            return counter;
-        }
 
         public void ExecuteAI(Game gameState)
         {
             if (Ships.Any(f => f.Orders.Count() == 0))
             {
-                Ship[] targetList = new Ship[countOfEnemyShips(gameState)];
+                Ship[] targetList = new Ship[gameState.Players.Where(f => f != this && !f.IsDefeated).Max(p => p.Ships.Where(s => !s.IsDestroyed).Count())];
 
                 //build lists of targets+distance (jump closest target)
                 int counter =0;
                 List<Tuple<Ship, double>> AllEnemyShips = new List<Tuple<Ship, double>>();
-                foreach(Ship ship in this.Ships.Where(f=>f.Orders.Count()==0))
+                foreach(Ship ship in this.Ships.Where(f=>!f.IsDestroyed && f.Orders.Count()==0))
                 {
                     foreach(Player p in gameState.Players.Where(f=>f!=this && !f.IsDefeated))
                         foreach(Ship s in p.Ships.Where(f=>!f.IsDestroyed))
@@ -113,38 +104,32 @@ namespace StarShips.Players
                     }
 
                     // calculate if this ship is enough to destroy target within Aggressiveness
-                        // this Damage Per Turn
-                        double totalDPT = 0;
-                        foreach (WeaponPart weapon in ship.Equipment.Where(f => !f.IsDestroyed && f is WeaponPart))
-                            if (weapon.ReloadTime > 0)
-                                totalDPT += (weapon.WeaponDamage / weapon.ReloadTime);
-                            else
-                                totalDPT += weapon.WeaponDamage;
-                        // miss chance
-                        totalDPT = totalDPT * 0.9d;
-
-                        //aggressiveness
-                        double totalDPA = totalDPT * _aggressiveness;
-
-                        // target total health
-                        double targetHealth = targetShip.HP.Current;
-                        foreach (DefensePart defense in targetShip.Equipment.Where(f => !f.IsDestroyed && f is DefensePart))
-                        {
-                            targetHealth += defense.DR + defense.HP.Current;
-                        }
-                        TargetTracker targetTuple = EachEnemyShip.First(f=>f.Ship==targetShip);
-
-                        if (targetTuple.TotalDPA + totalDPA >= targetHealth)
-                            EachEnemyShip.Remove(EachEnemyShip.First(f => f.Ship == targetShip));
+                    // this Damage Per Turn
+                    double totalDPT = 0;
+                    foreach (WeaponPart weapon in ship.Equipment.Where(f => !f.IsDestroyed && f is WeaponPart))
+                        if (weapon.ReloadTime > 0)
+                            totalDPT += (weapon.WeaponDamage / weapon.ReloadTime);
                         else
-                            targetTuple.TotalDPA += totalDPA;
-                
+                            totalDPT += weapon.WeaponDamage;
+                    // miss chance
+                    totalDPT = totalDPT * 0.9d;
+
+                    //aggressiveness
+                    double totalDPA = totalDPT * _aggressiveness;
+
+                    // target total health
+                    double targetHealth = targetShip.HP.Current;
+                    foreach (DefensePart defense in targetShip.Equipment.Where(f => !f.IsDestroyed && f is DefensePart))
+                    {
+                        targetHealth += defense.DR + defense.HP.Current;
+                    }
+                    TargetTracker target = EachEnemyShip.First(f=>f.Ship==targetShip);
+
+                    if (target.TotalDPA + totalDPA >= targetHealth)
+                        EachEnemyShip.Remove(EachEnemyShip.First(f => f.Ship == targetShip));
+                    else
+                        target.TotalDPA += totalDPA;
                 }
-                // move to minimum weapon range
-                // fire all weapons at target
-                // calc if target will die in Aggressiveness turns
-                //if so, next target
-                //if not, next ship @ same target
             }
         }
 

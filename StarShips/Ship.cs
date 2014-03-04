@@ -61,7 +61,7 @@ namespace StarShips
                 {
                     System.Windows.Media.Imaging.BitmapImage src = new System.Windows.Media.Imaging.BitmapImage();
                     src.BeginInit();
-                    src.UriSource = new Uri(string.Format("Images\\Empires\\{0}\\{1}", _owner.IconSet, this.HullType.ImageURL), UriKind.Relative);
+                    src.UriSource = new Uri(string.Format("Empires\\{0}\\Images\\{1}", _owner.IconSet, this.HullType.ImageURL), UriKind.Relative);
                     src.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
                     src.EndInit();
                     initImage((ImageSource)src);
@@ -402,7 +402,7 @@ namespace StarShips
             
             
         }
-        public Ship(XElement description, List<ShipPart> partsList, List<ShipHull> hullsList)
+        public Ship(XElement description, List<ShipPart> partsList, List<ShipHull> hullsList, Player player)
         {
             this.ClassName = description.Attribute("className").Value;
             this.HP.Max = int.Parse(description.Element("MaxHP").Value);
@@ -412,9 +412,10 @@ namespace StarShips
             if (description.Element("ShipHull") != null)
                 if (hullsList.Where(f => f.Name == description.Element("ShipHull").Value).Count() > 0)
                     this.HullType = hullsList.First(f => f.Name == description.Element("ShipHull").Value).Clone();
+            this._owner = player;
             System.Windows.Media.Imaging.BitmapImage src = new System.Windows.Media.Imaging.BitmapImage();
             src.BeginInit();
-            src.UriSource = new Uri(this.HullType.ImageURL, UriKind.Relative);
+            src.UriSource = new Uri(string.Format("Empires\\{0}\\Images\\{1}", player.IconSet, this.HullType.ImageURL), UriKind.Relative);
             src.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
             src.EndInit();
             initImage((ImageSource)src);

@@ -48,16 +48,17 @@
             this.label3 = new System.Windows.Forms.Label();
             this.btnClear = new System.Windows.Forms.Button();
             this.btnSaveHull = new System.Windows.Forms.Button();
-            this.tbxImage = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.nudHullMass = new System.Windows.Forms.NumericUpDown();
             this.label7 = new System.Windows.Forms.Label();
+            this.nudImage = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.nudHullPointsMax)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.drpPartLimits.ItemTemplate.SuspendLayout();
             this.drpPartLimits.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxPartCount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudHullMass)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudImage)).BeginInit();
             this.SuspendLayout();
             // 
             // btnLoadHull
@@ -251,13 +252,6 @@
             this.btnSaveHull.UseVisualStyleBackColor = true;
             this.btnSaveHull.Click += new System.EventHandler(this.btnSaveHull_Click);
             // 
-            // tbxImage
-            // 
-            this.tbxImage.Location = new System.Drawing.Point(88, 85);
-            this.tbxImage.Name = "tbxImage";
-            this.tbxImage.Size = new System.Drawing.Size(200, 20);
-            this.tbxImage.TabIndex = 26;
-            // 
             // label6
             // 
             this.label6.AutoSize = true;
@@ -289,14 +283,36 @@
             this.label7.TabIndex = 27;
             this.label7.Text = "Mass";
             // 
+            // nudImage
+            // 
+            this.nudImage.Location = new System.Drawing.Point(88, 86);
+            this.nudImage.Maximum = new decimal(new int[] {
+            6,
+            0,
+            0,
+            0});
+            this.nudImage.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudImage.Name = "nudImage";
+            this.nudImage.Size = new System.Drawing.Size(120, 20);
+            this.nudImage.TabIndex = 29;
+            this.nudImage.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
             // HullMaker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(410, 495);
+            this.Controls.Add(this.nudImage);
             this.Controls.Add(this.nudHullMass);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.tbxImage);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnSaveHull);
@@ -318,6 +334,7 @@
             this.drpPartLimits.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxPartCount)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudHullMass)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudImage)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -345,10 +362,10 @@
         private System.Windows.Forms.Button btnPartLimitRemove;
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Button btnSaveHull;
-        private System.Windows.Forms.TextBox tbxImage;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.NumericUpDown nudHullMass;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.NumericUpDown nudImage;
     }
 }
 

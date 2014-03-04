@@ -35,7 +35,7 @@ namespace SpaceX
 
         private void initIconSets()
         {
-            DirectoryInfo dir = new DirectoryInfo("Images/Empires");
+            DirectoryInfo dir = new DirectoryInfo("Empires");
             var empires = dir.EnumerateDirectories();
             List<string> empireNames = new List<string>();
             foreach (var emp in empires)
@@ -82,7 +82,7 @@ namespace SpaceX
                 Image img = new Image();
                 BitmapImage src = new BitmapImage();
                 src.BeginInit();
-                src.UriSource = new Uri(string.Format("Images\\Empires\\{0}\\{0}.png", empireName), UriKind.Relative);
+                src.UriSource = new Uri(string.Format("Empires\\{0}\\Images\\{0}.png", empireName), UriKind.Relative);
                 src.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
                 src.EndInit();
                 img.Source = src;

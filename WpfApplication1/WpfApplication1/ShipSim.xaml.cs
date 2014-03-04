@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using StarShips;
 using StarShips.Locations;
 using StarShips.Orders;
@@ -15,11 +17,6 @@ using StarShips.Orders.Interfaces;
 using StarShips.Parts;
 using StarShips.Players;
 using StarShips.Randomizer;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.IO;
-using System.Xml.Serialization;
-using System.Reflection;
 
 namespace WPFPathfinding
 {
@@ -250,8 +247,7 @@ namespace WPFPathfinding
             moveTarget = new Image();
             BitmapImage src = new BitmapImage();
             src.BeginInit();
-            string filename = "moveTarget.png";
-            src.UriSource = new Uri(filename, UriKind.Relative);
+            src.UriSource = new Uri("Images\\moveTarget.png", UriKind.Relative);
             src.CacheOption = BitmapCacheOption.OnLoad;
             src.EndInit();
             moveTarget.Source = src;
@@ -263,7 +259,7 @@ namespace WPFPathfinding
             explosionImg = new Image();
             BitmapImage expSrc = new BitmapImage();
             expSrc.BeginInit();
-            expSrc.UriSource = new Uri("Explosion.png", UriKind.Relative);
+            expSrc.UriSource = new Uri("Images\\Explosion.png", UriKind.Relative);
             expSrc.CacheOption = BitmapCacheOption.OnLoad;
             expSrc.EndInit();
             explosionImg.Source = expSrc;
@@ -274,7 +270,7 @@ namespace WPFPathfinding
 
             contextMenuTransparency = new BitmapImage();
             contextMenuTransparency.BeginInit();
-            contextMenuTransparency.UriSource = new Uri("contextDetector.png", UriKind.Relative);
+            contextMenuTransparency.UriSource = new Uri("Images\\contextDetector.png", UriKind.Relative);
             contextMenuTransparency.CacheOption = BitmapCacheOption.OnLoad;
             contextMenuTransparency.EndInit();
 
@@ -461,8 +457,20 @@ namespace WPFPathfinding
 
         private void AddShipImage(int x, int y,Image shipImage)
         {
+            AddShipImage(x, y, shipImage, 0.0);
+        }
+
+        private void AddShipImage(int x, int y, Image shipImage, double rotationDegrees)
+        {
+            if(shipImage.Parent!=null)
+                ((Grid)shipImage.Parent).Children.Remove(shipImage);
             Grid.SetRow(shipImage, x);
             Grid.SetColumn(shipImage, y);
+            RotateTransform rt = new RotateTransform();
+            rt.CenterX = (shipImage.Width / 2);
+            rt.CenterY = (shipImage.Height / 2);
+            rt.Angle = rotationDegrees;
+            shipImage.RenderTransform = rt;
             g.Children.Add(shipImage);
         }
         private void RemoveShipImage(Image shipImage)
@@ -477,7 +485,7 @@ namespace WPFPathfinding
             Image img = new Image();
             BitmapImage src = new BitmapImage();
             src.BeginInit();
-            string filename = string.Format("star_field{0}.png", imageNumber);
+            string filename = string.Format("Images\\star_field{0}.png", imageNumber);
             src.UriSource = new Uri(filename, UriKind.Relative);
             src.CacheOption = BitmapCacheOption.OnLoad;
             src.EndInit();
@@ -495,7 +503,7 @@ namespace WPFPathfinding
             Image img = new Image();
             BitmapImage src = new BitmapImage();
             src.BeginInit();
-            string filename = "asteroid1.png";
+            string filename = "Images\\asteroid1.png";
             src.UriSource = new Uri(filename, UriKind.Relative);
             src.CacheOption = BitmapCacheOption.OnLoad;
             src.EndInit();
@@ -519,7 +527,7 @@ namespace WPFPathfinding
                 highlightCurrentShip = new Image();
                 BitmapImage src = new BitmapImage();
                 src.BeginInit();
-                string filename = "highlight.png";
+                string filename = "Images\\highlight.png";
                 src.UriSource = new Uri(filename, UriKind.Relative);
                 src.CacheOption = BitmapCacheOption.OnLoad;
                 src.EndInit();
@@ -548,7 +556,7 @@ namespace WPFPathfinding
                 moveTarget = new Image();
                 BitmapImage src = new BitmapImage();
                 src.BeginInit();
-                string filename = "moveTarget.png";
+                string filename = "Images\\moveTarget.png";
                 src.UriSource = new Uri(filename, UriKind.Relative);
                 src.CacheOption = BitmapCacheOption.OnLoad;
                 src.EndInit();
@@ -665,12 +673,15 @@ namespace WPFPathfinding
         #region Orders
         public void onShipMoveHandler(object sender, EventArgs e, Image shipImage, System.Drawing.Point sourceLoc, System.Drawing.Point targetLoc, bool weaponsFiredAlready)
         {
-            Action<Image, System.Drawing.Point> moveact = new Action<Image, System.Drawing.Point>(moveShipImageAction);
+            Action<Image, System.Drawing.Point, double> moveact = new Action<Image, System.Drawing.Point,double>(moveShipImageAction);
             RefreshContextMenuImages(sourceLoc, targetLoc);
+            int deltaX = sourceLoc.X - targetLoc.X;
+            int deltaY = sourceLoc.Y - targetLoc.Y;
+            double rotationAngle = Math.Atan2(deltaX, deltaY) * 180 / Math.PI-90;
             int delay = 200;
             AnimationQueue.Enqueue(() =>
             {
-                MoveShipImageWithDelay(moveact, shipImage, targetLoc, delay);
+                MoveShipImageWithDelay(moveact, shipImage, targetLoc, rotationAngle, delay);
             });
             
         }
@@ -831,10 +842,10 @@ namespace WPFPathfinding
         #endregion
 
         #region Logic Methods
-        private void moveShipImageAction(Image shipImage, System.Drawing.Point targetLoc)
+        private void moveShipImageAction(Image shipImage, System.Drawing.Point targetLoc, double rotationDegrees)
         {
             RemoveShipImage(shipImage);
-            AddShipImage(targetLoc.X, targetLoc.Y, shipImage);
+            AddShipImage(targetLoc.X, targetLoc.Y, shipImage,rotationDegrees);
             System.Diagnostics.Debug.WriteLine("Resolving Move Action");
         }
         private void DrawShipFiringBeam(System.Drawing.Point sourceLoc, System.Drawing.Point targetLoc)
@@ -950,7 +961,7 @@ namespace WPFPathfinding
         #endregion
 
         #region DelayedExecution
-        public void MoveShipImageWithDelay(Action<Image, System.Drawing.Point> action, Image shipImage, System.Drawing.Point targetLoc, int delay = 100)
+        public void MoveShipImageWithDelay(Action<Image, System.Drawing.Point, double> action, Image shipImage, System.Drawing.Point targetLoc, double rotationAngle, int delay = 100)
         {
             var dispatcherTimer = new System.Windows.Threading.DispatcherTimer(System.Windows.Threading.DispatcherPriority.Render);
 
@@ -964,7 +975,7 @@ namespace WPFPathfinding
                 dispatcherTimer.Stop();
 
                 // Perform the action.
-                action(shipImage, targetLoc);
+                action(shipImage, targetLoc, rotationAngle);
                 NextAnimation();
             };
 

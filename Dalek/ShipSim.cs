@@ -46,7 +46,7 @@ namespace Dalek
         {
             ExistingShips.Clear();
             foreach (var EShip in shipDoc.Element("ships").Elements())
-                ExistingShips.Add(new Ship(EShip, ExistingParts,ExistingHulls));
+                ExistingShips.Add(new Ship(EShip, ExistingParts,ExistingHulls, new StarShips.Players.Player("None","No Empire","Default",false,0)));
         }
 
         private void LoadShips()

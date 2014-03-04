@@ -18,7 +18,7 @@ namespace ShipEditor
         List<ShipPart> ExistingParts = new List<ShipPart>();
         //string defaultShipPartsFileName = "ShipParts.xml";
         XDocument shipDoc = new XDocument(new XElement("ships"));
-        string currentShipDocFileName = "Ships.xml";
+        string currentShipDocFileName = "Empires\\Default\\Ships.xml";
         
         public ShipEditor()
         {
@@ -29,7 +29,7 @@ namespace ShipEditor
             bsShipParts.DataSource = ship.Equipment;
             LoadHulls();
             LoadParts();
-            shipDoc = XDocument.Load("Ships.xml");
+            shipDoc = XDocument.Load(currentShipDocFileName);
             LoadShipList(shipDoc);
             ShowShipList();
             ShowShip();
@@ -76,7 +76,7 @@ namespace ShipEditor
             ExistingShips.Clear();
             if(shipDoc.Element("ships").Elements().Count()>0)
             foreach (var EShip in shipDoc.Element("ships").Elements())
-                ExistingShips.Add(new Ship(EShip, ExistingParts, ExistingHulls));
+                ExistingShips.Add(new Ship(EShip, ExistingParts, ExistingHulls, new StarShips.Players.Player("None","No Empire","Default",false,0)));
         }
 
         private void ShowShipList()

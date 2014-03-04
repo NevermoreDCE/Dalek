@@ -112,17 +112,17 @@ namespace SpaceX
         {
             this.ExistingShips.Clear();
             // load source document, hulls and parts
-            XDocument xdoc = XDocument.Load("Ships.xml");
+            XDocument xdoc = XDocument.Load(string.Format("Empires\\{0}\\Ships.xml",p.IconSet));
             foreach (XElement shipElement in xdoc.Descendants("ship"))
             {
-                Ship ship = new Ship(shipElement, gameState.ExistingParts, gameState.ExistingHulls);
+                Ship ship = new Ship(shipElement, gameState.ExistingParts, gameState.ExistingHulls, p);
                 ship.Origin = new System.Drawing.Point();
                 Image img = new Image();
-                if (File.Exists(string.Format("Images\\Empires\\{0}\\{1}", p.IconSet, ship.HullType.ImageURL)))
+                if (File.Exists(string.Format("Empires\\{0}\\Images\\{1}", p.IconSet, ship.HullType.ImageURL)))
                 {
                     BitmapImage src = new BitmapImage();
                     src.BeginInit();
-                    src.UriSource = new Uri(string.Format("Images\\Empires\\{0}\\{1}", p.IconSet, ship.HullType.ImageURL), UriKind.Relative);;
+                    src.UriSource = new Uri(string.Format("Empires\\{0}\\Images\\{1}", p.IconSet, ship.HullType.ImageURL), UriKind.Relative); ;
                     src.CacheOption = BitmapCacheOption.OnLoad;
                     src.EndInit();
                     img.Source = src;
@@ -139,7 +139,6 @@ namespace SpaceX
         void initAddShipsWindow()
         {
             InitializeComponent();
-            initShips(gameState.Players.First());
             //test stuff
             foreach (Player p in gameState.Players)
             {
@@ -149,7 +148,7 @@ namespace SpaceX
                 addShipToPlayer(ExistingShips.First(f => f.ClassName == "Prey"), p);
             }
 
-
+            initShips(gameState.Players.First());
             cbxShipList.ItemsSource = ExistingShips;
             cbxPlayers.ItemsSource = gameState.Players;
             if (cbxPlayers.Items.Count > 0)
@@ -173,13 +172,13 @@ namespace SpaceX
             gameState.ExistingParts = ShipPart.GetShipPartList(partDoc, new Ship());
 
             //Load Ships
-            gameState.ExistingShips.Clear();
-            XDocument xdoc = XDocument.Load("Ships.xml");
-            foreach (XElement shipElement in xdoc.Descendants("ship"))
-            {
-                Ship ship = new Ship(shipElement, gameState.ExistingParts, gameState.ExistingHulls);
-                gameState.ExistingShips.Add(ship);
-            }
+            //gameState.ExistingShips.Clear();
+            //XDocument xdoc = XDocument.Load("Ships.xml");
+            //foreach (XElement shipElement in xdoc.Descendants("ship"))
+            //{
+            //    Ship ship = new Ship(shipElement, gameState.ExistingParts, gameState.ExistingHulls);
+            //    gameState.ExistingShips.Add(ship);
+            //}
 
             initAddShipsWindow();
         }
