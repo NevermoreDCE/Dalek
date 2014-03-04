@@ -946,15 +946,28 @@ namespace WPFPathfinding
             foreach (Player p in GameState.Players.Where(f => !f.IsDefeated))
                 if (!p.Ships.Any(f => !f.IsDestroyed))
                 {
-                    MessageBox.Show(string.Format("{0} is Defeated!", p.Name), "Player Defeated");
+                    AnimationQueue.Enqueue(() =>
+                    {
+                        MessageBox.Show(string.Format("{0} is Defeated!", p.Name), "Player Defeated");
+                    });
                     p.IsDefeated = true;
                 }
             if (GameState.Players.Where(f => !f.IsDefeated).Count() <= 1)
             {
                 if (GameState.Players.Where(f => !f.IsDefeated).Count() <= 0)
-                    MessageBox.Show("Stalemate! All Players Defeated!", "Victory!");
+                {
+                    AnimationQueue.Enqueue(() =>
+                    {
+                        MessageBox.Show("Stalemate! All Players Defeated!", "Victory!");
+                    });
+                }
                 else
-                    MessageBox.Show(string.Format("{0} is Victorious!", GameState.Players.First(f => !f.IsDefeated).Name), "Victory!");
+                {
+                    AnimationQueue.Enqueue(() =>
+                    {
+                        MessageBox.Show(string.Format("{0} is Victorious!", GameState.Players.First(f => !f.IsDefeated).Name), "Victory!");
+                    });
+                }
             }
         }
         

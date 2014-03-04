@@ -24,6 +24,7 @@ namespace ShipEditor
         {
             InitializeComponent();
             drpPartList.ItemValueNeeded += new Microsoft.VisualBasic.PowerPacks.DataRepeaterItemValueEventHandler(drpPartList_ItemValueNeeded);
+            cbxShipHullTypes.SelectedIndexChanged += new EventHandler(cbxShipHullTypes_SelectedIndexChanged);
             tbxShipName.TextChanged += new EventHandler(tbxShipName_TextChanged);
             lblPartName.DataBindings.Add("Text", ship.Equipment, "Name");
             bsShipParts.DataSource = ship.Equipment;
@@ -34,6 +35,8 @@ namespace ShipEditor
             ShowShipList();
             ShowShip();
         }
+
+        
 
         private void LoadHulls()
         {
@@ -68,6 +71,15 @@ namespace ShipEditor
                         e.Value = bsShipParts[e.ItemIndex].ToString();
                         break;
                 }
+            }
+        }
+
+        void cbxShipHullTypes_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cbxShipHullTypes.SelectedIndex >= 0)
+            {
+                ShipHull hull = (ShipHull)cbxShipHullTypes.SelectedItem;
+                ship.HullType = hull;
             }
         }
 
@@ -126,7 +138,81 @@ namespace ShipEditor
 
         private void btnAddPart_Click(object sender, EventArgs e)
         {
-            bsShipParts.Add(cbxPartList.SelectedItem);
+            bool allowedPart = true;
+            string message = string.Empty;
+            ShipHull selectedHull = (ShipHull)cbxShipHullTypes.SelectedItem;
+            ShipPart selectedPart = (ShipPart)cbxPartList.SelectedItem;
+            
+            object si = cbxPartList.SelectedItem;
+            if (si is WeaponPart)
+            {
+                if (selectedHull.AllowedParts.Any(f => f.PartType == typeof(WeaponPart)))
+                {
+                    // is weapon, check for firing type match
+                    if (selectedHull.AllowedParts.Any(f => f.PartType == typeof(WeaponPart) && f.ActionMechanism == ((WeaponPart)si).FiringType))
+                    {
+                        PartCount pc = selectedHull.AllowedParts.First(f => f.PartType == typeof(WeaponPart) && f.ActionMechanism == ((WeaponPart)si).FiringType);
+                        if (ship.Equipment.Count(f => f is WeaponPart && ((WeaponPart)f).FiringType == pc.ActionMechanism) >= pc.CountOfParts)
+                        {
+                            allowedPart = false;
+                            message = string.Format("Cannot add Weapon with Firing Type {0}, you already have the maximum {1} of those.", pc.ActionMechanism, pc.CountOfParts);
+                        }
+
+                    }
+                    else // is weapon, but no firing type match, check for generic weapon limit
+                    {
+                        PartCount pc = selectedHull.AllowedParts.First(f => f.PartType == typeof(WeaponPart) && f.ActionMechanism == string.Empty);
+                        if (ship.Equipment.Count(f => f is WeaponPart) >= pc.CountOfParts)
+                        {
+                            allowedPart = false;
+                            message = string.Format("Cannot add Weapon, you already have the maximum {0} of those.", pc.CountOfParts);
+                        }
+                    }
+                }
+
+            }
+            else if (si is DefensePart)
+            {
+                if (selectedHull.AllowedParts.Any(f => f.PartType == typeof(DefensePart)))
+                {
+                    PartCount pc = selectedHull.AllowedParts.First(f => f.PartType == typeof(DefensePart));
+                    if (ship.Equipment.Count(f => f is DefensePart) >= pc.CountOfParts)
+                    {
+                        allowedPart = false;
+                        message = string.Format("Cannot add Defense, you already have the maximum {0} of those.", pc.CountOfParts);
+                    }
+                }
+            }
+            else if (si is ActionPart)
+            {
+                if (selectedHull.AllowedParts.Any(f => f.PartType == typeof(ActionPart)))
+                {
+                    PartCount pc = selectedHull.AllowedParts.First(f => f.PartType == typeof(ActionPart));
+                    if (ship.Equipment.Count(f => f is ActionPart) >= pc.CountOfParts)
+                    {
+                        allowedPart = false;
+                        message = string.Format("Cannot add Action, you already have the maximum {0} of those.", pc.CountOfParts);
+                    }
+                }
+            }
+            else if (si is EnginePart)
+            {
+                if (selectedHull.AllowedParts.Any(f => f.PartType == typeof(EnginePart)))
+                {
+                    PartCount pc = selectedHull.AllowedParts.First(f => f.PartType == typeof(EnginePart));
+                    if (ship.Equipment.Count(f => f is EnginePart) >= pc.CountOfParts)
+                    {
+                        allowedPart = false;
+                        message = string.Format("Cannot add Engine, you already have the maximum {0} of those.", pc.CountOfParts);
+                    }
+                }
+            }
+
+            if(allowedPart)
+                bsShipParts.Add(cbxPartList.SelectedItem);
+            else
+                MessageBox.Show(message);
+
             ShowShip();
         }
         #endregion

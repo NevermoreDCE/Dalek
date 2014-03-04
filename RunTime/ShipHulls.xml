@@ -54,4 +54,27 @@
     <ImageURL>Ship2.png</ImageURL>
     <Mass>2900</Mass>
   </shipHull>
+  <shipHull name="Destroyer">
+    <MaxHP>75</MaxHP>
+    <Mass>2100</Mass>
+    <AllowedParts>
+      <allowedPart type="StarShips.Parts.WeaponPart">
+        <ActionMechanism>Torpedo</ActionMechanism>
+        <CountOfParts>4</CountOfParts>
+      </allowedPart>
+      <allowedPart type="StarShips.Parts.WeaponPart">
+        <ActionMechanism></ActionMechanism>
+        <CountOfParts>6</CountOfParts>
+      </allowedPart>
+      <allowedPart type="StarShips.Parts.DefensePart">
+        <ActionMechanism></ActionMechanism>
+        <CountOfParts>4</CountOfParts>
+      </allowedPart>
+      <allowedPart type="StarShips.Parts.EnginePart">
+        <ActionMechanism></ActionMechanism>
+        <CountOfParts>6</CountOfParts>
+      </allowedPart>
+    </AllowedParts>
+    <ImageURL>Ship3.png</ImageURL>
+  </shipHull>
 </shipHulls>

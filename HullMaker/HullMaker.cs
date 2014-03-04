@@ -111,7 +111,7 @@ namespace HullMaker
         {
             Type newPartType = (Type)cbxPartType.SelectedItem;
             string ActionMechanism = string.Empty;
-            if (cbxPartDetail.SelectedIndex >= 0 && cbxPartDetail.SelectedText!=" - None - ")
+            if (cbxPartDetail.SelectedIndex > 0 && cbxPartDetail.SelectedText!=" - None - ")
                 ActionMechanism = cbxPartDetail.SelectedItem.ToString();
             int CountOfParts = int.Parse(nudMaxPartCount.Value.ToString());
             PartCount newPartCount;
@@ -146,6 +146,10 @@ namespace HullMaker
             LoadHulls();
 
         }
+        private void btnPartLimitRemove_Click(object sender, EventArgs e)
+        {
+            RemovePart();
+        }
         #endregion
 
         #region Show
@@ -174,6 +178,15 @@ namespace HullMaker
             cbxPartDetail.SelectedText = string.Empty;
             cbxPartDetail.Enabled = false;
             nudMaxPartCount.Value = 0;
+        }
+        #endregion
+
+        #region Remove
+        private void RemovePart()
+        {
+            int index = drpPartLimits.CurrentItemIndex;
+            bsPartLimits.RemoveAt(index);
+            ShowParts();
         }
         #endregion
 

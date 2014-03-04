@@ -170,6 +170,7 @@
             this.btnPartLimitRemove.TabIndex = 2;
             this.btnPartLimitRemove.Text = "X";
             this.btnPartLimitRemove.UseVisualStyleBackColor = true;
+            this.btnPartLimitRemove.Click += new System.EventHandler(this.btnPartLimitRemove_Click);
             // 
             // btnAddPartLimit
             // 

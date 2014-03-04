@@ -413,12 +413,6 @@ namespace StarShips
                 if (hullsList.Where(f => f.Name == description.Element("ShipHull").Value).Count() > 0)
                     this.HullType = hullsList.First(f => f.Name == description.Element("ShipHull").Value).Clone();
             this._owner = player;
-            System.Windows.Media.Imaging.BitmapImage src = new System.Windows.Media.Imaging.BitmapImage();
-            src.BeginInit();
-            src.UriSource = new Uri(string.Format("Empires\\{0}\\Images\\{1}", player.IconSet, this.HullType.ImageURL), UriKind.Relative);
-            src.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
-            src.EndInit();
-            initImage((ImageSource)src);
         }
         #endregion
 
