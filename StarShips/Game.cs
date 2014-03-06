@@ -39,27 +39,4 @@ namespace StarShips
             ExistingShips = (List<Ship>)info.GetValue("ExistingShips", typeof(List<Ship>));
         }
     }
-
-    [Serializable]
-    public class GameTest : ISerializable
-    {
-        //public LocationCollection CombatLocations;
-        public PlayerCollection Players;
-
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            //info.AddValue("CombatLocations", CombatLocations);
-            info.AddValue("Players", Players);
-        }
-
-        public GameTest()
-        {
-        }
-
-        public GameTest(SerializationInfo info, StreamingContext context)
-        {
-            //CombatLocations = (LocationCollection)info.GetValue("CombatLocations", typeof(LocationCollection));
-            Players = (PlayerCollection)info.GetValue("Players", typeof(PlayerCollection));
-        }
-    }
 }

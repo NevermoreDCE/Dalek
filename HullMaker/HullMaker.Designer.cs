@@ -55,7 +55,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudHullPointsMax)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.drpPartLimits.ItemTemplate.SuspendLayout();
-            this.drpPartLimits.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxPartCount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudHullMass)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudImage)).BeginInit();
@@ -116,6 +115,11 @@
             // nudHullPointsMax
             // 
             this.nudHullPointsMax.Location = new System.Drawing.Point(88, 59);
+            this.nudHullPointsMax.Maximum = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
             this.nudHullPointsMax.Name = "nudHullPointsMax";
             this.nudHullPointsMax.Size = new System.Drawing.Size(91, 20);
             this.nudHullPointsMax.TabIndex = 21;
@@ -140,12 +144,7 @@
             // 
             // drpPartLimits
             // 
-            // 
-            // drpPartLimits.ItemTemplate
-            // 
-            this.drpPartLimits.ItemTemplate.Controls.Add(this.lblPartLimitTitle);
-            this.drpPartLimits.ItemTemplate.Controls.Add(this.btnPartLimitRemove);
-            this.drpPartLimits.ItemTemplate.Size = new System.Drawing.Size(354, 23);
+            this.drpPartLimits.Controls.Add(this.drpPartLimits.ItemTemplate);
             this.drpPartLimits.Location = new System.Drawing.Point(9, 73);
             this.drpPartLimits.Name = "drpPartLimits";
             this.drpPartLimits.Size = new System.Drawing.Size(362, 254);
@@ -332,7 +331,6 @@
             this.groupBox1.PerformLayout();
             this.drpPartLimits.ItemTemplate.ResumeLayout(false);
             this.drpPartLimits.ItemTemplate.PerformLayout();
-            this.drpPartLimits.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxPartCount)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudHullMass)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudImage)).EndInit();

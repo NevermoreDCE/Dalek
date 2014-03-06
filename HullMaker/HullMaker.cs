@@ -45,9 +45,12 @@ namespace HullMaker
         {
             hullsDoc = XDocument.Load("ShipHulls.xml");
             ExistingHulls = ShipHull.GetShipHulls(hullsDoc);
+            ExistingHulls.Sort(ShipHull.HullComparer);
             cbxExistingHulls.DataSource = ExistingHulls;
             cbxExistingHulls.DisplayMember = "Name";
         }
+        
+
 
         private void LoadPartTypes()
         {

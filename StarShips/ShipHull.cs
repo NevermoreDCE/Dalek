@@ -82,14 +82,6 @@ namespace StarShips
         public List<PartCount> AllowedParts { get { return _allowedParts; } }
         public string ImageURL { get { return _imageURL; } }
         public double Mass { get { return _mass; } }
-        public int EnginesPerDecrease
-        {
-            get
-            {
-                double div = _mass / 500d;
-                return Convert.ToInt32(div);
-            }
-        }
         #endregion
 
         #region Public Methods
@@ -115,6 +107,15 @@ namespace StarShips
                 result.Add(new ShipHull(hull));
 
             return result;
+        }
+        public static int HullComparer(ShipHull a, ShipHull b)
+        {
+            if (a.Mass > b.Mass)
+                return 1;
+            else if (b.Mass > a.Mass)
+                return -1;
+            else
+                return 0;
         }
         #endregion
 

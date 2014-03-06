@@ -42,6 +42,7 @@ namespace ShipEditor
         {
             XDocument doc = XDocument.Load("ShipHulls.xml");
             ExistingHulls = ShipHull.GetShipHulls(doc);
+            ExistingHulls.Sort(ShipHull.HullComparer);
             cbxShipHullTypes.DataSource = ExistingHulls;
             cbxShipHullTypes.DisplayMember = "Name";
             cbxShipHullTypes.SelectedIndex = -1;

@@ -1,80 +1,39 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <shipHulls>
   <shipHull name="Frigate">
-    <MaxHP>50</MaxHP>
-    <AllowedParts>
-      <allowedPart type="StarShips.Parts.ActionPart">
-        <ActionMechanism></ActionMechanism>
-        <CountOfParts>2</CountOfParts>
-      </allowedPart>
-      <allowedPart type="StarShips.Parts.DefensePart">
-        <ActionMechanism></ActionMechanism>
-        <CountOfParts>3</CountOfParts>
-      </allowedPart>
-      <allowedPart type="StarShips.Parts.WeaponPart">
-        <ActionMechanism>Beam</ActionMechanism>
-        <CountOfParts>3</CountOfParts>
-      </allowedPart>
-      <allowedPart type="StarShips.Parts.WeaponPart">
-        <ActionMechanism>Cannon</ActionMechanism>
-        <CountOfParts>2</CountOfParts>
-      </allowedPart>
-      <allowedPart type="StarShips.Parts.WeaponPart">
-        <ActionMechanism>Torpedo</ActionMechanism>
-        <CountOfParts>1</CountOfParts>
-      </allowedPart>
-    </AllowedParts>
-    <ImageURL>Ship1.png</ImageURL>
-    <Mass>1900</Mass>
-  </shipHull>
-  <shipHull name="Galaxy">
-    <MaxHP>50</MaxHP>
-    <AllowedParts>
-      <allowedPart type="StarShips.Parts.DefensePart">
-        <ActionMechanism></ActionMechanism>
-        <CountOfParts>3</CountOfParts>
-      </allowedPart>
-      <allowedPart type="StarShips.Parts.ActionPart">
-        <ActionMechanism></ActionMechanism>
-        <CountOfParts>2</CountOfParts>
-      </allowedPart>
-      <allowedPart type="StarShips.Parts.WeaponPart">
-        <ActionMechanism>Beam</ActionMechanism>
-        <CountOfParts>2</CountOfParts>
-      </allowedPart>
-      <allowedPart type="StarShips.Parts.WeaponPart">
-        <ActionMechanism>Cannon</ActionMechanism>
-        <CountOfParts>1</CountOfParts>
-      </allowedPart>
-      <allowedPart type="StarShips.Parts.WeaponPart">
-        <ActionMechanism>Torpedo</ActionMechanism>
-        <CountOfParts>1</CountOfParts>
-      </allowedPart>
-    </AllowedParts>
-    <ImageURL>Ship2.png</ImageURL>
-    <Mass>2900</Mass>
+    <MaxHP>128</MaxHP>
+    <AllowedParts />
+    <ImageURL>Ship3.png</ImageURL>
+    <Mass>3200</Mass>
   </shipHull>
   <shipHull name="Destroyer">
-    <MaxHP>75</MaxHP>
-    <Mass>2100</Mass>
-    <AllowedParts>
-      <allowedPart type="StarShips.Parts.WeaponPart">
-        <ActionMechanism>Torpedo</ActionMechanism>
-        <CountOfParts>4</CountOfParts>
-      </allowedPart>
-      <allowedPart type="StarShips.Parts.WeaponPart">
-        <ActionMechanism></ActionMechanism>
-        <CountOfParts>6</CountOfParts>
-      </allowedPart>
-      <allowedPart type="StarShips.Parts.DefensePart">
-        <ActionMechanism></ActionMechanism>
-        <CountOfParts>4</CountOfParts>
-      </allowedPart>
-      <allowedPart type="StarShips.Parts.EnginePart">
-        <ActionMechanism></ActionMechanism>
-        <CountOfParts>6</CountOfParts>
-      </allowedPart>
-    </AllowedParts>
-    <ImageURL>Ship3.png</ImageURL>
+    <MaxHP>80</MaxHP>
+    <Mass>800</Mass>
+    <AllowedParts />
+    <ImageURL>Ship2.png</ImageURL>
+  </shipHull>
+  <shipHull name="Corvette">
+    <MaxHP>50</MaxHP>
+    <Mass>200</Mass>
+    <AllowedParts />
+    <ImageURL>Ship1.png</ImageURL>
+  </shipHull>
+  <shipHull name="Battlecruiser">
+    <MaxHP>205</MaxHP>
+    <Mass>12800</Mass>
+    <AllowedParts />
+    <ImageURL>Ship4.png</ImageURL>
+  </shipHull>
+  <shipHull name="Battleship">
+    <MaxHP>328</MaxHP>
+    <Mass>51200</Mass>
+    <AllowedParts />
+    <ImageURL>Ship5.png</ImageURL>
+  </shipHull>
+  <shipHull name="Dreadnought">
+    <MaxHP>500</MaxHP>
+    <Mass>204800</Mass>
+    <AllowedParts />
+    <ImageURL>Ship6.png</ImageURL>
   </shipHull>
 </shipHulls>

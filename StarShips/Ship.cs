@@ -90,14 +90,28 @@ namespace StarShips
         #region Public Methods
         public int GetMaxMP()
         {
-            double thrustModifier = (100 - ((this.Equipment.Where(f=>f is EnginePart).Count() - 1) / this.HullType.EnginesPerDecrease * 20)) * .01;
+            //double thrustModifier = (100 - ((this.Equipment.Where(f=>f is EnginePart).Count() - 1) / this.HullType.EnginesPerDecrease * 20)) * .01;
+            //double totalThrust = 0;
+            //foreach (EnginePart part in this.Equipment.Where(f => f is EnginePart && !f.IsDestroyed))
+            //    totalThrust += part.Thrust;
+            //double thrust = totalThrust * thrustModifier;
+            //double time = 15;
+            //double impulse = thrust * time;
+            //double MP = impulse / TotalMass;
+            //return Convert.ToInt32(Math.Round(MP));
+
             double totalThrust = 0;
-            foreach (EnginePart part in this.Equipment.Where(f => f is EnginePart && !f.IsDestroyed))
+            foreach (EnginePart part in this.Equipment.Where(f => f is EnginePart))
                 totalThrust += part.Thrust;
-            double thrust = totalThrust * thrustModifier;
-            double time = 15;
-            double impulse = thrust * time;
-            double MP = impulse / TotalMass;
+            if (totalThrust <= 0)
+                return 0;
+
+            double SizeCategory = Math.Log((TotalMass / 50), 4);
+
+            double EngineCount = totalThrust / 100;
+
+            double MP = (-0.0332 * SizeCategory + 0.405) * EngineCount + (-0.29093 * SizeCategory + 1.7867);
+
             return Convert.ToInt32(Math.Round(MP));
         }
 

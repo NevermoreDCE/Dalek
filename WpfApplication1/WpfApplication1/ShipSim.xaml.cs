@@ -60,13 +60,23 @@ namespace WPFPathfinding
             initGrid();
             SpaceX.AddPlayerWindow addPlayerWindow = new SpaceX.AddPlayerWindow(GameState.Players);
             bool? addPlayerBool = addPlayerWindow.ShowDialog();
-            if (addPlayerBool==true)
+            bool? addShipBool=false;
+
+            if (addPlayerBool == true)
             {
                 SpaceX.AddShipsWindow addShipsWindow = new SpaceX.AddShipsWindow(GameState);
-                addShipsWindow.ShowDialog();
+                addShipBool = addShipsWindow.ShowDialog();
             }
-            initShipDetails();
-            BuildMap();
+            else
+                this.Close();
+
+            if (addShipBool == true)
+            {
+                initShipDetails();
+                BuildMap();
+            }
+            else
+                this.Close();
         }
 
         void BuildMap()

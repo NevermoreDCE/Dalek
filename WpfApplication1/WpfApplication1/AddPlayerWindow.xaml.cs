@@ -40,7 +40,8 @@ namespace SpaceX
             List<string> empireNames = new List<string>();
             foreach (var emp in empires)
             {
-                empireNames.Add(emp.Name);
+                if(emp.Name!="Default")
+                    empireNames.Add(emp.Name);
             }
             cbxIconSet.ItemsSource = empireNames;
         }
@@ -160,5 +161,6 @@ namespace SpaceX
                 cmdDown.IsEnabled = false;
             }
         }
+
     }
 }
