@@ -29,16 +29,29 @@ namespace StarShips
                 }
             }
         }
+        /// <summary>
+        /// Count of Ships in the collection
+        /// </summary>
         public int Count
         {
             get { return _ships.Count; }
         }
+        /// <summary>
+        /// Adds a Ship to the end of the collection.
+        /// Fires off CollectionChanged event.
+        /// </summary>
+        /// <param name="ship">Ship to be added to collection</param>
         public void Add(Ship ship)
         {
             _ships.Add(ship);
             if (CollectionChanged != null)
                 CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, ship));
         }
+        /// <summary>
+        /// Removes a Ship from the collection.
+        /// Fires off CollectionChanged event.
+        /// </summary>
+        /// <param name="ship">Ship to be removed from the collection</param>
         public void Remove(Ship ship)
         {
             _ships.Remove(ship);
@@ -50,7 +63,7 @@ namespace StarShips
         #region Internal Index Counter
         
         int _internalIndex = 0;
-        private int NextIndex()
+        int NextIndex()
         {
             if (_internalIndex + 1 >= _ships.Count)
                 return 0;
@@ -65,7 +78,7 @@ namespace StarShips
                 AdjustIndex();
             }
         }
-        private void IncreaseIndex()
+        void IncreaseIndex()
         {
             if (_internalIndex + 1 >= _ships.Count)
                 _internalIndex = 0;
@@ -75,10 +88,19 @@ namespace StarShips
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Gets next living Ship in list
+        /// </summary>
+        /// <returns>Next living Ship</returns>
         public Ship GetNextShip()
         {
             return GetNextShip(false);
         }
+        /// <summary>
+        /// Gets next Ship in list. Can inlcude destroyed ships.
+        /// </summary>
+        /// <param name="includeDestroyed">Indicates if Destroyed Ships should be included in possible results</param>
+        /// <returns>Next Ship</returns>
         public Ship GetNextShip(bool includeDestroyed)
         {
             Ship result = null;
@@ -114,6 +136,9 @@ namespace StarShips
             
             return result;
         }
+        /// <summary>
+        /// Resets internal index for collection
+        /// </summary>
         public void ResetIndex()
         {
             _internalIndex = -1;
@@ -121,6 +146,9 @@ namespace StarShips
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Empty Constructor
+        /// </summary>
         public ShipCollection()
         {
             /* Empty Constructor */

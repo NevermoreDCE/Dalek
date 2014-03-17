@@ -8,11 +8,11 @@ using System.Runtime.Serialization;
 namespace StarShips.Actions
 {
     [Serializable]
-    public class RepairThisPart : ShipAction,  ISerializable
+    public class RepairThisPart : EidosAction,  ISerializable
     {
         
         #region Public Methods
-        public override string DoAction(ShipPart target)
+        public override string DoAction(EidosPart target)
         {
             if (target.HP.Current < target.HP.Max)
             {

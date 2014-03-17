@@ -96,7 +96,7 @@ namespace SpaceX
             panel.Children.Add(spPoints);
             // Parts
             addStatusLabel("Equipment:", Brushes.White, panel);
-            foreach (var part in ship.Equipment)
+            foreach (var part in ship.Parts)
                 addStatusLabel(part.ToString(), (part.IsDestroyed ? Brushes.DarkRed : Brushes.LightSlateGray), panel);
         }
         
@@ -166,10 +166,11 @@ namespace SpaceX
             XDocument hullDoc = XDocument.Load("ShipHulls.xml");
             gameState.ExistingHulls = ShipHull.GetShipHulls(hullDoc);
 
-            //Load Parts
+            //Load ShipParts
             gameState.ExistingParts.Clear();
             XDocument partDoc = XDocument.Load("ShipParts.xml");
-            gameState.ExistingParts = ShipPart.GetShipPartList(partDoc, new Ship());
+            foreach (var part in ShipPart.GetShipPartList(partDoc, new Ship()))
+                gameState.ExistingParts.Add(part);
 
             //Load Ships
             //gameState.ExistingShips.Clear();

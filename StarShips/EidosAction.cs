@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace StarShips
 {
     [Serializable]
-    public abstract class ShipAction : ISerializable
+    public abstract class EidosAction : ISerializable
     {
         #region Parameters
         object[] _actionValues = new object[1];
@@ -15,7 +15,7 @@ namespace StarShips
         #endregion
 
         #region Abstract Methods
-        public abstract string DoAction(ShipPart target);
+        public abstract string DoAction(EidosPart target);
         public abstract void GetObjectData(SerializationInfo info, StreamingContext context);
         public abstract override string ToString();
         #endregion

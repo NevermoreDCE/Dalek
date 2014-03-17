@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
+using StarShips.StarSystems;
 
 namespace StarShips.Locations
 {
@@ -21,7 +22,6 @@ namespace StarShips.Locations
         {
             this.Loc = new Point(x, y);
         }
-
         public int CompareTo(Node other)
         {
             if (this.Loc.X > other.Loc.X || this.Loc.Y > other.Loc.Y) return 1;

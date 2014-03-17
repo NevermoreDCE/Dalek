@@ -20,7 +20,7 @@ using System.Xml.Serialization;
 namespace StarShips
 {
     [Serializable]
-    public class Ship : ISerializable
+    public class Ship : Eidos, ISerializable
     {
         #region Events
         public event ShipDelegates.ShipDestroyedEvent OnShipDestroyed;
@@ -29,32 +29,21 @@ namespace StarShips
         #region Private Variables
         StatWithMax _mp = new StatWithMax();
         string _className;
-        string _name;
         ShipHull _hullType = new ShipHull();
-        
-        [XmlIgnore]
-        System.Windows.Controls.Image _image;
-
         bool _weaponsFiredAlready = false;
-        bool _isDestroyed = false;
-        Player _owner;
         #endregion
 
         #region Public Properties
         public StatWithMax HP { get { return HullType.HullPoints; } set { HullType.HullPoints = value; } }
         public StatWithMax MP { get { return _mp; } set { _mp = value; } }
         public int ImpulseMultiplier { get { return 30 / (_mp.Max - 1); } }
-        public List<ShipPart> Equipment = new List<ShipPart>();
         public List<ShipOrder> Orders = new List<ShipOrder>();
         public List<ShipOrder> CompletedOrders = new List<ShipOrder>();
         public string ClassName { get { return _className; } set { _className = value; } }
-        public string Name { get { return _name; } set { _name = value; } }
-        public int PointCost { get { int result = HP.Max * 5; foreach (ShipPart part in Equipment)result += part.PointCost; return result; } }
+        public int PointCost { get { int result = HP.Max * 5; foreach (ShipPart part in Parts)result += part.PointCost; return result; } }
         public ShipHull HullType { get { return _hullType; } set { _hullType = value; } }
-        public Point Position = new Point(-1, -1);
         public Point Origin;
-        [XmlIgnore]
-        public System.Windows.Controls.Image Image { 
+        public override System.Windows.Controls.Image Image { 
             get 
             {
                 if (_image == null)
@@ -64,44 +53,37 @@ namespace StarShips
                     src.UriSource = new Uri(string.Format("Empires\\{0}\\Images\\{1}", _owner.IconSet, this.HullType.ImageURL), UriKind.Relative);
                     src.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
                     src.EndInit();
-                    initImage((ImageSource)src);
+                    initImage((ImageSource)src,40);
                 }
                 return _image; 
             } set { _image = value; } }
 
         public int CountOfResolvingOrders = 0;
         public bool WeaponsFiredAlready { get { return _weaponsFiredAlready; } }
-        public bool IsDestroyed { get { return _isDestroyed; } }
         public double TotalMass
         {
             get
             {
                 double mass = HullType.Mass;
-                foreach (var part in Equipment.Where(f=>!f.IsDestroyed))
+                foreach (var part in Parts.Where(f=>!f.IsDestroyed))
                     mass += part.Mass;
-                foreach (var part in Equipment.Where(f => f.IsDestroyed))
+                foreach (var part in Parts.Where(f => f.IsDestroyed))
                     mass += part.Mass * .25;
                 return mass;
             }
         }
-        public Player Owner { get { return _owner; } set { _owner = value; } }
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Calculates maximum MP for current ship status based on Total Thrust from Engines and Total Mass from Hull and Parts
+        /// </summary>
+        /// <returns>Number of MP currently possible</returns>
         public int GetMaxMP()
         {
-            //double thrustModifier = (100 - ((this.Equipment.Where(f=>f is EnginePart).Count() - 1) / this.HullType.EnginesPerDecrease * 20)) * .01;
-            //double totalThrust = 0;
-            //foreach (EnginePart part in this.Equipment.Where(f => f is EnginePart && !f.IsDestroyed))
-            //    totalThrust += part.Thrust;
-            //double thrust = totalThrust * thrustModifier;
-            //double time = 15;
-            //double impulse = thrust * time;
-            //double MP = impulse / TotalMass;
-            //return Convert.ToInt32(Math.Round(MP));
-
+            
             double totalThrust = 0;
-            foreach (EnginePart part in this.Equipment.Where(f => f is EnginePart))
+            foreach (EnginePart part in this.Parts.Where(f => f is EnginePart))
                 totalThrust += part.Thrust;
             if (totalThrust <= 0)
                 return 0;
@@ -120,7 +102,7 @@ namespace StarShips
         {
             List<string> result = new List<string>();
 
-            foreach (WeaponPart weapon in Equipment.Where(f => f is WeaponPart))
+            foreach (WeaponPart weapon in Parts.Where(f => f is WeaponPart))
             {
                 // check if destroyed
                 if (weapon.IsDestroyed)
@@ -162,7 +144,7 @@ namespace StarShips
         {
             List<string> result = new List<string>();
 
-            foreach (DefensePart defense in Equipment.Where(f => f is DefensePart && !f.IsDestroyed))
+            foreach (DefensePart defense in Parts.Where(f => f is DefensePart && !f.IsDestroyed))
             {
                 DefenseResult res = defense.TakeHit(Damage);
                 Damage = res.Remainder;
@@ -179,14 +161,14 @@ namespace StarShips
                 // chance to destroy ship part
                 using (RNG rand = new RNG())
                 {
-                    int countOfEquipment = Equipment.Count * 2;
+                    int countOfEquipment = Parts.Count * 2;
                     int random = rand.d(countOfEquipment);
-                    if (random <= Equipment.Count)
+                    if (random <= Parts.Count)
                     {
-                        if (!Equipment[random - 1].IsDestroyed)
+                        if (!Parts[random - 1].IsDestroyed)
                         {
-                            Equipment[random - 1].IsDestroyed = true;
-                            result.Add(string.Format("{0} is destroyed by the damage!", Equipment[random - 1].Name));
+                            Parts[random - 1].IsDestroyed = true;
+                            result.Add(string.Format("{0} is destroyed by the damage!", Parts[random - 1].Name));
                         }
                     }
 
@@ -220,11 +202,11 @@ namespace StarShips
                 // move order
                 if (Impulse % this.ImpulseMultiplier == 0)
                 {
-                    IMoveOrder moveOrder = (IMoveOrder)Orders.First(f => f is IMoveOrder);
+                    ITacticalMoveOrder moveOrder = (ITacticalMoveOrder)Orders.First(f => f is ITacticalMoveOrder);
                     result = result.Concat(moveOrder.ExecuteOrder(this, Impulse)).ToList<string>();
                 }
                 // check weapon orders
-                foreach (IWeaponOrder order in Orders.Where(f => f is IWeaponOrder && !f.IsCompleted))
+                foreach (ITacticalWeaponOrder order in Orders.Where(f => f is ITacticalWeaponOrder && !f.IsCompleted))
                     if (order.IsInRange(this))
                         result = result.Concat(order.ExecuteOrder(this)).ToList<string>();
                 // other orders
@@ -261,19 +243,19 @@ namespace StarShips
         {
             List<string> result = new List<string>();
             //Process Actions
-            foreach (ShipPart part in Equipment.Where(f => !f.IsDestroyed))
+            foreach (ShipPart part in Parts.Where(f => !f.IsDestroyed))
             {
                 result.Add(part.DoAction(this));
             }
 
             //Cleanup Weapon Orders
-            foreach (ShipOrder weaponOrder in Orders.Where(f => f is IWeaponOrder))
+            foreach (ShipOrder weaponOrder in Orders.Where(f => f is ITacticalWeaponOrder))
             {
                 if (((Ship)weaponOrder.OrderValues[1]).IsDestroyed)
                     CompletedOrders.Add(weaponOrder);
             }
             //Cleanup MoveToShip Orders
-            foreach (ShipOrder moveOrder in Orders.Where(f => f is IMoveToShipOrder))
+            foreach (ShipOrder moveOrder in Orders.Where(f => f is ITacticalMoveToShipOrder))
             {
                 if (((Ship)moveOrder.OrderValues[0]).IsDestroyed)
                     CompletedOrders.Add(moveOrder);
@@ -316,44 +298,36 @@ namespace StarShips
         {
             Ship result = new Ship();
             result.ClassName = this.ClassName;
-            foreach (ShipPart part in this.Equipment)
-                result.Equipment.Add(part.Clone());
+            foreach (ShipPart part in this.Parts)
+                result.Parts.Add(part.Clone());
             result.HullType = this.HullType.Clone();
             result.MP.Max = this.MP.Max;
-            result.initImage(this.Image.Source);
+            result.initImage(this.Image.Source,40);
             return result;
         }
         #endregion
 
-        private void initImage(ImageSource source)
-        {
-            System.Windows.Controls.Image img = new System.Windows.Controls.Image();
-            img.Source = source;
-            img.Height = 32;
-            img.Width = 32;
-            img.Stretch = System.Windows.Media.Stretch.None;
-            img.SetValue(System.Windows.Controls.Panel.ZIndexProperty, 10);
-            this._image = img;
-        }
+        
 
         #region Serialization
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
+            base.GetObjectData(info, context);
             info.AddValue("HP", HP);
             info.AddValue("MP", MP);
-            info.AddValue("Owner", _owner);
-            foreach (ShipPart part in Equipment)
+            foreach (ShipPart part in Parts)
                 part.Target = null;
-            info.AddValue("Equipment", Equipment);
-            info.AddValue("Name", ClassName);
+            info.AddValue("Equipment", Parts);
+            info.AddValue("ClassName", ClassName);
             info.AddValue("HullType", HullType);
             info.AddValue("Orders", Orders);
-            info.AddValue("IsDestroyed", IsDestroyed);
-            info.AddValue("Position", Position);
-            
 
         }
 
+        /// <summary>
+        /// Adds or Updates XML elements for this Ship in supplied XDocument
+        /// </summary>
+        /// <param name="sourceDoc">XDocument containing "ship" elements for Addition/Update</param>
         public void GetObjectXML(XDocument sourceDoc)
         {
             XElement ship;
@@ -386,10 +360,10 @@ namespace StarShips
             }
         }
 
-        private void addPartsXML(XElement shipParts)
+        void addPartsXML(XElement shipParts)
         {
             List<XElement> parts = new List<XElement>();
-            foreach (var shipPart in this.Equipment)
+            foreach (var shipPart in this.Parts)
                 parts.Add(new XElement("shipPart", shipPart.Name));
             shipParts.RemoveAll();
             foreach (var element in parts)
@@ -398,31 +372,38 @@ namespace StarShips
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Empty Constructor
+        /// </summary>
         public Ship()
         {
             /* Empty Constructor */
         }
         public Ship(SerializationInfo info, StreamingContext ctxt)
+            :base(info,ctxt)
         {
             HP = (StatWithMax)info.GetValue("HP", typeof(StatWithMax));
             MP = (StatWithMax)info.GetValue("MP", typeof(StatWithMax));
-            _owner = (Player)info.GetValue("Owner", typeof(Player));
-            Equipment = (List<ShipPart>)info.GetValue("Equipment", typeof(List<ShipPart>));
+            Parts = (List<ShipPart>)info.GetValue("Equipment", typeof(List<ShipPart>));
             Orders = (List<ShipOrder>)info.GetValue("Orders", typeof(List<ShipOrder>));
-            ClassName = (string)info.GetValue("Name", typeof(string));
+            ClassName = (string)info.GetValue("ClassName", typeof(string));
             HullType = (ShipHull)info.GetValue("HullType", typeof(ShipHull));
-            _isDestroyed = (bool)info.GetValue("IsDestroyed", typeof(bool));
-            Position = (Point)info.GetValue("Position", typeof(Point));
-            
-            
         }
-        public Ship(XElement description, List<ShipPart> partsList, List<ShipHull> hullsList, Player player)
+        /// <summary>
+        /// Instantiates a Ship based on the XML description, cloning Parts and Hull from 
+        /// available objects and assigns ownership to supplied Player
+        /// </summary>
+        /// <param name="description">XElement containing full description of this Ship</param>
+        /// <param name="partsList">List of ShipParts to clone components from</param>
+        /// <param name="hullsList">List of ShipHulls to clone hull from</param>
+        /// <param name="player">Player to assign ownership to</param>
+        public Ship(XElement description, List<EidosPart> partsList, List<ShipHull> hullsList, Player player)
         {
             this.ClassName = description.Attribute("className").Value;
             this.HP.Max = int.Parse(description.Element("MaxHP").Value);
             this.MP.Max = int.Parse(description.Element("MaxMP").Value);
             foreach (XElement SPE in description.Element("shipParts").Elements())
-                this.Equipment.Add(partsList.First(f => f.Name == SPE.Value).Clone());
+                this.Parts.Add(((ShipPart)partsList.First(f => f.Name == SPE.Value)).Clone());
             if (description.Element("ShipHull") != null)
                 if (hullsList.Where(f => f.Name == description.Element("ShipHull").Value).Count() > 0)
                     this.HullType = hullsList.First(f => f.Name == description.Element("ShipHull").Value).Clone();

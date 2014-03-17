@@ -1,0 +1,83 @@
+﻿<UserControl x:Class="_4XIM.UserControls.StrategicWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="935" d:DesignWidth="1270">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="455"/>
+            <RowDefinition Height="480"/>
+        </Grid.RowDefinitions>   
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="440"/>
+            <ColumnDefinition Width="830"/>
+        </Grid.ColumnDefinitions>
+        
+        <!-- Local System (Top Left)-->
+        <StackPanel Grid.Row="0" Grid.Column="0">
+            <TextBlock Name="txbSystemName" Text="Test System" Foreground="White" FontSize="26"/>
+            <Grid Name="grdLocalSystem" />
+        </StackPanel>
+        
+        <!-- Eidos in selected location (Top Right)-->
+        <StackPanel Grid.Row="0" Grid.Column="1">
+            <TextBlock Name="txbSelectedSystemName" Text="Ships in Test System - Sector 71" Foreground="White" FontSize="26"/>
+            <ListBox Name="lbxTargetShips" Height="404" Background="Transparent" Foreground="White" SelectionChanged="lbxTargetShips_SelectionChanged">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{Binding Path=Owner.Icon.Source}" Height="32" Width="32"/>
+                            <Image Source="{Binding Path=Image.Source}" Height="32" Width="32"/>
+                            <StackPanel Width="150">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Name: "/>
+                                    <TextBlock Text="{Binding Path=Name}"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Class: " Margin="15 0 0 0"/>
+                                    <TextBlock Text="{Binding Path=ClassName}"/>
+                                    <TextBlock Text=" ("/>
+                                    <TextBlock Text="{Binding Path=HullType.Name}"/>
+                                    <TextBlock Text=")"/>
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel Width="68">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="HP: "/>
+                                    <TextBlock Text="{Binding Path=HP}"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="MP: "/>
+                                    <TextBlock Text="{Binding Path=MP}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
+        
+        <!-- Selected Status (Bottom Left)-->
+        <StackPanel Grid.Row="1" Grid.Column="0">
+            <TextBlock Text="Status" Foreground="White" FontSize="26"/>
+            <ScrollViewer CanContentScroll="true" VerticalScrollBarVisibility="Auto">
+                <StackPanel Name="spTargetShip" Height="459"></StackPanel>
+            </ScrollViewer>
+        </StackPanel>
+        
+        <!-- Galaxy View (Bottom Right)-->
+        <StackPanel Grid.Row="1" Grid.Column="1">
+            <TextBlock Text="Galaxy" Foreground="White" FontSize="26"/>
+            <StackPanel>
+                <ScrollViewer CanContentScroll="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Height="444">
+                    <Canvas Height="{Binding ElementName=grdGalaxyView, Path=ActualHeight}" Width="{Binding ElementName=grdGalaxyView, Path=ActualWidth}">
+                        <Grid Name="grdGalaxyView"  />
+                        <Canvas Name="cnvGalaxyView" Width="{Binding ElementName=grdGalaxyView, Path=ActualWidth}" Height="{Binding ElementName=grdGalaxyView, Path=ActualHeight}" HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="80" />
+                    </Canvas>
+                </ScrollViewer>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

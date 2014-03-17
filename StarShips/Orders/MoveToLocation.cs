@@ -11,16 +11,16 @@ using StarShips.Locations;
 namespace StarShips.Orders
 {
     [Serializable]
-    public class MoveToLocation : ShipOrder, ISerializable, IMoveOrder
+    public class MoveToLocation : ShipOrder, ISerializable, ITacticalMoveOrder
     {
-        public event OrderDelegates.ShipMoveEvent OnShipMove;
+        public event OrderDelegates.TacticalShipMoveEvent OnShipMove;
         public override List<string> ExecuteOrder(Ship ship)
         {
             List<string> result = new List<string>();
             result.Add(moveShip(ship));
             this.IsCompleted = true;
             // check if action should be removed on completion
-            if (ship.Position == (Point)OrderValues[0])
+            if (ship.TacticalPosition == (Point)OrderValues[0])
                 ship.CompletedOrders.Add(this);
             return result;
         }
@@ -35,7 +35,7 @@ namespace StarShips.Orders
                 if (impulse % impulseMultiplier == 0)
                     result.Add(moveShip(ship));
             }
-            if (ship.Position == (Point)OrderValues[0])
+            if (ship.TacticalPosition == (Point)OrderValues[0])
                 ship.CompletedOrders.Add(this);
 
             return result;
@@ -45,12 +45,12 @@ namespace StarShips.Orders
         {
             string result = "Could Not Move";
 
-            Point sourceLoc = ship.Position;
+            Point sourceLoc = ship.TacticalPosition;
             Point targetLoc = (Point)this.OrderValues[0];
             LocationCollection locations = (LocationCollection)this.OrderValues[1];
-            if (ship.Position != targetLoc && ship.MP.Current > 0)
+            if (ship.TacticalPosition != targetLoc && ship.MP.Current > 0)
             {
-                Point from = ship.Position;
+                Point from = ship.TacticalPosition;
                 Point to = locations.MoveShipToPoint(ship, targetLoc);
                 if (OnShipMove != null)
                     OnShipMove(this, new EventArgs(), ship.Image, from, to, ship.WeaponsFiredAlready);

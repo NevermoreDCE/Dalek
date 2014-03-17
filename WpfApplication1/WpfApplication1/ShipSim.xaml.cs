@@ -176,7 +176,7 @@ namespace WPFPathfinding
                 }
 
                 // highlight next player's ship
-                AddHighlightImage(currentShip.Position.X, currentShip.Position.Y);
+                AddHighlightImage(currentShip.TacticalPosition.X, currentShip.TacticalPosition.Y);
 
                 ShowShipStatus(currentShip, spCurrentShip);
                 lbxTargetShips.ItemsSource = SelectedLocShips;
@@ -217,7 +217,7 @@ namespace WPFPathfinding
                             }
                             GameState.CombatLocations[x, y].Ships.Add(ship);
                             ship.Origin = new System.Drawing.Point(x, y);
-                            ship.Position = new System.Drawing.Point(x, y);
+                            ship.TacticalPosition = new System.Drawing.Point(x, y);
 
                             ship.OnShipDestroyed += new StarShips.Delegates.ShipDelegates.ShipDestroyedEvent(onShipDestroyedHandler);
                         }
@@ -262,7 +262,7 @@ namespace WPFPathfinding
                 }
 
                 // highlight next player's ship
-                AddHighlightImage(currentShip.Position.X, currentShip.Position.Y);
+                AddHighlightImage(currentShip.TacticalPosition.X, currentShip.TacticalPosition.Y);
 
                 ShowShipStatus(currentShip, spCurrentShip);
                 lbxTargetShips.ItemsSource = SelectedLocShips;
@@ -297,15 +297,15 @@ namespace WPFPathfinding
                 {
                     s.OnShipDestroyed -= new StarShips.Delegates.ShipDelegates.ShipDestroyedEvent(onShipDestroyedHandler);
                     s.OnShipDestroyed += new StarShips.Delegates.ShipDelegates.ShipDestroyedEvent(onShipDestroyedHandler);
-                    foreach (IWeaponOrder wo in s.Orders.Where(f => f is IWeaponOrder))
+                    foreach (ITacticalWeaponOrder wo in s.Orders.Where(f => f is ITacticalWeaponOrder))
                     {
-                        wo.OnWeaponFired -= new OrderDelegates.WeaponFiredEvent(onWeaponFiredHandler);
-                        wo.OnWeaponFired += new OrderDelegates.WeaponFiredEvent(onWeaponFiredHandler);
+                        wo.OnWeaponFired -= new OrderDelegates.TacticalWeaponFiredEvent(onWeaponFiredHandler);
+                        wo.OnWeaponFired += new OrderDelegates.TacticalWeaponFiredEvent(onWeaponFiredHandler);
                     }
-                    foreach (IMoveOrder mo in s.Orders.Where(f => f is IMoveOrder))
+                    foreach (ITacticalMoveOrder mo in s.Orders.Where(f => f is ITacticalMoveOrder))
                     {
-                        mo.OnShipMove -= new OrderDelegates.ShipMoveEvent(onShipMoveHandler);
-                        mo.OnShipMove += new OrderDelegates.ShipMoveEvent(onShipMoveHandler);
+                        mo.OnShipMove -= new OrderDelegates.TacticalShipMoveEvent(onShipMoveHandler);
+                        mo.OnShipMove += new OrderDelegates.TacticalShipMoveEvent(onShipMoveHandler);
                     }
                 }
             }
@@ -451,7 +451,7 @@ namespace WPFPathfinding
             {
                 foreach (var p in GameState.Players)
                     foreach (var s in p.Ships)
-                        RefreshContextMenuImages(s.Position);
+                        RefreshContextMenuImages(s.TacticalPosition);
             }
             catch (Exception ex)
             {
@@ -562,7 +562,7 @@ namespace WPFPathfinding
                 foreach (Player p in GameState.Players.Where(f => !f.IsDefeated))
                     foreach (Ship ship in p.Ships.Where(f => !f.IsDestroyed))
                     {
-                        if (ship.Position == new System.Drawing.Point(x, y) && ship != currentShip)
+                        if (ship.TacticalPosition == new System.Drawing.Point(x, y) && ship != currentShip)
                         {
                             MenuItem MenuMoveToShip = new MenuItem();
                             MenuMoveToShip.Header = string.Format("Move To {0}", ship.Name);
@@ -603,11 +603,11 @@ namespace WPFPathfinding
                 foreach (Player p in GameState.Players.Where(f => !f.IsDefeated))
                     foreach (Ship ship in p.Ships.Where(f => !f.IsDestroyed))
                     {
-                        if (ship.Position == new System.Drawing.Point(x, y) && ship != currentShip && !currentPlayer.Ships.Any(f => f == ship))
+                        if (ship.TacticalPosition == new System.Drawing.Point(x, y) && ship != currentShip && !currentPlayer.Ships.Any(f => f == ship))
                         {
                             MenuItem MenuFireOnShip = new MenuItem();
                             MenuFireOnShip.Header = string.Format("Fire on {0}", ship.Name);
-                            foreach (WeaponPart weapon in currentShip.Equipment.Where(f => f is WeaponPart && !f.IsDestroyed))
+                            foreach (WeaponPart weapon in currentShip.Parts.Where(f => f is WeaponPart && !f.IsDestroyed))
                             {
                                 MenuItem MenuWeapon = new MenuItem();
                                 MenuWeapon.Header = string.Format("With {0}", weapon.Name);
@@ -620,7 +620,7 @@ namespace WPFPathfinding
                             MenuItem fireAll = new MenuItem();
                             fireAll.Header = "With All Weapons";
                             List<WeaponPart> allWeaponList = new List<WeaponPart>();
-                            foreach (WeaponPart weapon in currentShip.Equipment.Where(f => f is WeaponPart && !f.IsDestroyed))
+                            foreach (WeaponPart weapon in currentShip.Parts.Where(f => f is WeaponPart && !f.IsDestroyed))
                                 allWeaponList.Add(weapon);
                             fireAll.CommandParameter = new Tuple<Ship, List<WeaponPart>>(ship, allWeaponList);
                             fireAll.Click += new RoutedEventHandler(MenuWeapon_Click);
@@ -879,8 +879,8 @@ namespace WPFPathfinding
             {
                 if (explosionImg.Parent != null)
                     ((Grid)explosionImg.Parent).Children.Remove(explosionImg);
-                Grid.SetRow(explosionImg, shipToExplode.Position.X);
-                Grid.SetColumn(explosionImg, shipToExplode.Position.Y);
+                Grid.SetRow(explosionImg, shipToExplode.TacticalPosition.X);
+                Grid.SetColumn(explosionImg, shipToExplode.TacticalPosition.Y);
                 g.Children.Add(explosionImg);
                 Action<Image, Ship> removeExpImage = new Action<Image, Ship>(removeExplosionImage);
                 RemoveExplosion(removeExpImage, explosionImg, shipToExplode);
@@ -953,7 +953,7 @@ namespace WPFPathfinding
                 img.Stretch = Stretch.None;
                 titlebar.Children.Add(img);
                 panel.Children.Add(titlebar);
-                addStatusLabel(string.Format("{0} ({1} {2})", ship.Name, ship.ClassName, ship.Position), Brushes.White, titlebar);
+                addStatusLabel(string.Format("{0} ({1} {2})", ship.Name, ship.ClassName, ship.TacticalPosition), Brushes.White, titlebar);
                 // HP
                 addStatusLabel(string.Format("Hit Points: {0}", ship.HP.ToString()), Brushes.White, panel);
                 // MP
@@ -975,7 +975,7 @@ namespace WPFPathfinding
                 }
                 // Parts
                 addStatusLabel("Equipment:", Brushes.White, panel);
-                foreach (var part in ship.Equipment)
+                foreach (var part in ship.Parts)
                     addStatusLabel(part.ToString(), (part.IsDestroyed ? Brushes.DarkRed : Brushes.LightSlateGray), panel);
             }
             catch (Exception ex)
@@ -1122,7 +1122,7 @@ namespace WPFPathfinding
                 int x = Grid.GetRow(img);
                 int y = Grid.GetColumn(img);
                 MoveToLocation mtl = new MoveToLocation(new System.Drawing.Point(x, y), GameState.CombatLocations);
-                mtl.OnShipMove += new OrderDelegates.ShipMoveEvent(onShipMoveHandler);
+                mtl.OnShipMove += new OrderDelegates.TacticalShipMoveEvent(onShipMoveHandler);
                 currentShip.Orders.Add(mtl);
                 AddMoveTargetImage(x, y);
                 ShowShipStatus();
@@ -1139,7 +1139,7 @@ namespace WPFPathfinding
             {
                 Tuple<Ship, int> moveToRange = (Tuple<Ship, int>)((MenuItem)sender).CommandParameter;
                 MoveToShipAtRange mtsar = new MoveToShipAtRange(moveToRange.Item1, moveToRange.Item2, GameState.CombatLocations);
-                mtsar.OnShipMove += new OrderDelegates.ShipMoveEvent(onShipMoveHandler);
+                mtsar.OnShipMove += new OrderDelegates.TacticalShipMoveEvent(onShipMoveHandler);
                 currentShip.Orders.Add(mtsar);
                 ShowShipStatus();
             }
@@ -1154,7 +1154,7 @@ namespace WPFPathfinding
             try
             {
                 RemoveMoveTargetImage();
-                currentShip.Orders.RemoveAll(f => f is IMoveOrder);
+                currentShip.Orders.RemoveAll(f => f is ITacticalMoveOrder);
                 statusWindow.Items.Insert(0, string.Format("Cleared Move Orders from {0}", currentShip.Name));
                 ShowShipStatus();
             }
@@ -1174,7 +1174,7 @@ namespace WPFPathfinding
                     try
                     {
                         FireWeaponAtTarget fwat = new FireWeaponAtTarget(weapon, fireWeapons.Item1);
-                        fwat.OnWeaponFired += new OrderDelegates.WeaponFiredEvent(onWeaponFiredHandler);
+                        fwat.OnWeaponFired += new OrderDelegates.TacticalWeaponFiredEvent(onWeaponFiredHandler);
                         currentShip.Orders.Add(fwat);
                     }
                     catch (Exception ex)
@@ -1195,7 +1195,7 @@ namespace WPFPathfinding
         {
             try
             {
-                currentShip.Orders.RemoveAll(f => f is IWeaponOrder);
+                currentShip.Orders.RemoveAll(f => f is ITacticalWeaponOrder);
                 statusWindow.Items.Insert(0, string.Format("Cleared Weapon Orders from {0}", currentShip.Name));
             }
             catch (Exception ex)
@@ -1212,7 +1212,7 @@ namespace WPFPathfinding
                 SelectedLocShips.Clear();
                 foreach (Player p in GameState.Players.Where(f => !f.IsDefeated))
                     foreach (Ship s in p.Ships.Where(f => !f.IsDestroyed))
-                        if (s.Position == targetLoc)
+                        if (s.TacticalPosition == targetLoc)
                             SelectedLocShips.Add(s);
                 lbxTargetShips.UpdateLayout();
             }
@@ -1285,7 +1285,7 @@ namespace WPFPathfinding
                 currentShip = currentPlayer.Ships.GetNextShip();
                 ShowShipStatus();
                 RefreshContextMenuImages();
-                AddHighlightImage(currentShip.Position.X, currentShip.Position.Y);
+                AddHighlightImage(currentShip.TacticalPosition.X, currentShip.TacticalPosition.Y);
             }
             catch (Exception ex)
             {
@@ -1475,7 +1475,7 @@ namespace WPFPathfinding
                     s.StartOfTurn();
 
                 // highlight next player's ship
-                AddHighlightImage(currentShip.Position.X, currentShip.Position.Y);
+                AddHighlightImage(currentShip.TacticalPosition.X, currentShip.TacticalPosition.Y);
 
                 // clear movement target image
                 RemoveMoveTargetImage();

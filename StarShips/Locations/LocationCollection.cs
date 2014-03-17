@@ -9,6 +9,7 @@ using System.Timers;
 using System.Threading;
 using System.Diagnostics;
 using System.Runtime.Serialization;
+using StarShips.StarSystems;
 
 namespace StarShips.Locations
 {
@@ -25,7 +26,7 @@ namespace StarShips.Locations
 
     }
     [Serializable]
-    public class LocationCollection : ISerializable
+    public class LocationCollection : ISerializable, IEnumerable<Location>
     {
         #region Collection and Indexer
         private Location[,] _locations;
@@ -52,17 +53,67 @@ namespace StarShips.Locations
         #endregion
 
         #region Public Methods
-        public static double GetDistance(Point a, Point b)
+        public static double GetTacticalDistance(Point a, Point b)
         {
             double sqrX = Math.Pow(a.X - b.X, 2);
             double sqrY = Math.Pow(a.Y - b.Y, 2);
             return Math.Sqrt(sqrX + sqrY);
         }
+        public StarSystem GetNextSystem(StarSystem startingSystem, StarSystem targetSystem)
+        {
+            // Players might call for path to current system
+            if (startingSystem == targetSystem)
+                return startingSystem;
 
+            // Queue needs to store path-thus-far and current system
+            Queue<Tuple<List<StarSystem>, StarSystem>> StarSystemQueue = new Queue<Tuple<List<StarSystem>, StarSystem>>();
+
+            // Need to track visited systems to prevent infinite loops
+            List<StarSystem> visitedSystems = new List<StarSystem>();
+            // Starting system is already visited
+            visitedSystems.Add(startingSystem);
+
+            // For connected systems that we haven't already visited
+            foreach (StarSystem system in startingSystem.GetConnectedStarSystems().Where(f => !visitedSystems.Contains(f)))
+            {
+                List<StarSystem> pathList = new List<StarSystem>();
+                pathList.Add(system);
+                // Add to visited systems so it's not evaluated in the loop
+                visitedSystems.Add(system);
+                // Enqueue the path & system
+                StarSystemQueue.Enqueue(new Tuple<List<StarSystem>, StarSystem>(pathList, system));
+            }
+            // Loop til there's an answer or all paths are exausted
+            while (StarSystemQueue.Count > 0)
+            {
+                // Grab current from the queue
+                Tuple<List<StarSystem>, StarSystem> currentSystem = StarSystemQueue.Dequeue();
+
+                // If current is the target, return the first system from the path
+                if (currentSystem.Item2 == targetSystem)
+                    return currentSystem.Item1.First();
+
+                // For connected systems that we haven't already visited
+                foreach (StarSystem system in currentSystem.Item2.GetConnectedStarSystems().Where(f => !visitedSystems.Contains(f)))
+                {
+                    // rebuild path list to prevent changing other paths by reference
+                    List<StarSystem> pathList = new List<StarSystem>();
+                    foreach (var previous in currentSystem.Item1)
+                        pathList.Add(previous);
+                    pathList.Add(system); // add new system to path
+                    visitedSystems.Add(system); // add new system to visited
+                    // Enqueue the path & system
+                    StarSystemQueue.Enqueue(new Tuple<List<StarSystem>, StarSystem>(pathList, system));
+                }
+            }
+            // No valid answer at this point, return starting system and handle in outer code
+            return startingSystem;
+        }
+        
         public Point GetTargetPointInRadius(Point origin, Point target, double radius, int maxX, int maxY)
         {
             
-            if (GetDistance(origin, target) <= radius)
+            if (GetTacticalDistance(origin, target) <= radius)
                 return origin;
 
             return getTargetPointOnRadius(origin, target, radius, maxX, maxY);
@@ -81,12 +132,12 @@ namespace StarShips.Locations
         public Point MoveShipToPoint(Ship ship, Point targetLoc)
         {
             Point current;
-            Point next = ship.Position;
-            current = ship.Position;
-            next = this.GetNextPoint(ship.Position, targetLoc);
+            Point next = ship.TacticalPosition;
+            current = ship.TacticalPosition;
+            next = this.GetNextPoint(ship.TacticalPosition, targetLoc);
             this[current.X, current.Y].Ships.Remove(ship);
             this[next.X, next.Y].Ships.Add(ship);
-            ship.Position = next;
+            ship.TacticalPosition = next;
             ship.MP.Reduce(1);
 
             return next;
@@ -112,14 +163,14 @@ namespace StarShips.Locations
             // get all points in radius
             List<Point> inRadius = new List<Point>();
             foreach (Point p in matrix)
-                if (Math.Round(GetDistance(target, p),0) == radius && (p.X > -1 && p.X <= maxX-1 && p.Y > -1 && p.Y <= maxY-1))
+                if (Math.Round(GetTacticalDistance(target, p),0) == radius && (p.X > -1 && p.X <= maxX-1 && p.Y > -1 && p.Y <= maxY-1))
                     inRadius.Add(p);
 
             double shortestDistance = double.MaxValue;
             Point result = new Point(target.X, target.Y);
             foreach (Point p in inRadius)
             {
-                double current = GetDistance(origin, p);
+                double current = GetTacticalDistance(origin, p);
                 if (current < shortestDistance && !_locations[p.X,p.Y].IsBlocked)
                 {
                     shortestDistance = current;
@@ -173,7 +224,7 @@ namespace StarShips.Locations
                     {
                         neighbor.Parent = node;
                         neighbor.G = tempG;
-                        neighbor.H = Convert.ToInt32(GetDistance(neighbor.Loc, targetLoc));
+                        neighbor.H = Convert.ToInt32(GetTacticalDistance(neighbor.Loc, targetLoc));
                         if (!_openList.Contains(neighbor) && !_closedList.Contains(neighbor))
                             _openList.Add(neighbor);
                     }
@@ -237,7 +288,7 @@ namespace StarShips.Locations
                     if (!_locations[int.Parse(newNode.Loc.X.ToString()), int.Parse(newNode.Loc.Y.ToString())].IsBlocked)
                     {
                         newNode.G = node.G + 1;
-                        newNode.H = Convert.ToInt32(GetDistance(newNode.Loc, targetLoc));
+                        newNode.H = Convert.ToInt32(GetTacticalDistance(newNode.Loc, targetLoc));
                         newNode.Depth = node.Depth + 1;
                         if (!_closedList.Contains(newNode))
                             results.Add(newNode);
@@ -299,5 +350,80 @@ namespace StarShips.Locations
             info.AddValue("Locations", this._locations);
         }
         #endregion
+
+        #region IEnumerable Methods
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return (IEnumerator)GetEnumerator();
+        }
+
+        public LocColEnum GetEnumerator()
+        {
+            return new LocColEnum(_locations);
+        }
+
+        IEnumerator<Location> IEnumerable<Location>.GetEnumerator()
+        {
+            return (IEnumerator<Location>)GetEnumerator();
+        }
+        #endregion
+    }
+
+    public class LocColEnum : IEnumerator<Location>
+    {
+        public Location[,] _locations;
+
+        int positionX = 0;
+        int positionY = 0;
+
+        public LocColEnum(Location[,] locations)
+        {
+            _locations = locations;
+        }
+        public LocColEnum()
+        {
+
+        }
+        object IEnumerator.Current
+        {
+            get { return Current; }
+        }
+        public Location Current
+        {
+            get
+            {
+                try
+                {
+                    return (Location)_locations[positionX,positionY];
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+        }
+
+        public bool MoveNext()
+        {
+            if (positionY + 1 >= _locations.GetLength(1))
+            {
+                positionY = 0;
+                positionX++;
+            }
+            else
+                positionY++;
+            return (positionX < _locations.GetLength(0));
+        }
+
+        public void Reset()
+        {
+            positionX = 0;
+            positionY = 0;
+        }
+
+        public void Dispose()
+        {
+            _locations = null;
+        }
     }
 }

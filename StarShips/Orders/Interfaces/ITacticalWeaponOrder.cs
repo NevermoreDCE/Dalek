@@ -6,9 +6,9 @@ using StarShips.Orders.Delegates;
 
 namespace StarShips.Orders.Interfaces
 {
-    public interface IWeaponOrder
+    public interface ITacticalWeaponOrder
     {
-        event OrderDelegates.WeaponFiredEvent OnWeaponFired;
+        event OrderDelegates.TacticalWeaponFiredEvent OnWeaponFired;
         bool IsInRange(Ship ship);
         List<string> ExecuteOrder(Ship ship);
     }

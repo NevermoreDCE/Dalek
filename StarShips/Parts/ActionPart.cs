@@ -73,7 +73,7 @@ namespace StarShips.Parts
         #endregion
 
         #region Constructors
-        public ActionPart(Ship Parent, string Name, int MaxHP, double Mass, string ActionDescription, List<ShipAction> Actions)
+        public ActionPart(Eidos Parent, string Name, int MaxHP, double Mass, string ActionDescription, List<EidosAction> Actions)
         {
             this._parent = Parent;
             this.Name = Name;
@@ -91,7 +91,7 @@ namespace StarShips.Parts
             HP = (StatWithMax)info.GetValue("HP", typeof(StatWithMax));
             _mass = (double)info.GetValue("Mass", typeof(double));
             _actionDescription = (string)info.GetValue("ActionDescription", typeof(string));
-            _actions = (List<ShipAction>)info.GetValue("Actions", typeof(List<ShipAction>));
+            _actions = (List<EidosAction>)info.GetValue("Actions", typeof(List<EidosAction>));
         }
 
         public ActionPart(XElement description, Ship parent)

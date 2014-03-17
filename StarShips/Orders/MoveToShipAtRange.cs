@@ -11,9 +11,9 @@ using StarShips.Orders.Interfaces;
 namespace StarShips.Orders
 {
     [Serializable]
-    public class MoveToShipAtRange : ShipOrder, ISerializable, IMoveToShipOrder
+    public class MoveToShipAtRange : ShipOrder, ISerializable, ITacticalMoveToShipOrder
     {
-        public event OrderDelegates.ShipMoveEvent OnShipMove;
+        public event OrderDelegates.TacticalShipMoveEvent OnShipMove;
         public override List<string> ExecuteOrder(Ship ship)
         {
             List<string> result = new List<string>();
@@ -41,14 +41,14 @@ namespace StarShips.Orders
             string result = "Could Not Move";
             if (OnShipMove != null)
             {
-                Point sourceLoc = ship.Position;
-                Point targetLoc = ((Ship)this.OrderValues[0]).Position;
+                Point sourceLoc = ship.TacticalPosition;
+                Point targetLoc = ((Ship)this.OrderValues[0]).TacticalPosition;
                 LocationCollection locations = (LocationCollection)this.OrderValues[2];
                 int range = (int)this.OrderValues[1];
                 Point targetCurrentLoc = locations.GetTargetPointOnRadius(sourceLoc, targetLoc, range, locations.GetLength(0), locations.GetLength(1));
-                if (ship.Position != targetCurrentLoc && ship.MP.Current > 0)
+                if (ship.TacticalPosition != targetCurrentLoc && ship.MP.Current > 0)
                 {
-                    Point from = ship.Position;
+                    Point from = ship.TacticalPosition;
                     Point to = locations.MoveShipToPoint(ship, targetCurrentLoc);
                     OnShipMove(this, new EventArgs(), ship.Image, from, to, ship.WeaponsFiredAlready);
                 }

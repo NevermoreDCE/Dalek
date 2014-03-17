@@ -10,61 +10,19 @@ using StarShips.Utility;
 namespace StarShips
 {
     [Serializable]
-    public abstract class ShipPart
+    public abstract class ShipPart : EidosPart
     {
         #region Private Variables
-        protected StatWithMax _hp = new StatWithMax();
-        protected string _name = "No Name";
-        protected bool _isDestroyed = false;
-        protected Ship _target;
-        protected Ship _parent;
-        protected List<ShipAction> _actions = new List<ShipAction>();
         protected double _mass = 0;
         protected int _pointCost = 0;
         #endregion
 
         #region Public Properties
-        public StatWithMax HP { get { return _hp; } set { _hp = value; } }
-        public string Name { get { return _name; } set { _name = value; } }
-        public bool IsDestroyed { get { return _isDestroyed; } set { _isDestroyed = value; } }
-        public Ship Target { get { return _target; } set { _target = value; } }
-        public Ship Parent { get { return _parent; } }
-        public List<ShipAction> Actions { get { return _actions; } set { _actions = value; } }
         public double Mass { get { return _mass; } }
         public int PointCost { get { return _pointCost; } set { _pointCost = value; } }
         #endregion
 
-
-        public abstract override string ToString();
-        
-        public abstract void GetObjectXML(XDocument sourceDoc);
-
-
-        /// <summary>
-        /// Repair the part, removing Destroyed status and adding HP (up to max)
-        /// </summary>
-        /// <param name="amount">Number of HP to repair</param>
-        /// <returns>Status result</returns>
-        public string Repair(int amount)
-        {
-            string result = string.Empty;
-
-            if (this.IsDestroyed)
-            {
-                result = string.Format("Repaired {0}", this.Name);
-                this.IsDestroyed = false;
-            }
-
-            if (this.HP.Current < this.HP.Max && amount > 0)
-            {
-                int amountRepaired = this.HP.Add(amount);
-                result = string.Format("Repaired {0} for {1}", this.Name, amountRepaired);
-            }
-
-            return result;
-        }
-
-        public string DoAction(Ship target)
+        public override string DoAction(Eidos target)
         {
             if (_target == null)
                 _target = target;
@@ -99,7 +57,7 @@ namespace StarShips
         internal void loadActions(XElement ActionsElement)
         {
             List<XElement> actionValues;
-            ShipAction newAction;
+            EidosAction newAction;
             foreach (var action in ActionsElement.Elements())
             {
                 actionValues = new List<XElement>();
@@ -112,11 +70,11 @@ namespace StarShips
                     object[] actVals = new object[actionValues.Count];
                     foreach(var val in actionValues)
                         actVals[int.Parse(val.Attribute("index").Value)]=int.Parse(val.Value);
-                    newAction = (ShipAction)Activator.CreateInstance(newActionType, actVals);
+                    newAction = (EidosAction)Activator.CreateInstance(newActionType, actVals);
                 }
                     else
                 {
-                    newAction = (ShipAction)Activator.CreateInstance(newActionType);
+                    newAction = (EidosAction)Activator.CreateInstance(newActionType);
                 }
                 this._actions.Add(newAction);
             }
@@ -128,8 +86,8 @@ namespace StarShips
             if (this is WeaponPart)
             {
                 WeaponPart source = (WeaponPart)this;
-                List<ShipAction> newActions = new List<ShipAction>();
-                foreach (ShipAction oldAct in this.Actions)
+                List<EidosAction> newActions = new List<EidosAction>();
+                foreach (EidosAction oldAct in this.Actions)
                 {
                     object[] oldValues = new object[oldAct.ActionValues.Length];
                     for (int i = 0; i < oldValues.Length; i++)
@@ -137,7 +95,7 @@ namespace StarShips
                         oldValues[i] = oldAct.ActionValues[i];
                     }   
                     Type t = oldAct.GetType();
-                    ShipAction newAct = (ShipAction)Activator.CreateInstance(t,oldValues);
+                    EidosAction newAct = (EidosAction)Activator.CreateInstance(t,oldValues);
                     newActions.Add(newAct);
                 }
                 result = new WeaponPart(source.Parent, source.Name, source.HP.Max, source.Mass, source.WeaponDamage,source.Range,source.DamageType,source.FiringType, source.CritMultiplier, source.ReloadTime, newActions);
@@ -145,8 +103,8 @@ namespace StarShips
             else if (this is DefensePart)
             {
                 DefensePart source = (DefensePart)this;
-                List<ShipAction> newActions = new List<ShipAction>();
-                foreach (ShipAction oldAct in this.Actions)
+                List<EidosAction> newActions = new List<EidosAction>();
+                foreach (EidosAction oldAct in this.Actions)
                 {
                     object[] oldValues = new object[oldAct.ActionValues.Length];
                     for (int i = 0; i < oldValues.Length; i++)
@@ -154,7 +112,7 @@ namespace StarShips
                         oldValues[i] = oldAct.ActionValues[i];
                     }   
                     Type t = oldAct.GetType();
-                    ShipAction newAct = (ShipAction)Activator.CreateInstance(t,oldValues);
+                    EidosAction newAct = (EidosAction)Activator.CreateInstance(t,oldValues);
                     newActions.Add(newAct);
                 }
                 result = new DefensePart(source.Parent, source.Name, source.HP.Max, source.Mass, source.DR, source.DownAdjective, source.PenetrateVerb, newActions);
@@ -162,8 +120,8 @@ namespace StarShips
             else if (this is EnginePart)
             {
                 EnginePart source = (EnginePart)this;
-                List<ShipAction> newActions = new List<ShipAction>();
-                foreach (ShipAction oldAct in this.Actions)
+                List<EidosAction> newActions = new List<EidosAction>();
+                foreach (EidosAction oldAct in this.Actions)
                 {
                     object[] oldValues = new object[oldAct.ActionValues.Length];
                     for (int i = 0; i < oldValues.Length; i++)
@@ -171,7 +129,7 @@ namespace StarShips
                         oldValues[i] = oldAct.ActionValues[i];
                     }
                     Type t = oldAct.GetType();
-                    ShipAction newAct = (ShipAction)Activator.CreateInstance(t, oldValues);
+                    EidosAction newAct = (EidosAction)Activator.CreateInstance(t, oldValues);
                     newActions.Add(newAct);
                 }
                 result = new EnginePart(source.Parent, source.Name, source.HP.Max, source.Mass, source.Thrust, newActions);
@@ -179,8 +137,8 @@ namespace StarShips
             else
             {
                 ActionPart source = (ActionPart)this;
-                List<ShipAction> newActions = new List<ShipAction>();
-                foreach (ShipAction oldAct in this.Actions)
+                List<EidosAction> newActions = new List<EidosAction>();
+                foreach (EidosAction oldAct in this.Actions)
                 {
                     object[] oldValues = new object[oldAct.ActionValues.Length];
                     for (int i = 0; i < oldValues.Length; i++)
@@ -188,7 +146,7 @@ namespace StarShips
                         oldValues[i] = oldAct.ActionValues[i];
                     }
                     Type t = oldAct.GetType();
-                    ShipAction newAct = (ShipAction)Activator.CreateInstance(t, oldValues);
+                    EidosAction newAct = (EidosAction)Activator.CreateInstance(t, oldValues);
                     newActions.Add(newAct);
                 }
                 result = new ActionPart(source.Parent, source.Name, source.HP.Max, source.Mass, source.Description, newActions);

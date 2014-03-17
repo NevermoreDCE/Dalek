@@ -62,7 +62,7 @@
       <MaxHP>1</MaxHP>
       <ActionDescription>Regen: 5 HPs</ActionDescription>
       <Actions>
-        <action type="StarShips.Actions.RepairTargetShip">
+        <action type="StarShips.Actions.RepairTargetEidos">
           <Value index="0">5</Value>
         </action>
       </Actions>

@@ -6,9 +6,9 @@ using StarShips.Orders.Delegates;
 
 namespace StarShips.Orders.Interfaces
 {
-    public interface IMoveOrder
+    public interface ITacticalMoveOrder
     {
-        event OrderDelegates.ShipMoveEvent OnShipMove;
+        event OrderDelegates.TacticalShipMoveEvent OnShipMove;
         List<string> ExecuteOrder(Ship ship, int impulse);
     }
 }

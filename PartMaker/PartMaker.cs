@@ -20,7 +20,7 @@ namespace PartMaker
         ThemeSettings themeSettings;
         List<ShipPart> ExistingParts = new List<ShipPart>();
         ShipPart Part;
-        List<ShipAction> PartActions = new List<ShipAction>();
+        List<EidosAction> PartActions = new List<EidosAction>();
         BindingSource bs = new BindingSource();
         string filename = "ShipParts.xml";
 
@@ -118,11 +118,11 @@ namespace PartMaker
 
         void ShowActions()
         {
-            var type = typeof(ShipAction);
+            var type = typeof(EidosAction);
             IEnumerable<Type> partListE = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(s => s.GetTypes())
                 .Where(p => type.IsAssignableFrom(p) && p.GetType() != type);
-            List<Type> partList = new List<Type>(partListE.Where(t => t != typeof(ShipAction)));
+            List<Type> partList = new List<Type>(partListE.Where(t => t != typeof(EidosAction)));
             cbxWeapPartActions.DataSource = partList;
             cbxWeapPartActions.DisplayMember = "Name";
             cbxWeapPartActions.SelectedIndex = 0;
@@ -142,7 +142,7 @@ namespace PartMaker
             Type newActType = (Type)PartActions.SelectedItem;
             int[] ActionValues = new int[1];
             ActionValues[0] = int.Parse(ActionValue.Value.ToString());
-            ShipAction newAct = (ShipAction)Activator.CreateInstance(newActType, ActionValues);
+            EidosAction newAct = (EidosAction)Activator.CreateInstance(newActType, ActionValues);
             bs.Add(newAct);
         }
 

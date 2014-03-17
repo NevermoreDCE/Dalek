@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace StarShips.Orders.Interfaces
+namespace _4XIM
 {
-    interface IMoveToShipOrder : IMoveOrder
+    public interface ISwitchable
     {
+        void UtilizeState(object state);
     }
 }

@@ -15,7 +15,7 @@ namespace ShipEditor
         List<ShipHull> ExistingHulls = new List<ShipHull>();
         Ship ship = new Ship();
         BindingSource bsShipParts = new BindingSource();
-        List<ShipPart> ExistingParts = new List<ShipPart>();
+        List<EidosPart> ExistingParts = new List<EidosPart>();
         //string defaultShipPartsFileName = "ShipParts.xml";
         XDocument shipDoc = new XDocument(new XElement("ships"));
         string currentShipDocFileName = "Empires\\Default\\Ships.xml";
@@ -26,8 +26,8 @@ namespace ShipEditor
             drpPartList.ItemValueNeeded += new Microsoft.VisualBasic.PowerPacks.DataRepeaterItemValueEventHandler(drpPartList_ItemValueNeeded);
             cbxShipHullTypes.SelectedIndexChanged += new EventHandler(cbxShipHullTypes_SelectedIndexChanged);
             tbxShipName.TextChanged += new EventHandler(tbxShipName_TextChanged);
-            lblPartName.DataBindings.Add("Text", ship.Equipment, "Name");
-            bsShipParts.DataSource = ship.Equipment;
+            lblPartName.DataBindings.Add("Text", ship.Parts, "Name");
+            bsShipParts.DataSource = ship.Parts;
             LoadHulls();
             LoadParts();
             shipDoc = XDocument.Load(currentShipDocFileName);
@@ -51,7 +51,8 @@ namespace ShipEditor
         private void LoadParts()
         {
             XDocument doc = XDocument.Load("ShipParts.xml");
-            ExistingParts = ShipPart.GetShipPartList(doc, new Ship());
+            foreach(var part in ShipPart.GetShipPartList(doc, new Ship()))
+                ExistingParts.Add(part);
             cbxPartList.DataSource = ExistingParts;
             cbxPartList.DisplayMember = "Name";
             cbxPartList.SelectedIndex = -1;
@@ -64,7 +65,7 @@ namespace ShipEditor
 
         void drpPartList_ItemValueNeeded(object sender, Microsoft.VisualBasic.PowerPacks.DataRepeaterItemValueEventArgs e)
         {
-            if (e.ItemIndex < ship.Equipment.Count && e.ItemIndex>=0)
+            if (e.ItemIndex < ship.Parts.Count && e.ItemIndex>=0)
             {
                 switch (e.Control.Name)
                 {
@@ -112,7 +113,7 @@ namespace ShipEditor
                         i = cbxShipHullTypes.Items.IndexOf(item);
                 cbxShipHullTypes.SelectedIndex = i;
             }
-            bsShipParts.DataSource = ship.Equipment;
+            bsShipParts.DataSource = ship.Parts;
             drpPartList.DataSource = bsShipParts;
             drpPartList.BeginResetItemTemplate();
             drpPartList.EndResetItemTemplate();
@@ -153,7 +154,7 @@ namespace ShipEditor
                     if (selectedHull.AllowedParts.Any(f => f.PartType == typeof(WeaponPart) && f.ActionMechanism == ((WeaponPart)si).FiringType))
                     {
                         PartCount pc = selectedHull.AllowedParts.First(f => f.PartType == typeof(WeaponPart) && f.ActionMechanism == ((WeaponPart)si).FiringType);
-                        if (ship.Equipment.Count(f => f is WeaponPart && ((WeaponPart)f).FiringType == pc.ActionMechanism) >= pc.CountOfParts)
+                        if (ship.Parts.Count(f => f is WeaponPart && ((WeaponPart)f).FiringType == pc.ActionMechanism) >= pc.CountOfParts)
                         {
                             allowedPart = false;
                             message = string.Format("Cannot add Weapon with Firing Type {0}, you already have the maximum {1} of those.", pc.ActionMechanism, pc.CountOfParts);
@@ -163,7 +164,7 @@ namespace ShipEditor
                     else // is weapon, but no firing type match, check for generic weapon limit
                     {
                         PartCount pc = selectedHull.AllowedParts.First(f => f.PartType == typeof(WeaponPart) && f.ActionMechanism == string.Empty);
-                        if (ship.Equipment.Count(f => f is WeaponPart) >= pc.CountOfParts)
+                        if (ship.Parts.Count(f => f is WeaponPart) >= pc.CountOfParts)
                         {
                             allowedPart = false;
                             message = string.Format("Cannot add Weapon, you already have the maximum {0} of those.", pc.CountOfParts);
@@ -177,7 +178,7 @@ namespace ShipEditor
                 if (selectedHull.AllowedParts.Any(f => f.PartType == typeof(DefensePart)))
                 {
                     PartCount pc = selectedHull.AllowedParts.First(f => f.PartType == typeof(DefensePart));
-                    if (ship.Equipment.Count(f => f is DefensePart) >= pc.CountOfParts)
+                    if (ship.Parts.Count(f => f is DefensePart) >= pc.CountOfParts)
                     {
                         allowedPart = false;
                         message = string.Format("Cannot add Defense, you already have the maximum {0} of those.", pc.CountOfParts);
@@ -189,7 +190,7 @@ namespace ShipEditor
                 if (selectedHull.AllowedParts.Any(f => f.PartType == typeof(ActionPart)))
                 {
                     PartCount pc = selectedHull.AllowedParts.First(f => f.PartType == typeof(ActionPart));
-                    if (ship.Equipment.Count(f => f is ActionPart) >= pc.CountOfParts)
+                    if (ship.Parts.Count(f => f is ActionPart) >= pc.CountOfParts)
                     {
                         allowedPart = false;
                         message = string.Format("Cannot add Action, you already have the maximum {0} of those.", pc.CountOfParts);
@@ -201,7 +202,7 @@ namespace ShipEditor
                 if (selectedHull.AllowedParts.Any(f => f.PartType == typeof(EnginePart)))
                 {
                     PartCount pc = selectedHull.AllowedParts.First(f => f.PartType == typeof(EnginePart));
-                    if (ship.Equipment.Count(f => f is EnginePart) >= pc.CountOfParts)
+                    if (ship.Parts.Count(f => f is EnginePart) >= pc.CountOfParts)
                     {
                         allowedPart = false;
                         message = string.Format("Cannot add Engine, you already have the maximum {0} of those.", pc.CountOfParts);
@@ -255,7 +256,7 @@ namespace ShipEditor
             LoadShipList(shipDoc);
             ShowShipList();
             ship = new Ship();
-            bsShipParts.DataSource = ship.Equipment;
+            bsShipParts.DataSource = ship.Parts;
             ShowShip();
         }
 

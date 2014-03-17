@@ -12,10 +12,10 @@ using System.Diagnostics;
 namespace StarShips.Orders
 {
     [Serializable]
-    public class FireWeaponAtTarget: ShipOrder,IWeaponOrder, ISerializable
+    public class FireWeaponAtTarget: ShipOrder,ITacticalWeaponOrder, ISerializable
     {
         #region Events
-        public event OrderDelegates.WeaponFiredEvent OnWeaponFired;
+        public event OrderDelegates.TacticalWeaponFiredEvent OnWeaponFired;
         #endregion
 
         public override List<string> ExecuteOrder(Ship ship)
@@ -58,7 +58,7 @@ namespace StarShips.Orders
                         else
                         {
                             // target is in range
-                            if (LocationCollection.GetDistance(ship.Position, target.Position) >= weapon.Range + 1)
+                            if (LocationCollection.GetTacticalDistance(ship.TacticalPosition, target.TacticalPosition) >= weapon.Range + 1)
                             {
                                 result.Add("Target Out Of Range");
                                 Debug.WriteLine(string.Format("Resolving {0}, Target Out Of Range", weapon.Name));
@@ -67,7 +67,7 @@ namespace StarShips.Orders
                             {
                                 weapon.Target = target;
                                 result = result.Concat(weapon.Fire()).ToList<string>();
-                                OnWeaponFired(this, new EventArgs(), ship.Position, target.Position, weapon.FiringType);
+                                OnWeaponFired(this, new EventArgs(), ship.TacticalPosition, target.TacticalPosition, weapon.FiringType);
                                 this.IsCompleted = true;
                             }
                         }
@@ -95,7 +95,7 @@ namespace StarShips.Orders
         {
             WeaponPart weapon = (WeaponPart)this.OrderValues[0];
             Ship target = (Ship)this.OrderValues[1];
-            return LocationCollection.GetDistance(ship.Position, target.Position) <= weapon.Range+1;
+            return LocationCollection.GetTacticalDistance(ship.TacticalPosition, target.TacticalPosition) <= weapon.Range+1;
         }
 
         #region Constructors

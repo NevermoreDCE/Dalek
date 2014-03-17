@@ -77,6 +77,7 @@ namespace StarShips.Parts
         /// <returns>Status result</returns>
         public List<string> Fire(int hitAbove, int critAbove)
         {
+            Ship targetShip = (Ship)Target;
             List<string> result = new List<string>();
             _currentReload = _reloadTime;
             using (RNG rng = new RNG())
@@ -87,19 +88,19 @@ namespace StarShips.Parts
                 {
                     result.Add(string.Format("{0} CRITS {1} for {2}",
                         this.Name,
-                        Target.ClassName,
+                        targetShip.Name,
                         this.WeaponDamage
                         ));
-                    result = result.Concat(Target.HitFor(_weaponDamage * _critMultiplier)).ToList<string>();
+                    result = result.Concat(targetShip.HitFor(_weaponDamage * _critMultiplier)).ToList<string>();
                 }
                 else if (hitNum >= hitAbove)
                 {
                     result.Add(string.Format("{0} hits {1} for {2}",
                         this.Name,
-                        Target.ClassName,
+                        targetShip.Name,
                         this.WeaponDamage
                         ));
-                    result = result.Concat(Target.HitFor(_weaponDamage)).ToList<string>();
+                    result = result.Concat(targetShip.HitFor(_weaponDamage)).ToList<string>();
                 }
                 else
                     result.Add(string.Format("{0} Missed!", this.Name));
@@ -194,7 +195,7 @@ namespace StarShips.Parts
         #endregion
 
         #region Constructors
-        private void initWeaponPart(Ship Parent, string Name, int MaxHP, double Mass, int Damage,double Range, string DamageType, string FiringType, int CritMultiplier, int ReloadTime, List<ShipAction> Actions)
+        private void initWeaponPart(Ship Parent, string Name, int MaxHP, double Mass, int Damage,double Range, string DamageType, string FiringType, int CritMultiplier, int ReloadTime, List<EidosAction> Actions)
         {
             this._parent = Parent;
             this.Name = Name;
@@ -209,9 +210,9 @@ namespace StarShips.Parts
             _actions = Actions;
             _weaponRange = Range;
         }
-        public WeaponPart(Ship Parent, string Name, int MaxHP, double Mass, int Damage, double Range, string DamageType, string FiringType, int CritMultiplier, int ReloadTime, List<ShipAction> Actions)
+        public WeaponPart(Eidos Parent, string Name, int MaxHP, double Mass, int Damage, double Range, string DamageType, string FiringType, int CritMultiplier, int ReloadTime, List<EidosAction> Actions)
         {
-            initWeaponPart(Parent, Name, MaxHP, Mass, Damage, Range, DamageType, FiringType, CritMultiplier, ReloadTime, Actions);
+            initWeaponPart((Ship)Parent, Name, MaxHP, Mass, Damage, Range, DamageType, FiringType, CritMultiplier, ReloadTime, Actions);
         }
         public WeaponPart(SerializationInfo info, StreamingContext ctxt)
         {
@@ -225,7 +226,7 @@ namespace StarShips.Parts
             _firingType = (string)info.GetValue("FiringType", typeof(string));
             _reloadTime = (int)info.GetValue("ReloadTime", typeof(int));
             _currentReload = (int)info.GetValue("CurrentReload", typeof(int));
-            _actions = (List<ShipAction>)info.GetValue("Actions", typeof(List<ShipAction>));
+            _actions = (List<EidosAction>)info.GetValue("Actions", typeof(List<EidosAction>));
             _weaponRange = (double)info.GetValue("WeaponRange", typeof(double));
         }
         public WeaponPart(XElement description, Ship parent)

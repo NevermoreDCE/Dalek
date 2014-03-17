@@ -69,7 +69,7 @@ namespace StarShips.Players
                 {
                     foreach(Player p in gameState.Players.Where(f=>f!=this && !f.IsDefeated))
                         foreach(Ship s in p.Ships.Where(f=>!f.IsDestroyed))
-                            AllEnemyShips.Add(new Tuple<Ship,double>(s,LocationCollection.GetDistance(ship.Position,s.Position)));
+                            AllEnemyShips.Add(new Tuple<Ship,double>(s,LocationCollection.GetTacticalDistance(ship.TacticalPosition,s.TacticalPosition)));
                     counter++;
                 }
 
@@ -92,12 +92,12 @@ namespace StarShips.Players
                     Ship targetShip = EachEnemyShip.First(f => f.Range == EachEnemyShip.Min(z => z.Range)).Ship;
 
                     //add move order (Move to target and Minimum Weapon Range)
-                    int range = Convert.ToInt32(ship.Equipment.Where(f=>!f.IsDestroyed && f is WeaponPart).Min(f=>((WeaponPart)f).Range));
+                    int range = Convert.ToInt32(ship.Parts.Where(f=>!f.IsDestroyed && f is WeaponPart).Min(f=>((WeaponPart)f).Range));
                     MoveToShipAtRange mtsar = new MoveToShipAtRange(targetShip, range, gameState.CombatLocations);
                     ship.Orders.Add(mtsar);
 
                     //add attack orders (Attack target with all weapons)
-                    foreach (WeaponPart weapon in ship.Equipment.Where(f=>!f.IsDestroyed && f is WeaponPart))
+                    foreach (WeaponPart weapon in ship.Parts.Where(f=>!f.IsDestroyed && f is WeaponPart))
                     {
                         FireWeaponAtTarget fwat = new FireWeaponAtTarget(weapon, targetShip);
                         ship.Orders.Add(fwat);
@@ -106,7 +106,7 @@ namespace StarShips.Players
                     // calculate if this ship is enough to destroy target within Aggressiveness
                     // this Damage Per Turn
                     double totalDPT = 0;
-                    foreach (WeaponPart weapon in ship.Equipment.Where(f => !f.IsDestroyed && f is WeaponPart))
+                    foreach (WeaponPart weapon in ship.Parts.Where(f => !f.IsDestroyed && f is WeaponPart))
                         if (weapon.ReloadTime > 0)
                             totalDPT += (weapon.WeaponDamage / weapon.ReloadTime);
                         else
@@ -119,7 +119,7 @@ namespace StarShips.Players
 
                     // target total health
                     double targetHealth = targetShip.HP.Current;
-                    foreach (DefensePart defense in targetShip.Equipment.Where(f => !f.IsDestroyed && f is DefensePart))
+                    foreach (DefensePart defense in targetShip.Parts.Where(f => !f.IsDestroyed && f is DefensePart))
                     {
                         targetHealth += defense.DR + defense.HP.Current;
                     }

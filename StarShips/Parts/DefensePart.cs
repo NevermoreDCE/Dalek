@@ -129,7 +129,7 @@ namespace StarShips.Parts
         #endregion
 
         #region Constructors
-        public DefensePart(Ship parent, string Name, int MaxHP, double Mass, int DR, string DownAdjective, string PenetrateVerb, List<ShipAction> Actions)
+        public DefensePart(Eidos parent, string Name, int MaxHP, double Mass, int DR, string DownAdjective, string PenetrateVerb, List<EidosAction> Actions)
         {
             this._parent = parent;
             this.Name = Name;
@@ -151,7 +151,7 @@ namespace StarShips.Parts
             _mass = (double)info.GetValue("Mass", typeof(double));
             _downAdjective = (string)info.GetValue("DownAdjective", typeof(string));
             _penetrateVerb = (string)info.GetValue("PenetrateVerb", typeof(string));
-            _actions = (List<ShipAction>)info.GetValue("Actions", typeof(List<ShipAction>));
+            _actions = (List<EidosAction>)info.GetValue("Actions", typeof(List<EidosAction>));
         }
 
         public DefensePart(XElement description, Ship parent)

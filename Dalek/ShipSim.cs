@@ -69,10 +69,10 @@ namespace Dalek
             {
                 results = new List<string>();
                 Ship1.HP.Current = Ship1.HP.Max;
-                foreach (ShipPart part in Ship1.Equipment)
+                foreach (ShipPart part in Ship1.Parts)
                     part.Repair(int.MaxValue);
                 Ship2.HP.Current = Ship2.HP.Max;
-                foreach (ShipPart part in Ship2.Equipment)
+                foreach (ShipPart part in Ship2.Parts)
                     part.Repair(int.MaxValue);
 
                 Round = 1;
@@ -214,7 +214,7 @@ namespace Dalek
             tlp.Controls.Clear();
             addLabel(string.Format("Current HP: {0}", ship.HP.ToString()), Color.Black, rowcount, tlp);
             rowcount++;
-            foreach (ShipPart part in ship.Equipment)
+            foreach (ShipPart part in ship.Parts)
             {
                 addLabel(part.ToString(), (part.IsDestroyed ? Color.Red : Color.Black), rowcount, tlp);
                 rowcount++;

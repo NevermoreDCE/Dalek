@@ -12,7 +12,19 @@ namespace StarShips.Locations
     {
         public string Name;
         public bool IsBlocked = false;
-        public List<Ship> Ships = new List<Ship>();
+        List<Ship> _ships = new List<Ship>();
+        public List<Ship> Ships
+        {
+            get { return _ships; }
+            set { _ships = value; }
+        }
+        List<Eidos> _stellars = new List<Eidos>();
+
+        public List<Eidos> Stellars
+        {
+            get { return _stellars; }
+            set { _stellars = value; }
+        }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {

@@ -75,5 +75,6 @@
             
         </StackPanel>
         <Menu Height="23" Name="menu1" Width="200" />
+        <Menu Height="100"/>
     </StackPanel>
 </Window>
