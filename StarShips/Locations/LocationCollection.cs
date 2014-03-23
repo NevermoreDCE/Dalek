@@ -142,6 +142,18 @@ namespace StarShips.Locations
 
             return next;
         }
+        public Point WarpShipToSystem(Ship ship, StarSystem nextSystem)
+        {
+            StarSystem previousSystem = ship.StrategicSystem;
+            Point next = nextSystem.GetWarpPointPosition(previousSystem);
+            this[ship.StrategicPosition.X, ship.StrategicPosition.Y].Ships.Remove(ship);
+            nextSystem.StrategicLocations[next.X, next.Y].Ships.Add(ship);
+            ship.StrategicPosition = next;
+            ship.StrategicSystem = nextSystem;
+            // Warping does not cost MP
+
+            return next;
+        }
         #endregion
 
         #region Private Methods
@@ -367,6 +379,8 @@ namespace StarShips.Locations
             return (IEnumerator<Location>)GetEnumerator();
         }
         #endregion
+
+        
     }
 
     public class LocColEnum : IEnumerator<Location>

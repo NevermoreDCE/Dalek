@@ -56,6 +56,12 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Code\Switcher.cs" />
+    <Compile Include="UserControls\AddPlayers.xaml.cs">
+      <DependentUpon>AddPlayers.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\AddStartingShips.xaml.cs">
+      <DependentUpon>AddStartingShips.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\MainMenu.xaml.cs">
       <DependentUpon>MainMenu.xaml</DependentUpon>
     </Compile>
@@ -75,6 +81,14 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="UserControls\AddPlayers.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\AddStartingShips.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\MainMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

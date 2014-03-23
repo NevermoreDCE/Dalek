@@ -24,7 +24,12 @@
         <!-- Eidos in selected location (Top Right)-->
         <StackPanel Grid.Row="0" Grid.Column="1">
             <TextBlock Name="txbSelectedSystemName" Text="Ships in Test System - Sector 71" Foreground="White" FontSize="26"/>
-            <ListBox Name="lbxTargetShips" Height="404" Background="Transparent" Foreground="White" SelectionChanged="lbxTargetShips_SelectionChanged">
+            <ListBox Name="lbxTargetShips" Height="404" Background="Transparent" Foreground="White" SelectionChanged="lbxTargetShips_SelectionChanged" >
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <EventSetter Event="MouseDoubleClick" Handler="lbxTargetShips_MouseDoubleClick"/>
+                    </Style>
+                </ListBox.ItemContainerStyle>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
@@ -61,9 +66,34 @@
         
         <!-- Selected Status (Bottom Left)-->
         <StackPanel Grid.Row="1" Grid.Column="0">
-            <TextBlock Text="Status" Foreground="White" FontSize="26"/>
-            <ScrollViewer CanContentScroll="true" VerticalScrollBarVisibility="Auto">
-                <StackPanel Name="spTargetShip" Height="459"></StackPanel>
+            <TextBlock Text="Current Ship" Foreground="White" FontSize="16"/>
+            <Grid Name="grdCurrentShip">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="32"/>
+                    <ColumnDefinition Width="32"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="16"/>
+                    <RowDefinition Height="16"/>
+                </Grid.RowDefinitions>
+                <Image Name="imgCurrentShipPlayerIcon" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Height="32" Width="32"/>
+                <Image Name="imgCurrentShipShipIcon" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Height="32" Width="32"/>
+                <TextBlock Name="txtCurrentShipName" Grid.Row="0" Grid.Column="2" Foreground="White" Padding="5 0 5 0" Text="" />
+                <Grid Grid.Row="1" Grid.Column="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="90"/>
+                        <ColumnDefinition Width="60"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Name="txtCurrentShipLocation" Grid.Column="0" Foreground="White" Padding="5 0 5 0" Text=""/>
+                    <TextBlock Name="txtCurrentShipHP" Grid.Column="1" Foreground="White" Padding="5 0 5 0" Text=""/>
+                    <TextBlock Name="txtCurrentShipMP" Grid.Column="2" Foreground="White" Padding="5 0 5 0" Text=""/>
+                </Grid>
+            </Grid>
+            <TextBlock Text="Status" Foreground="White" FontSize="26" FontWeight="Bold"/>
+            <ScrollViewer CanContentScroll="true" VerticalScrollBarVisibility="Visible"  Height="391">
+                <StackPanel Name="spSelectedEidos" ></StackPanel>
             </ScrollViewer>
         </StackPanel>
         

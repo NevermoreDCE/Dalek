@@ -46,7 +46,7 @@ namespace _4XIM.UserControls
         private void btnNewGame_Click(object sender, RoutedEventArgs e)
         {
             Game newGame = initNewGame();
-            Switcher.Switch(new StrategicWindow(newGame));
+            Switcher.Switch(new AddPlayers(newGame));
         }
 
         Game initNewGame()
@@ -94,9 +94,11 @@ namespace _4XIM.UserControls
                 {
                     rand = rng.d(StartingWarpPointsMax-1) + 1;
                 }
-                while(system.GetCountOfWarpPoints()<rand)
+                int attempts = 0;
+                while(system.GetCountOfWarpPoints()<rand && attempts<StartingWarpPointsMax+1)
                 {
-                    AddWarpPointToSystem(result, system);    
+                    AddWarpPointToSystem(result, system);
+                    attempts++;
                 }
             }
 
@@ -192,33 +194,40 @@ namespace _4XIM.UserControls
         private static void AddWarpPointToSystem(Game result, StarSystem system)
         {
             StarSystem targetSystem = new StarSystem();
-            targetSystem = NearestSystemNotConnected(result, system);
+            int counter = 0;
+            while (targetSystem.GalacticCoordinates.X == -1 && counter<25)
+            {
+                targetSystem = NearestSystemNotConnected(result, system);
+                counter++;
+            }
+            if (targetSystem.GalacticCoordinates.X != -1)
+            {
+                // create points and assign opposite systems
+                WarpPoint thisSide = new WarpPoint();
+                WarpPoint thatSide = new WarpPoint();
 
-            // create points and assign opposite systems
-            WarpPoint thisSide = new WarpPoint();
-            WarpPoint thatSide = new WarpPoint();
+                // This side of the Warp Point
+                thisSide.StrategicPosition = WarpPointLocation(system);
+                thisSide.Name = targetSystem.Name;
+                thisSide.StrategicSystem = system;
+                thisSide.LinkedSystem = targetSystem;
+                thisSide.LinkedWarpPoint = thatSide;
+                system.StrategicLocations[thisSide.StrategicPosition.X, thisSide.StrategicPosition.Y].Stellars.Add(thisSide);
 
-            // This side of the Warp Point
-            thisSide.StrategicPosition = WarpPointLocation(system);
-            thisSide.Name = targetSystem.Name;
-            thisSide.StrategicSystem = system;
-            thisSide.LinkedSystem = targetSystem;
-            thisSide.LinkedWarpPoint = thatSide;
-            system.StrategicLocations[thisSide.StrategicPosition.X, thisSide.StrategicPosition.Y].Stellars.Add(thisSide);
-
-            // Other side of the Warp Point
-            thatSide.StrategicPosition = WarpPointLocation(targetSystem);
-            thatSide.Name = system.Name;
-            thatSide.StrategicSystem = targetSystem;
-            thatSide.LinkedSystem = system;
-            thatSide.LinkedWarpPoint = thisSide;
-            targetSystem.StrategicLocations[thatSide.StrategicPosition.X, thatSide.StrategicPosition.Y].Stellars.Add(thatSide);
+                // Other side of the Warp Point
+                thatSide.StrategicPosition = WarpPointLocation(targetSystem);
+                thatSide.Name = system.Name;
+                thatSide.StrategicSystem = targetSystem;
+                thatSide.LinkedSystem = system;
+                thatSide.LinkedWarpPoint = thisSide;
+                targetSystem.StrategicLocations[thatSide.StrategicPosition.X, thatSide.StrategicPosition.Y].Stellars.Add(thatSide);
+            }
         }
 
         private static StarSystem NearestSystemNotConnected(Game result, StarSystem system)
         {
             // get top 10% of systems ordered by distance
-            int topTenPercent = Convert.ToInt32(0.1 * result.StarSystems.Count());
+            int topTenPercent = Convert.ToInt32(0.1 * StartingWarpPointsMax * result.StarSystems.Count());
             List<StarSystem> NearbySystems = result.StarSystems.Where(f => f != system).OrderBy(r => RelativeDistance(system.GalacticCoordinates, r.GalacticCoordinates)).Take(topTenPercent).ToList<StarSystem>();
 
             // from top, find next not connected

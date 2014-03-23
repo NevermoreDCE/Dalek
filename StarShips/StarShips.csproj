@@ -56,12 +56,14 @@
     <Compile Include="Locations\LocationCollection.cs" />
     <Compile Include="Locations\Node.cs" />
     <Compile Include="Orders\Delegates\OrderDelegates.cs" />
-    <Compile Include="Orders\FireWeaponAtTarget.cs" />
+    <Compile Include="Orders\Interfaces\IStrategicMoveOrder.cs" />
+    <Compile Include="Orders\Strategic\MoveToLocationInSystem.cs" />
+    <Compile Include="Orders\Tactical\FireWeaponAtTarget.cs" />
     <Compile Include="Orders\Interfaces\ITacticalMoveOrder.cs" />
     <Compile Include="Orders\Interfaces\ITacticalMoveToShipOrder.cs" />
     <Compile Include="Orders\Interfaces\ITacticalWeaponOrder.cs" />
-    <Compile Include="Orders\MoveToLocation.cs" />
-    <Compile Include="Orders\MoveToShipAtRange.cs" />
+    <Compile Include="Orders\Tactical\MoveToLocation.cs" />
+    <Compile Include="Orders\Tactical\MoveToShipAtRange.cs" />
     <Compile Include="Parts\ActionPart.cs" />
     <Compile Include="Parts\DefensePart.cs" />
     <Compile Include="Actions\Interfaces\IShipPartAction.cs" />
@@ -86,6 +88,7 @@
     <Compile Include="Utility\ThemeSettings.cs" />
     <Compile Include="Utility\StatWithMax.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

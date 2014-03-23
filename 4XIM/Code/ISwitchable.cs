@@ -8,5 +8,6 @@ namespace _4XIM
     public interface ISwitchable
     {
         void UtilizeState(object state);
+        void EndTurn();
     }
 }

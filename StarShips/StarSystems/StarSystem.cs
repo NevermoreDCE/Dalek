@@ -1,6 +1,9 @@
 ﻿using StarShips.Locations;
+using StarShips.Planets;
+using StarShips.Stellars;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -44,6 +47,17 @@ namespace StarShips.StarSystems
             }
             set { _galaxyImage = value; }
         }
+        public List<Planet> Planets
+        {
+            get
+            {
+                List<Planet> result = new List<Planet>();
+                foreach (Location loc in _strategicLocations)
+                    foreach (Planet p in loc.Stellars.Where(f => f is Planet))
+                        result.Add(p);
+                return result;
+            }
+        }
         
         #endregion
 
@@ -78,6 +92,21 @@ namespace StarShips.StarSystems
         public override string ToString()
         {
             return Name;
+        }
+
+        public Point GetWarpPointPosition(StarSystem targetSystem)
+        {
+            Point result = new Point(-1, -1);
+            for (int x = 0; x < this.StrategicLocations.GetLength(0); x++)
+            {
+                for (int y = 0; y < this.StrategicLocations.GetLength(1); y++)
+                {
+                    if (this.StrategicLocations[x, y].Stellars.Any(s => s is WarpPoint))
+                        if (this.StrategicLocations[x, y].Stellars.Any(s => ((WarpPoint)s).LinkedSystem == targetSystem))
+                            result = new Point(x, y);
+                }
+            }
+            return result;
         }
         #endregion
 
