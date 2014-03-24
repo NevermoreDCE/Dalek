@@ -37,12 +37,16 @@ namespace _4XIM.UserControls
         {
             InitializeComponent();
         }
-
+        #region ISwitchable
         public void UtilizeState(object state)
         {
             throw new NotImplementedException();
         }
-
+        public void EndTurn()
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
         private void btnNewGame_Click(object sender, RoutedEventArgs e)
         {
             Game newGame = initNewGame();

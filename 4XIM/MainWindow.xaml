@@ -342,6 +342,7 @@
                 <MenuItem Header="_Save" Background="DarkGray"/>
                 <MenuItem Header="_Close" Background="DarkGray"/>
             </MenuItem>
+            <MenuItem Header="END TURN" Click="EndTurn_Click"/>
         </Menu>
         <ContentPresenter Name="cprMain"/>
     </DockPanel>

@@ -770,6 +770,7 @@ namespace _4XIM.UserControls
         {
             try
             {
+                List<string> TurnResults = new List<string>();
                 List<string> results = new List<string>();
                 
                 // exec orders
@@ -779,9 +780,9 @@ namespace _4XIM.UserControls
                         try
                         {
                             results = new List<string>();
-                            results = s.ExecuteOrders();
+                            results = s.ExecuteStrategicOrders();
                             foreach (string r in results.Where(f => f != string.Empty))
-                                statusWindow.Items.Insert(0, string.Format("{0}: {1}: {2}", p, s, r));
+                                TurnResults.Add(string.Format("{0}: {1}: {2}", p, s, r));
                         }
                         catch (Exception ex)
                         {
@@ -799,7 +800,7 @@ namespace _4XIM.UserControls
                             results = new List<string>();
                             results = s.EndOfTurn();
                             foreach (string r in results.Where(f => f != string.Empty))
-                                statusWindow.Items.Insert(0, string.Format("{0}: {1}: {2}", p, s, r));
+                                TurnResults.Add(string.Format("{0}: {1}: {2}", p, s, r));
                         }
                         catch (Exception ex)
                         {

@@ -44,5 +44,11 @@ namespace _4XIM
                 throw new ArgumentException("NextPage is not ISwitchable! " + nextPage.Name.ToString());
 
         }
+
+        private void EndTurn_Click(object sender, RoutedEventArgs e)
+        {
+            ISwitchable currentControl = (ISwitchable)cprMain.Content;
+            currentControl.EndTurn();
+        }
     }
 }

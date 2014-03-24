@@ -1526,7 +1526,7 @@ namespace WPFPathfinding
                                 try
                                 {
                                     results = new List<string>();
-                                    results = s.ExecuteOrders(impulse);
+                                    results = s.ExecuteTacticalOrders(impulse);
                                     foreach (string r in results.Where(f => f != string.Empty))
                                         statusWindow.Items.Insert(0, string.Format("{0}: {1}: {2}", p, s, r));
                                 }

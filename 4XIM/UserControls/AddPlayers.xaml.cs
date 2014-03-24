@@ -53,6 +53,10 @@ namespace _4XIM.UserControls
         {
             this.GameState = (Game)state;
         }
+        public void EndTurn()
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
         private int _numValue = 10;
@@ -168,5 +172,8 @@ namespace _4XIM.UserControls
                 cmdDown.IsEnabled = false;
             }
         }
+
+
+        
     }
 }

@@ -194,7 +194,7 @@ namespace StarShips
         /// </summary>
         /// <param name="Impulse">The Impulse number currently being executed</param>
         /// <returns>List of status results from Orders</returns>
-        public List<string> ExecuteOrders(int Impulse)
+        public List<string> ExecuteTacticalOrders(int Impulse)
         {
             List<string> result = new List<string>();
             if (this.Orders.Count > 0)
@@ -209,6 +209,32 @@ namespace StarShips
                 foreach (ITacticalWeaponOrder order in Orders.Where(f => f is ITacticalWeaponOrder && !f.IsCompleted))
                     if (order.IsInRange(this))
                         result = result.Concat(order.ExecuteOrder(this)).ToList<string>();
+                // other orders
+                //implement later on
+
+                // clear up completed orders
+                if (CompletedOrders.Count > 0)
+                {
+                    foreach (ShipOrder order in CompletedOrders)
+                        Orders.Remove(order);
+                    CompletedOrders.Clear();
+                }
+
+            }
+            return result.Where(f => f != string.Empty).ToList<string>();
+        }
+
+        public List<string> ExecuteStrategicOrders()
+        {
+            List<string> result = new List<string>();
+            if (this.Orders.Count > 0)
+            {
+                // move orders
+                while (this.MP.Current > 0 && this.Orders.Where(f => f is IStrategicMoveOrder).Count() > 0)
+                {
+                    IStrategicMoveOrder moveOrder = (IStrategicMoveOrder)Orders.First(f => f is IStrategicMoveOrder);
+                    result = result.Concat(moveOrder.ExecuteOrder(this)).ToList<string>();
+                }
                 // other orders
                 //implement later on
 
