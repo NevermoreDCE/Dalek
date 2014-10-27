@@ -101,8 +101,8 @@
         <StackPanel Grid.Row="1" Grid.Column="1">
             <TextBlock Text="Galaxy" Foreground="White" FontSize="26"/>
             <StackPanel>
-                <ScrollViewer CanContentScroll="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Height="444">
-                    <Canvas Height="{Binding ElementName=grdGalaxyView, Path=ActualHeight}" Width="{Binding ElementName=grdGalaxyView, Path=ActualWidth}">
+                <ScrollViewer Name="scrGalaxyScroll" CanContentScroll="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Height="444">
+                    <Canvas Name="cnvGalaxy" Height="{Binding ElementName=grdGalaxyView, Path=ActualHeight}" Width="{Binding ElementName=grdGalaxyView, Path=ActualWidth}">
                         <Grid Name="grdGalaxyView"  />
                         <Canvas Name="cnvGalaxyView" Width="{Binding ElementName=grdGalaxyView, Path=ActualWidth}" Height="{Binding ElementName=grdGalaxyView, Path=ActualHeight}" HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="80" />
                     </Canvas>

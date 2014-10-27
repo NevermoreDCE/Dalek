@@ -42,7 +42,8 @@ namespace StarShips.Orders.Strategic
                 {                      
                     // move ship towards TargetLoc
                     Point from = ship.StrategicPosition;
-                    Point to = ship.StrategicSystem.StrategicLocations.MoveShipToPoint(ship, targetLoc);
+                    Point to = ship.StrategicSystem.StrategicLocations.MoveShipToPoint(ship, ship.StrategicPosition, targetLoc);
+                    ship.StrategicPosition = to;
                     if (OnShipMove != null)
                         OnShipMove(this, new EventArgs(), ship.Image, ship.StrategicSystem, from, to);
                     result = string.Format("Moved towards {0},{1} in {2}", targetLoc.X, targetLoc.Y, ship.StrategicSystem.Name);
@@ -56,7 +57,8 @@ namespace StarShips.Orders.Strategic
                     Point WPLoc = ship.StrategicSystem.GetWarpPointPosition(nextSystem);
                     // move ship towards WPLoc
                     Point from = ship.StrategicPosition;
-                    Point to = ship.StrategicSystem.StrategicLocations.MoveShipToPoint(ship, WPLoc);
+                    Point to = ship.StrategicSystem.StrategicLocations.MoveShipToPoint(ship,ship.StrategicPosition, WPLoc);
+                    ship.StrategicPosition = to;
                     if (OnShipMove != null)
                         OnShipMove(this, new EventArgs(), ship.Image, ship.StrategicSystem, from, to);
                     result = String.Concat(result, string.Format("Moved towards {0},{1} in {2} ", targetLoc.X, targetLoc.Y, ship.StrategicSystem.Name));

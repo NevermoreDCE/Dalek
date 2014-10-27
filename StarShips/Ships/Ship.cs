@@ -230,9 +230,9 @@ namespace StarShips
             if (this.Orders.Count > 0)
             {
                 // move orders
-                while (this.MP.Current > 0 && this.Orders.Where(f => f is IStrategicMoveOrder).Count() > 0)
+                while (this.MP.Current > 0 && this.Orders.Where(f => f is IStrategicMoveOrder && !CompletedOrders.Contains(f)).Count() > 0)
                 {
-                    IStrategicMoveOrder moveOrder = (IStrategicMoveOrder)Orders.First(f => f is IStrategicMoveOrder);
+                    IStrategicMoveOrder moveOrder = (IStrategicMoveOrder)Orders.First(f => f is IStrategicMoveOrder && !CompletedOrders.Contains(f));
                     result = result.Concat(moveOrder.ExecuteOrder(this)).ToList<string>();
                 }
                 // other orders

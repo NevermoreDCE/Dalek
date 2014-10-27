@@ -51,7 +51,8 @@ namespace StarShips.Orders
             if (ship.TacticalPosition != targetLoc && ship.MP.Current > 0)
             {
                 Point from = ship.TacticalPosition;
-                Point to = locations.MoveShipToPoint(ship, targetLoc);
+                Point to = locations.MoveShipToPoint(ship,ship.TacticalPosition, targetLoc);
+                ship.TacticalPosition = to;
                 if (OnShipMove != null)
                     OnShipMove(this, new EventArgs(), ship.Image, from, to, ship.WeaponsFiredAlready);
             }

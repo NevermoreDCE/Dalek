@@ -6,6 +6,7 @@ using System.Linq;
 using StarShips.Locations;
 using StarShips.Parts;
 using StarShips.Orders;
+using StarShips.StarSystems;
 
 namespace StarShips.Players
 {
@@ -19,6 +20,7 @@ namespace StarShips.Players
         System.Windows.Controls.Image _icon;
         bool _isAI = false;
         int _aggressiveness = 0;
+        StarSystem _homeSystem;
         #endregion
 
         #region Public Properties
@@ -30,6 +32,7 @@ namespace StarShips.Players
         public ShipCollection Ships;
         public bool IsTurnComplete;
         public bool IsDefeated = false;
+        public StarSystem HomeSystem { get { return _homeSystem; } set { _homeSystem = value; } }
         #endregion
 
         #region Public Methods

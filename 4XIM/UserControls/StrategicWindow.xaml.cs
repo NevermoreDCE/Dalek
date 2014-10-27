@@ -72,12 +72,13 @@ namespace _4XIM.UserControls
 
         #region Private Variables
         Game GameState;
-        bool LogEverything = false;
+        bool LogEverything = true;
         BitmapImage contextMenuTransparency;
         public Player currentPlayer;
         public StarSystem currentSystem;
         public Ship currentShip;
         ObservableCollection<Ship> SelectedShipList = new ObservableCollection<Ship>();
+        Queue<Action> AnimationQueue = new Queue<Action>();
         Image[,] SystemContextImages;
         #endregion
 
@@ -96,6 +97,7 @@ namespace _4XIM.UserControls
             
             initGalaxyMap();
             ShowSystemMap(currentSystem);
+            scrollGalaxyGridToSystem(currentSystem);
         }
         #endregion
 
@@ -729,6 +731,16 @@ namespace _4XIM.UserControls
         #endregion
 
         #region Logic Methods
+        private void scrollGalaxyGridToSystem(StarSystem system)
+        {
+            var point = new Point(currentSystem.GalacticCoordinates.X * 32+16, currentSystem.GalacticCoordinates.Y * 32+16);
+            var t1 = cnvGalaxy.TranslatePoint(point, scrGalaxyScroll);
+            var t2 = scrGalaxyScroll.TranslatePoint(point, cnvGalaxy);
+            var t3 = cnvGalaxy.TranslatePoint(point, grdGalaxyView);
+            scrGalaxyScroll.ScrollToVerticalOffset(point.X - (scrGalaxyScroll.ActualHeight / 2));
+            scrGalaxyScroll.ScrollToHorizontalOffset(point.Y - (scrGalaxyScroll.ActualWidth / 2));
+        }
+
         private void endTurn()
         {
             // process end-of-turn actions
@@ -749,7 +761,11 @@ namespace _4XIM.UserControls
             // refresh menu options for ships
             RefreshSystemContextMenuImages();
             ClearSelectedCurrentShip();
-            
+
+            // "focus" on home system for current player
+            ShowSystemMap(currentPlayer.HomeSystem);
+            scrollGalaxyGridToSystem(currentPlayer.HomeSystem);
+
             //if (currentPlayer.IsAI)
             //{
             //    try
@@ -810,93 +826,166 @@ namespace _4XIM.UserControls
                     }
 
                 //check for defeat/victory
-                //foreach (Player p in GameState.Players.Where(f => !f.IsDefeated))
-                //    if (!p.Ships.Any(f => !f.IsDestroyed))
-                //    {
-                //        try
-                //        {
-                //            AnimationQueue.Enqueue(() =>
-                //            {
-                //                try
-                //                {
-                //                    MessageBox.Show(string.Format("{0} is Defeated!", p.Name), "Player Defeated");
-                //                    NextAnimation();
-                //                }
-                //                catch (Exception ex)
-                //                {
-                //                    if (LogEverything)
-                //                        Logger(ex);
-                //                }
-                //            });
-                //            p.IsDefeated = true;
-                //        }
-                //        catch (Exception ex)
-                //        {
-                //            if (LogEverything)
-                //                Logger(ex);
-                //        }
-                //    }
-                //if (GameState.Players.Where(f => !f.IsDefeated).Count() <= 1)
-                //{
-                //    try
-                //    {
-                //        if (GameState.Players.Where(f => !f.IsDefeated).Count() <= 0)
-                //        {
-                //            try
-                //            {
-                //                AnimationQueue.Enqueue(() =>
-                //                {
-                //                    try
-                //                    {
-                //                        MessageBox.Show("Stalemate! All Players Defeated!", "Victory!");
-                //                    }
-                //                    catch (Exception ex)
-                //                    {
-                //                        if (LogEverything)
-                //                            Logger(ex);
-                //                    }
-                //                });
-                //            }
-                //            catch (Exception ex)
-                //            {
-                //                if (LogEverything)
-                //                    Logger(ex);
-                //            }
-                //        }
-                //        else
-                //        {
-                //            try
-                //            {
-                //                AnimationQueue.Enqueue(() =>
-                //                {
-                //                    try
-                //                    {
-                //                        MessageBox.Show(string.Format("{0} is Victorious!", GameState.Players.First(f => !f.IsDefeated).Name), "Victory!");
-                //                        NextAnimation();
-                //                    }
-                //                    catch (Exception ex)
-                //                    {
-                //                        if (LogEverything)
-                //                            Logger(ex);
-                //                    }
-                //                });
-                //            }
-                //            catch (Exception ex)
-                //            {
-                //                if (LogEverything)
-                //                    Logger(ex);
-                //            }
-                //        }
-                //    }
-                //    catch (Exception ex)
-                //    {
-                //        if (LogEverything)
-                //            Logger(ex);
-                //    }
-                //}
+                foreach (Player p in GameState.Players.Where(f => !f.IsDefeated))
+                    if (!p.Ships.Any(f => !f.IsDestroyed))
+                    {
+                        try
+                        {
+                            AnimationQueue.Enqueue(() =>
+                            {
+                                try
+                                {
+                                    MessageBox.Show(string.Format("{0} is Defeated!", p.Name), "Player Defeated");
+                                    NextAnimation();
+                                }
+                                catch (Exception ex)
+                                {
+                                    if (LogEverything)
+                                        Logger(ex);
+                                }
+                            });
+                            p.IsDefeated = true;
+                        }
+                        catch (Exception ex)
+                        {
+                            if (LogEverything)
+                                Logger(ex);
+                        }
+                    }
+                if (GameState.Players.Where(f => !f.IsDefeated).Count() <= 1)
+                {
+                    try
+                    {
+                        if (GameState.Players.Where(f => !f.IsDefeated).Count() <= 0)
+                        {
+                            try
+                            {
+                                AnimationQueue.Enqueue(() =>
+                                {
+                                    try
+                                    {
+                                        MessageBox.Show("Stalemate! All Players Defeated!", "Victory!");
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        if (LogEverything)
+                                            Logger(ex);
+                                    }
+                                });
+                            }
+                            catch (Exception ex)
+                            {
+                                if (LogEverything)
+                                    Logger(ex);
+                            }
+                        }
+                        else
+                        {
+                            try
+                            {
+                                AnimationQueue.Enqueue(() =>
+                                {
+                                    try
+                                    {
+                                        MessageBox.Show(string.Format("{0} is Victorious!", GameState.Players.First(f => !f.IsDefeated).Name), "Victory!");
+                                        NextAnimation();
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        if (LogEverything)
+                                            Logger(ex);
+                                    }
+                                });
+                            }
+                            catch (Exception ex)
+                            {
+                                if (LogEverything)
+                                    Logger(ex);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        if (LogEverything)
+                            Logger(ex);
+                    }
+                }
                 
                 // begin animation queue
-                //NextAnimation();
+                NextAnimation();
+            }
+            catch (Exception ex)
+            {
+                if (LogEverything)
+                    Logger(ex);
+            }
+        }
+        #endregion
+
+        #region Animation Queue
+        public void NextAnimation()
+        {
+            try
+            {
+                if (AnimationQueue.Count > 0)
+                {
+                    try
+                    {
+                        Action action = AnimationQueue.Dequeue();
+                        action();
+                    }
+                    catch (Exception ex)
+                    {
+                        if (LogEverything)
+                            Logger(ex);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (LogEverything)
+                    Logger(ex);
+            }
+        }
+
+        public void MoveShipImageWithDelay(Action<StarSystem, Image, System.Drawing.Point, double> action, StarSystem system, Image shipImage, System.Drawing.Point targetLoc, double rotationAngle, int delay = 100)
+        {
+            try
+            {
+                var dispatcherTimer = new System.Windows.Threading.DispatcherTimer(System.Windows.Threading.DispatcherPriority.Render);
+
+                EventHandler handler = null;
+                handler = (sender, e) =>
+                {
+                    // Stop the timer so it won't keep executing every X seconds
+                    // and also avoid keeping the handler in memory.
+                    dispatcherTimer.Tick -= handler;
+                    dispatcherTimer.Stop();
+                    // Perform the action.
+                    action(system, shipImage, targetLoc, rotationAngle);
+                    // Start the next animation
+                    NextAnimation();
+                };
+
+                dispatcherTimer.Tick += handler;
+                dispatcherTimer.Interval = TimeSpan.FromMilliseconds(delay);
+                dispatcherTimer.Start();
+            }
+            catch (Exception ex)
+            {
+                if (LogEverything)
+                    Logger(ex);
+            }
+        }
+
+        private void moveShipImageAction(StarSystem system, Image shipImage, System.Drawing.Point targetLoc, double rotationDegrees)
+        {
+            try
+            {
+                scrollGalaxyGridToSystem(system);
+                ShowSystemMap(system);
+                AddShipImage(targetLoc.X, targetLoc.Y, shipImage, rotationDegrees);
+                System.Diagnostics.Debug.WriteLine("Resolving Move Action");
             }
             catch (Exception ex)
             {
@@ -907,6 +996,37 @@ namespace _4XIM.UserControls
         #endregion
 
         #region Events
+        #region Orders
+        public void onShipStrategicMoveHandler(object sender, EventArgs e,StarSystem system, Image shipImage, System.Drawing.Point sourceLoc, System.Drawing.Point targetLoc, bool weaponsFiredAlready)
+        {
+            try
+            {
+                Action<StarSystem, Image, System.Drawing.Point, double> moveact = new Action<StarSystem,Image, System.Drawing.Point, double>(moveShipImageAction);
+                int deltaX = sourceLoc.X - targetLoc.X;
+                int deltaY = sourceLoc.Y - targetLoc.Y;
+                double rotationAngle = Math.Atan2(deltaX, deltaY) * 180 / Math.PI - 90;
+                int delay = 200;
+                AnimationQueue.Enqueue(() =>
+                {
+                    try
+                    {
+                        MoveShipImageWithDelay(moveact,system, shipImage, targetLoc, rotationAngle, delay);
+                    }
+                    catch (Exception ex)
+                    {
+                        if (LogEverything)
+                            Logger(ex);
+                    }
+                });
+
+            }
+            catch (Exception ex)
+            {
+                if (LogEverything)
+                    Logger(ex);
+            }
+        }
+        #endregion
         private void lbxTargetShips_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (lbxTargetShips.SelectedItem != null)
@@ -932,7 +1052,8 @@ namespace _4XIM.UserControls
                 if (system != null)
                 {
                     currentSystem = system;
-                    ShowSystemMap(system);
+                    ShowSystemMap(system); 
+                    scrollGalaxyGridToSystem(system);
                 }
             }
             lbxTargetShips.ItemsSource = null;

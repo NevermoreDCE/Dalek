@@ -195,6 +195,7 @@ namespace _4XIM.UserControls
                 while(StartingSystems.Contains(startingSystem))
                     startingSystem = GameState.StarSystems[rng.d(GameState.StarSystems.Count()-1)];
                 StartingSystems.Add(startingSystem);
+                p.HomeSystem = startingSystem;
                 if (p == GameState.Players.First())
                     result = startingSystem;
                 Planet startingPlanet;

@@ -129,15 +129,13 @@ namespace StarShips.Locations
             return getNextPoint(sourceLoc, targetLoc);
         }
 
-        public Point MoveShipToPoint(Ship ship, Point targetLoc)
+        public Point MoveShipToPoint(Ship ship, Point curentLoc, Point targetLoc)
         {
-            Point current;
-            Point next = ship.TacticalPosition;
-            current = ship.TacticalPosition;
-            next = this.GetNextPoint(ship.TacticalPosition, targetLoc);
+            Point current = curentLoc;
+            Point next = curentLoc;
+            next = this.GetNextPoint(curentLoc, targetLoc);
             this[current.X, current.Y].Ships.Remove(ship);
             this[next.X, next.Y].Ships.Add(ship);
-            ship.TacticalPosition = next;
             ship.MP.Reduce(1);
 
             return next;
