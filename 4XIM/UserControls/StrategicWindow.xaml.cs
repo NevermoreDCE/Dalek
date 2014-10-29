@@ -80,10 +80,11 @@ namespace _4XIM.UserControls
         ObservableCollection<Ship> SelectedShipList = new ObservableCollection<Ship>();
         Queue<Action> AnimationQueue = new Queue<Action>();
         Image[,] SystemContextImages;
+        Image GalaxyGridSystemHighlight;
         #endregion
 
         #region Constructor
-        public StrategicWindow(Game gameState, Player currentPlayer = null, StarSystem currentSystem = null, Ship currentShip = null)
+        public StrategicWindow(Game gameState, Player currentPlayer = null, StarSystem currentSystem = null, System.Drawing.Point currentSystemLoc = new System.Drawing.Point(), Ship currentShip = null)
         {
             InitializeComponent();
             #region Bindings
@@ -98,6 +99,8 @@ namespace _4XIM.UserControls
             initGalaxyMap();
             ShowSystemMap(currentSystem);
             scrollGalaxyGridToSystem(currentSystem);
+            highlightSelectedSystem(currentSystem);
+            selectSystemCoordinates(currentSystemLoc);
         }
         #endregion
 
@@ -177,6 +180,8 @@ namespace _4XIM.UserControls
         #region Show Methods
         void ShowSystemMap(StarSystem system)
         {
+            txbSelectedSystemName.Text = system.Name;
+            txbSelectedSystemCoords.Text = "";
             initGrid(grdLocalSystem, StrategicGridDimension, StrategicGridDimension);
             SystemContextImages = new Image[StrategicGridDimension, StrategicGridDimension];
             txbSystemName.Text = system.Name;
@@ -472,27 +477,16 @@ namespace _4XIM.UserControls
         {
             try
             {
-                using (RNG rng = new RNG())
-                {
-                    try
-                    {
-                        // random origin and target (to offset beams)
-                        Point origin = new Point(((sourceLoc.Y + 1) * 32) - 16, ((sourceLoc.X) * 32) + 16);
-                        Point target = new Point(((targetLoc.Y + 1) * 32) - 16, ((targetLoc.X) * 32) + 16);
-                        System.Windows.Shapes.Path warpPath = new System.Windows.Shapes.Path();
-                        warpPath.Stroke = Brushes.Gray;
-                        warpPath.StrokeThickness = 1;
-                        Point from = grdGalaxyView.TransformToVisual(cnvGalaxyView).Transform(origin);
-                        Point to = grdGalaxyView.TransformToVisual(cnvGalaxyView).Transform(target);
-                        warpPath.Data = new LineGeometry(from, to);
-                        cnvGalaxyView.Children.Add(warpPath);
-                    }
-                    catch (Exception ex)
-                    {
-                        if (LogEverything)
-                            Logger(ex);
-                    }
-                }
+                Point origin = new Point(((sourceLoc.Y + 1) * 32) - 16, ((sourceLoc.X) * 32) + 16);
+                Point target = new Point(((targetLoc.Y + 1) * 32) - 16, ((targetLoc.X) * 32) + 16);
+                System.Windows.Shapes.Path warpPath = new System.Windows.Shapes.Path();
+                warpPath.Stroke = Brushes.Gray;
+                warpPath.StrokeThickness = 1;
+                Point from = grdGalaxyView.TransformToVisual(cnvGalaxyView).Transform(origin);
+                Point to = grdGalaxyView.TransformToVisual(cnvGalaxyView).Transform(target);
+                warpPath.Data = new LineGeometry(from, to);
+                warpPath.SetValue(Panel.ZIndexProperty, 1);
+                cnvGalaxyView.Children.Add(warpPath);
             }
             catch (Exception ex)
             {
@@ -550,6 +544,35 @@ namespace _4XIM.UserControls
                 Grid.SetRow(img, x);
                 Grid.SetColumn(img, y);
                 grdGalaxyView.Children.Add(img);
+            }
+            catch (Exception ex)
+            {
+                if (LogEverything)
+                    Logger(ex);
+            }
+        }
+
+        private void highlightSelectedSystem(StarSystem system)
+        {
+            try
+            {
+                if (GalaxyGridSystemHighlight == null)
+                {
+                    BitmapImage src = new BitmapImage();
+                    src.BeginInit();
+                    src.UriSource = new Uri("Images\\GalaxySystemHighlight.png", UriKind.Relative);
+                    src.CacheOption = BitmapCacheOption.OnLoad;
+                    src.EndInit();
+                    GalaxyGridSystemHighlight = new Image();
+                    GalaxyGridSystemHighlight.Source = src;
+                    GalaxyGridSystemHighlight.Height = 32;
+                    GalaxyGridSystemHighlight.Width = 32;
+                    GalaxyGridSystemHighlight.Stretch = Stretch.None;
+                    GalaxyGridSystemHighlight.SetValue(Panel.ZIndexProperty, 40);
+                    grdGalaxyView.Children.Add(GalaxyGridSystemHighlight);
+                }
+                Grid.SetRow(GalaxyGridSystemHighlight, system.GalacticCoordinates.X);
+                Grid.SetColumn(GalaxyGridSystemHighlight, system.GalacticCoordinates.Y);
             }
             catch (Exception ex)
             {
@@ -739,6 +762,17 @@ namespace _4XIM.UserControls
             var t3 = cnvGalaxy.TranslatePoint(point, grdGalaxyView);
             scrGalaxyScroll.ScrollToVerticalOffset(point.X - (scrGalaxyScroll.ActualHeight / 2));
             scrGalaxyScroll.ScrollToHorizontalOffset(point.Y - (scrGalaxyScroll.ActualWidth / 2));
+        }
+
+        private void selectSystemCoordinates(System.Drawing.Point targetLoc)
+        {
+            SelectedShipList.Clear();
+            foreach (Player p in GameState.Players.Where(f => !f.IsDefeated))
+                foreach (Ship s in p.Ships.Where(f => !f.IsDestroyed))
+                    if (s.StrategicPosition == targetLoc && s.StrategicSystem == currentSystem)
+                        SelectedShipList.Add(s);
+            lbxTargetShips.UpdateLayout();
+            txbSelectedSystemCoords.Text = string.Format(" - Sector ({0},{1})", targetLoc.X, targetLoc.Y);
         }
 
         private void endTurn()
@@ -1054,6 +1088,8 @@ namespace _4XIM.UserControls
                     currentSystem = system;
                     ShowSystemMap(system); 
                     scrollGalaxyGridToSystem(system);
+                    highlightSelectedSystem(system);
+                    txbSelectedSystemCoords.Text = "";
                 }
             }
             lbxTargetShips.ItemsSource = null;
@@ -1062,13 +1098,10 @@ namespace _4XIM.UserControls
         void LocalContextMenuImage_MouseDown(object sender, MouseButtonEventArgs e)
         {
             System.Drawing.Point targetLoc = new System.Drawing.Point(Grid.GetRow((Image)sender), Grid.GetColumn((Image)sender));
-            SelectedShipList.Clear();
-            foreach (Player p in GameState.Players.Where(f => !f.IsDefeated))
-                foreach (Ship s in p.Ships.Where(f => !f.IsDestroyed))
-                    if (s.StrategicPosition == targetLoc && s.StrategicSystem==currentSystem)
-                        SelectedShipList.Add(s);
-            lbxTargetShips.UpdateLayout();
+            selectSystemCoordinates(targetLoc);
         }
+
+        
         void menuRemoveOrder_Click(object sender, RoutedEventArgs e)
         {
             Tuple<Ship, ShipOrder> order = (Tuple<Ship, ShipOrder>)((MenuItem)e.Source).CommandParameter;

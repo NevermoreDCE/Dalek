@@ -89,7 +89,7 @@ namespace _4XIM.UserControls
         private void btnShipsDone_Click(object sender, RoutedEventArgs e)
         {
             StarSystem firstPlayerSystem = initGameState();
-            StrategicWindow w = new StrategicWindow(GameState, GameState.Players.First(),firstPlayerSystem);
+            StrategicWindow w = new StrategicWindow(GameState, GameState.Players.First(), firstPlayerSystem, GameState.Players.First().Ships.First().StrategicPosition);
             Switcher.Switch(w);
         }
 

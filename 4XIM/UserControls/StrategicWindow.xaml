@@ -5,14 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="935" d:DesignWidth="1270">
-    <Grid>
+    <Grid Name="grdLayoutRoot">
         <Grid.RowDefinitions>
-            <RowDefinition Height="455"/>
-            <RowDefinition Height="480"/>
+            <RowDefinition Name="grTopRow" Height="1*"/>
+            <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>   
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="440"/>
-            <ColumnDefinition Width="830"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
         
         <!-- Local System (Top Left)-->
@@ -22,20 +22,41 @@
         </StackPanel>
         
         <!-- Eidos in selected location (Top Right)-->
-        <StackPanel Grid.Row="0" Grid.Column="1">
-            <TextBlock Name="txbSelectedSystemName" Text="Ships in Test System - Sector 71" Foreground="White" FontSize="26"/>
-            <ListBox Name="lbxTargetShips" Height="404" Background="Transparent" Foreground="White" SelectionChanged="lbxTargetShips_SelectionChanged" >
-                <ListBox.ItemContainerStyle>
+        <Grid Grid.Row="0" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+                <TextBlock Text="Ships in " Foreground="White" FontSize="26"/>
+                <TextBlock Name="txbSelectedSystemName" Text="Test System" Foreground="White" FontSize="26"/>
+                <TextBlock Name="txbSelectedSystemCoords" Text=" - Sector 71" Foreground="White" FontSize="26"/>
+            </StackPanel>
+            
+            <ListView Grid.Row="1" Grid.Column="0" Name="lbxTargetShips" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" SelectionChanged="lbxTargetShips_SelectionChanged" >
+                <ListView.ItemContainerStyle>
                     <Style TargetType="{x:Type ListBoxItem}">
                         <EventSetter Event="MouseDoubleClick" Handler="lbxTargetShips_MouseDoubleClick"/>
                     </Style>
-                </ListBox.ItemContainerStyle>
-                <ListBox.ItemTemplate>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <Image Source="{Binding Path=Owner.Icon.Source}" Height="32" Width="32"/>
-                            <Image Source="{Binding Path=Image.Source}" Height="32" Width="32"/>
-                            <StackPanel Width="150">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                            <Image Grid.Row="0" Grid.Column="0" Margin="15 0 0 0" Source="{Binding Path=Owner.Icon.Source}" Height="32" Width="32"/>
+                            <Image Grid.Row="0" Grid.Column="1" Margin="15 0 0 0" Source="{Binding Path=Image.Source}" Height="32" Width="32"/>
+                            <StackPanel Grid.Row="0" Grid.Column="2" Margin="15 0 0 0">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="Name: "/>
                                     <TextBlock Text="{Binding Path=Name}"/>
@@ -48,7 +69,7 @@
                                     <TextBlock Text=")"/>
                                 </StackPanel>
                             </StackPanel>
-                            <StackPanel Width="68">
+                            <StackPanel Grid.Row="0" Grid.Column="3" Margin="15 0 0 0">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="HP: "/>
                                     <TextBlock Text="{Binding Path=HP}"/>
@@ -58,11 +79,12 @@
                                     <TextBlock Text="{Binding Path=MP}"/>
                                 </StackPanel>
                             </StackPanel>
-                        </StackPanel>
+                        </Grid>
                     </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </StackPanel>
+                </ListView.ItemTemplate>
+            </ListView>
+            
+        </Grid>
         
         <!-- Selected Status (Bottom Left)-->
         <StackPanel Grid.Row="1" Grid.Column="0">
